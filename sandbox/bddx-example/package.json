@@ -1,0 +1,16 @@
+{
+  "name": "bddx-example",
+  "version": "1.0.0",
+  "private": false,
+  "description": "Sandbox of BDDX - simple example",
+  "main": "index.js",
+  "scripts": {
+    "init": "bddx init",
+    "start": "bddx"
+  },
+  "dependencies": {
+    "bddx": "*"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,41 @@
+{
+    "name": "bddx-repo",
+    "version": "0.0.1",
+    "private": false,
+    "license": "MIT",
+    "description": "Behavior driven development CLI. Write tests in Gherkin and integrate with Git and JIRA",
+    "homepage": "https://github.com/aexol-studio/bddx/#readme",
+    "scripts": {
+      "build": "npm run build --ws --if-present",
+     
+      "start-bddx": "npm run dev -w packages/bddx",
+      "start-sandbox-example": "npm run dev -w sandbox/bddx-example"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/aexol-studio/bddx.git"
+    },
+    "bugs": {
+      "url": "https://github.com/aexol-studio/bddx/issues"
+    },
+    "devDependencies": {
+      "@types/jest": "^29.1.2",
+      "@types/node": "^18.11.2",
+      "@types/ws": "^8.5.3",
+      "@typescript-eslint/eslint-plugin": "^5.40.0",
+      "@typescript-eslint/parser": "^5.40.0",
+      "eslint": "^8.25.0",
+      "eslint-config-prettier": "^8.5.0",
+      "eslint-plugin-prettier": "^4.2.1",
+      "jest": "^29.1.2",
+      "prettier": "^2.7.1",
+      "ts-jest": "^29.0.3",
+      "ts-node": "^10.9.1",
+      "ttypescript": "^1.5.13",
+      "typescript-transform-paths": "^3.3.1"
+    },
+    "workspaces": [
+      "./packages/bddx-core",
+      "./packages/bddx"
+    ]
+  }

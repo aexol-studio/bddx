@@ -1,0 +1,27 @@
+{
+  "name": "bddx",
+  "version": "0.0.1",
+  "private": false,
+  "license": "MIT",
+  "description": "Behavior driven development CLI. Write tests in Gherkin and integrate with Git and JIRA",
+  "homepage": "https://github.com/aexol-studio/bddx#readme",
+  "main": "lib/CLI.js",
+  "bin": {
+    "bddx": "lib/CLI.js"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "rimraf tsconfig.build.tsbuildinfo lib && ttsc --build tsconfig.build.json"
+  },
+  "dependencies": {
+    "bddx-core": "*",
+    "yargs": "^17.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aexol-studio/bddx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aexol-studio/bddx/issues"
+  }
+}
