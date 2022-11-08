@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import { message } from "./console.js";
 
 export const fileRegex = /(.*)\.js$/;
 const featureRegex = /(.*)\.feature$/;
@@ -73,27 +72,32 @@ export const fileTouchSync = (p: string) => {
   }
 };
 
+
 export const getFeatureFilesPathsRecursive = (
-  startPath: string,
-  filter: string
-) => {
-  if (!fs.existsSync(startPath)) {
-    throw new Error(`There is no directory: ${startPath}`);
-  }
-  const directories: string[] = [];
-  const files = fs.readdirSync(startPath);
+  dir: string,
+  extn: string,
+  files?: string[],
+  result?: string[],
+  regex?: RegExp
+): string[] => {
+  files = files || fs.readdirSync(dir);
+  result = result || [];
+  regex = regex || new RegExp(`\\${extn}$`);
+
   for (let i = 0; i < files.length; i++) {
-    const filename = path.join(startPath, files[i]);
-    const stat = fs.lstatSync(filename);
-    if (stat.isDirectory()) {
-      getFeatureFilesPathsRecursive(filename, filter);
-    } else if (filename.endsWith(filter)) {
-      directories.push(filename);
+    const file = path.join(dir, files[i]);
+    if (fs.statSync(file).isDirectory()) {
+      try {
+        result = getFeatureFilesPathsRecursive(file, extn, fs.readdirSync(file), result, regex);
+      } catch (error) {
+        continue;
+      }
+    } else {
+      if (regex.test(file)) {
+        if (result) result.push("./" + file);
+        else result = ["./" + file];
+      }
     }
   }
-  if (directories.length === 0) {
-    message("There is no .feature files in directory", "yellow");
-  }
-  message(directories.toString(), "blueBright");
-  return directories;
+  return result;
 };

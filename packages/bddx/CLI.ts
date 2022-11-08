@@ -1,7 +1,12 @@
 #!/usr/bin/env node
-import { initConfig } from "bddx-core/lib/config.js";
+import {
+  initConfig,
+  readConfig,
+  GLOBAL_CONFIG_FILE,
+} from "bddx-core/lib/config.js";
 import { message } from "bddx-core/lib/console.js";
 import yargs from "yargs";
+import { performTests } from "bddx-core/lib/doTests.js";
 
 process.on("SIGINT", function () {
   message("Exiting...", "redBright");
@@ -16,18 +21,26 @@ yargs(process.argv.slice(2))
     "$0",
     "the default command",
     (yargs) => {
-      yargs.option("build", {
-        alias: "b",
-        describe: "Build project",
+      yargs.option("init", {
+        alias: "i",
+        describe: "Init default DBBX config file",
         boolean: true,
       });
     },
     async (argv) => {
-      if (argv.build) {
-        // await build();
-        console.log(argv);
+      if (argv.init) {
+        message("Init config file", "blueBright");
+        await initConfig({
+          in: GLOBAL_CONFIG_FILE.in,
+          out: GLOBAL_CONFIG_FILE.out,
+        });
+        message("Start performing tests1", "blueBright");
+        performTests(GLOBAL_CONFIG_FILE.in, GLOBAL_CONFIG_FILE.out);
       } else {
-        // await watch();
+        const config = readConfig("./bddx.json");
+        message("Read config file", "blueBright");
+        message("Start performing tests2", "blueBright");
+        performTests(config.in, config.out);
       }
     }
   )
@@ -37,19 +50,14 @@ yargs(process.argv.slice(2))
     async (yargs) => {
       yargs.options({
         in: {
-          default: "./content",
-          describe: "Folder with markdown files",
+          default: GLOBAL_CONFIG_FILE.in,
+          describe: "Folder with BDD files",
           type: "string",
         },
         out: {
-          default: "./src",
-          describe: "Folder to output generated markdown.ts file",
+          default: GLOBAL_CONFIG_FILE.out,
+          describe: "Folder to output results of performed manual tests",
           type: "string",
-        },
-        markdownToHtml: {
-          default: false,
-          describe: "Boolean to active markdown conversion",
-          type: "boolean",
         },
       });
     },
@@ -57,14 +65,17 @@ yargs(process.argv.slice(2))
       const args = argv as unknown as {
         in: string;
         out: string;
-        markdownToHtml: boolean;
       };
-      console.log(args);
       if ("in" in argv && "out" in argv) {
         await initConfig({
           in: args.in,
           out: args.out,
         });
+      } else {
+        message(
+          "You need to give 2 input parameters of in and out directory",
+          "red"
+        );
       }
     }
   )
