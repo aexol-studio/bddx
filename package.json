@@ -36,6 +36,7 @@
     },
     "workspaces": [
       "./packages/bddx-core",
-      "./packages/bddx"
+      "./packages/bddx",
+      "./sandbox/bddx-example"
     ]
   }

@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "bddx-core": "*",
+    "inquirer": "^9.1.4",
     "yargs": "^17.6.0"
   },
   "repository": {
@@ -23,5 +24,8 @@
   },
   "bugs": {
     "url": "https://github.com/aexol-studio/bddx/issues"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^9.0.3"
   }
 }
