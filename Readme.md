@@ -45,7 +45,7 @@ bddx init
 #### You can set custom in and out directory by --in and --out arguments in init (or one of those)
 
 ```
-npx bddx init --in "./yourInDirectory" --out "./yourOutDirectory"
+bddx init --in ./yourInDirectory --out ./yourOutDirectory
 ```
 
 #### Result:
