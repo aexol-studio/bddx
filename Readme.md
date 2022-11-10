@@ -42,12 +42,26 @@ bddx init
 - in: string - means folder with test files, **(default: "./bddx/tests")**
 - out: string - means folder to generate test result files, **(default: "./bddx/results")**
 
+#### You can set custom in and out directory by --in and --out arguments in init (or one of those)
+
+```
+npx bddx init --in "./yourInDirectory" --out "./yourOutDirectory"
+```
+
+#### Result:
+
+```
+{
+  "in": "./yourInDirectory",
+  "out": "./yourOutDirectory",
+}
+```
 
 #### [Readme CORE](https://github.com/aexol-studio/bddx/blob/main/Readme.md)
-
 
 ## Roadmap
 
 - [x] 2 test scenarios: display test & pass or fail test
 - [ ] Jira plugin
 - [ ] GitHub plugin
+
