@@ -108,13 +108,9 @@ export const getFeatureFilesPathsRecursive = (
   return result;
 };
 
-export const getTestsDirectories = (inPath: string, outPath: string) => {
+export const getTestsDirectories = (inPath: string) => {
   if (!fs.existsSync(inPath)) {
     throw new Error(`There is no input directory: ${inPath}`);
-  }
-  if (!fs.existsSync(outPath)) {
-    fs.mkdirSync(outPath, { recursive: true });
-    message(`Directory ${outPath} was created`, "greenBright");
   }
   const testFilesNames = getFeatureFilesPathsRecursive(inPath, ".feature");
   if (testFilesNames.length === 0) {

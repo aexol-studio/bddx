@@ -4,7 +4,7 @@ Feature: Verification of the functionality through a test
 
   Scenario: User wants to test register functionality via "register.feature" test which is in "/userHandling" path, but one of register inputs is broken
     Given register functionality exists
-    And register.feature file exists in path "/userHandling" which also exists
+    And register.feature file exists in path "/userHandling" which also exists selectss
     And There is a tool to approve or reject the functionality
     And This tool has functionality to ask if everything is ok?
     And This tool has functionality to ask for rejection reason and save it to the selected output file if something is wrong

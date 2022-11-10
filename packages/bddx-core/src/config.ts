@@ -1,5 +1,5 @@
 import fs from "fs";
-
+import { message } from "./console.js";
 export const GLOBAL_CONFIG_FILE = {
   out: `./bddx/results`,
   in: "./bddx/tests",
@@ -7,9 +7,17 @@ export const GLOBAL_CONFIG_FILE = {
 
 export type ConfigFile = typeof GLOBAL_CONFIG_FILE;
 
-export const validateConfig = (config: ConfigFile) => {
+export const readConfig = (path: string) => {
+  if (!fs.existsSync(path)) {
+    message(
+      "No config for bddx please create one using init or create correct bddx.json",
+      "red"
+    );
+    return undefined;
+  }
+
+  const config: ConfigFile = JSON.parse(fs.readFileSync(path).toString("utf8"));
   const errors: string[] = [];
-  // Validate config
   Object.keys(GLOBAL_CONFIG_FILE).forEach((key) => {
     const v = config[key as keyof ConfigFile];
     if (typeof v === "undefined" || v === null) {
@@ -19,26 +27,29 @@ export const validateConfig = (config: ConfigFile) => {
     }
   });
   if (errors.length > 0) {
-    throw new Error(errors.join("\n"));
+    message(errors.join("\n"), "red");
+    message(errors.join("\n"), "red");
+    return undefined;
   }
+  return config;
 };
 
-export const readConfig = (path: string) => {
-  const configExists = fs.existsSync(path);
-  if (!configExists) {
-    throw new Error("No config for bddx please create one using init");
-  }
-  try {
-    const config: ConfigFile = JSON.parse(
-      fs.readFileSync(path).toString("utf8")
+export const checkConfigDirectories = async (config: ConfigFile) => {
+  if (!fs.existsSync(config.in)) {
+    fs.mkdirSync(config.in, { recursive: true });
+    message(
+      "In directory was not present. It was created automatically",
+      "yellow"
     );
-    validateConfig(config);
-    return config;
-  } catch (error) {
-    throw new Error("Invalid JSON file");
+  }
+  if (!fs.existsSync(config.out)) {
+    fs.mkdirSync(config.out, { recursive: true });
+    message(
+      "Out directory was not present. It was created automatically",
+      "yellow"
+    );
   }
 };
-
 export const initConfig = async (values = GLOBAL_CONFIG_FILE) => {
   fs.writeFileSync("bddx.json", JSON.stringify(values, null, 4));
 };
