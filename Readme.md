@@ -64,3 +64,4 @@ bddx init --in ./yourInDirectory --out ./yourOutDirectory
 - [x] 2 test scenarios: display test & pass or fail test
 - [ ] Jira plugin
 - [ ] GitHub plugin
+
