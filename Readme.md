@@ -10,7 +10,7 @@ Inspired by generative programming and weed :). Behavior driven development CLI
 - Upload BDD test files in bulk,
 - Run tests to execute them line by line for all your files
 - Get a detailed summary on **what** failed and **why**
-- Failed tests can be made to automatically result in a Jira task or Githun issue to automate the fixing process
+- Failed tests can be made to automatically result in a Jira task or Github issue to automate the fixing process
 
 # What we serve?
 
