@@ -2,14 +2,22 @@
 import {
   initConfig,
   readConfig,
+  checkConfigDirectories,
   GLOBAL_CONFIG_FILE,
 } from "bddx-core/lib/config.js";
 import { message } from "bddx-core/lib/console.js";
+import { getTestsDirectories } from "bddx-core/lib/fsAddons.js";
+import { doTests } from "@/src/doTests.js";
 import yargs from "yargs";
-import { performTests } from "bddx-core/lib/doTests.js";
 
-process.on("SIGINT", function () {
-  message("Exiting...", "redBright");
+process.on("exit", () => {
+  message(
+    "Exiting...(file with unsuccessful test was created if there were any)",
+    "redBright"
+  );
+});
+process.on("SIGINT", () => {
+  message("Exiting...(file with unsuccessful test was created)", "redBright");
   process.exit();
 });
 
@@ -34,13 +42,18 @@ yargs(process.argv.slice(2))
           in: GLOBAL_CONFIG_FILE.in,
           out: GLOBAL_CONFIG_FILE.out,
         });
-        message("Start performing tests1", "blueBright");
-        performTests(GLOBAL_CONFIG_FILE.in, GLOBAL_CONFIG_FILE.out);
-      } else {
-        const config = readConfig("./bddx.json");
-        message("Read config file", "blueBright");
-        message("Start performing tests2", "blueBright");
-        performTests(config.in, config.out);
+      }
+      const config = readConfig("./bddx.json");
+      if (config) {
+        message(
+          `Read config: tests files are in ${config.in} and result of tests will be saved in ${config.out}`,
+          "blueBright"
+        );
+        await checkConfigDirectories(config);
+        const fileRoutes = getTestsDirectories(config.in);
+        if (fileRoutes.length > 0) {
+          doTests(fileRoutes, config.out);
+        }
       }
     }
   )

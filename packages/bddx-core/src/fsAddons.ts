@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { message } from "./console.js";
 
 export const fileRegex = /(.*)\.js$/;
 const featureRegex = /(.*)\.feature$/;
@@ -72,7 +73,6 @@ export const fileTouchSync = (p: string) => {
   }
 };
 
-
 export const getFeatureFilesPathsRecursive = (
   dir: string,
   extn: string,
@@ -88,7 +88,13 @@ export const getFeatureFilesPathsRecursive = (
     const file = path.join(dir, files[i]);
     if (fs.statSync(file).isDirectory()) {
       try {
-        result = getFeatureFilesPathsRecursive(file, extn, fs.readdirSync(file), result, regex);
+        result = getFeatureFilesPathsRecursive(
+          file,
+          extn,
+          fs.readdirSync(file),
+          result,
+          regex
+        );
       } catch (error) {
         continue;
       }
@@ -100,4 +106,17 @@ export const getFeatureFilesPathsRecursive = (
     }
   }
   return result;
+};
+
+export const getTestsDirectories = (inPath: string) => {
+  if (!fs.existsSync(inPath)) {
+    throw new Error(`There is no input directory: ${inPath}`);
+  }
+  const testFilesNames = getFeatureFilesPathsRecursive(inPath, ".feature");
+  if (testFilesNames.length === 0) {
+    message(`No .feature files found in input directory`, "yellowBright");
+  } else {
+    message(`${testFilesNames.length} .feature files founded`, "greenBright");
+  }
+  return testFilesNames;
 };

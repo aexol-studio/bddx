@@ -1,7 +1,22 @@
-import chalk from 'chalk';
+import chalk from "chalk";
 type Colors = keyof Pick<
   typeof chalk,
-  'red' | 'yellow' | 'greenBright' | 'yellowBright' | 'redBright' | 'blueBright'
+  | "bgBlue"
+  | "bgBlueBright"
+  | "bgGreen"
+  | "bgMagenta"
+  | "bgRed"
+  | "bgRedBright"
+  | "bgYellow"
+  | "blue"
+  | "blueBright"
+  | "green"
+  | "greenBright"
+  | "magenta"
+  | "red"
+  | "redBright"
+  | "yellow"
+  | "yellowBright"
 >;
 export const message = (m: string, color: Colors) => {
   console.log(chalk[color](m));
