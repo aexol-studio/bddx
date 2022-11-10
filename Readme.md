@@ -1,69 +1,53 @@
-# MDtx [![NPM Version](https://img.shields.io/npm/v/mdtx.svg?style=flat)](https://www.npmjs.com/package/mdtx) [![NPM Version](https://img.shields.io/github/checks-status/aexol-studio/mdtx/main)](https://www.npmjs.com/package/mdtx) [![NPM Version](https://img.shields.io/github/last-commit/aexol-studio/mdtx)](https://github.com/aexol-studio/mdtx)
+# BDDx [![NPM Version](https://img.shields.io/npm/v/bddx.svg?style=flat)](https://www.npmjs.com/package/bddx) [![NPM Version](https://img.shields.io/github/checks-status/aexol-studio/bddx/main)](https://www.npmjs.com/package/bddx) [![NPM Version](https://img.shields.io/github/last-commit/aexol-studio/bddx)](https://github.com/aexol-studio/bddx)
 
-Inspired by generative programming and weed :). So I was learning Elm language at home usually in the evening and now I am missing all this generative stuff from Elm libs in TS.
+Inspired by generative programming and weed :). Behavior driven development CLI
 
 ![Alt Text](sandbox/mdtx-nextjs-example/public/PresentationOfMDtx.gif)
 
-# What is MDtx?
+# What is BDDx?
 
-- When you add **Markdown** files with gray matter it will generate typings for those,
-- Genereted typings from **Markdowns** can get automatically convert into html structure,
-- There is **Next JS Plugin** to work faster with MDtx on NextJS,
+- Write tests in Gherkin, Cucumber's simply structured plain-text language
+- Upload BDD test files in bulk,
+- Run tests to execute them line by line for all your files
+- Get a detailed summary on **what** failed and **why**
+- Failed tests can be made to automatically result in a Jira task or Githun issue to automate the fixing process
 
 # What we serve?
 
-## [![GitHub package.json version (subfolder of monorepo)](https://img.shields.io/github/package-json/v/aexol-studio/mdtx?color=yellow&filename=%2Fpackages%2Fmdtx-cli%2Fpackage.json&label=CLI&style=for-the-badge)](https://github.com/aexol-studio/mdtx) | [![GitHub package.json version (subfolder of monorepo)](https://img.shields.io/github/package-json/v/aexol-studio/mdtx?color=green&filename=%2Fpackages%2Fmdtx-core%2Fpackage.json&label=CORE&style=for-the-badge)](https://github.com/aexol-studio/mdtx/tree/main/packages/mdtx-core) | [![GitHub package.json version (subfolder of monorepo)](https://img.shields.io/github/package-json/v/aexol-studio/mdtx?color=white&filename=%2Fpackages%2Fmdtx-plugin-nextjs%2Fpackage.json&label=NextJS-plugin&style=for-the-badge)](https://github.com/aexol-studio/mdtx/tree/main/packages/mdtx-plugin-nextjs)
+## [![GitHub package.json version (subfolder of monorepo)](https://img.shields.io/github/package-json/v/aexol-studio/bddx?color=yellow&filename=%2Fpackages%2Fmdtx-cli%2Fpackage.json&label=CLI&style=for-the-badge)](https://github.com/aexol-studio/bddx) | [![GitHub package.json version (subfolder of monorepo)](https://img.shields.io/github/package-json/v/aexol-studio/bddx?color=green&filename=%2Fpackages%2Fmdtx-core%2Fpackage.json&label=CORE&style=for-the-badge)](https://github.com/aexol-studio/bddx/tree/main/packages/mdtx-core) | [![GitHub package.json version (subfolder of monorepo)](https://img.shields.io/github/package-json/v/aexol-studio/bddx?color=white&filename=%2Fpackages%2Fmdtx-plugin-nextjs%2Fpackage.json&label=NextJS-plugin&style=for-the-badge)](https://github.com/aexol-studio/bddx/tree/main/packages/mdtx-plugin-nextjs)
 
 ## Readme CLI
 
-#### Instaling MDtx
+#### Instaling BDDx
 
 ```
-npm i mdtx
+npm i bddx
 ```
 
-#### Initializing MDtx
+#### Initializing BDDx
 
 ```
-mdtx init
+bddx init
 ```
 
-#### After initalize config file mdtx.json apear as that:
+#### After initalizing the config file contains:
 
 ```
 {
-  "in": "./content",
-  "out": "./src",
+  "in": "./bddx/tests",
+  "out": "./bddx/results",
 }
 ```
 
-- in: string - means folder with content, **(default: "./content")**
-- out: string - means folder to generate mdtx.ts file, **(default: "./src")**
+- in: string - means folder with test files, **(default: "./bddx/tests")**
+- out: string - means folder to generate test result files, **(default: "./bddx/results")**
 
-#### Optionally:
 
-- markdownToHtml: boolean - allow mdtx covert md content to html content. **(default: false)**
+#### [Readme CORE](https://github.com/aexol-studio/bddx/blob/main/Readme.md)
 
-#### Watch mode (on "in" path)
-
-```
-mdtx
-```
-
-#### Build mode (trigger once)
-
-```
-mdtx -b
-```
-
-#### [Readme CORE](https://github.com/aexol-studio/mdtx/tree/main/sandbox/mdtx-example/Readme.md)
-
-#### [Readme NextJS Plugin](https://github.com/aexol-studio/mdtx/tree/main/sandbox/mdtx-nextjs-example/Readme.md)
 
 ## Roadmap
 
-- [x] NextJS plugin
-- [ ] Gatsby plugin
-- [ ] Tree building
-- [ ] Summary building
-- [ ] Other language generation
+- [x] 2 test scenarios: display test & pass or fail test
+- [ ] Jira plugin
+- [ ] GitHub plugin
