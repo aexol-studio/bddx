@@ -11,11 +11,16 @@
   },
   "type": "module",
   "scripts": {
-    "build": "rimraf tsconfig.build.tsbuildinfo lib && ttsc --build tsconfig.build.json"
+    "build": "rimraf tsconfig.build.tsbuildinfo lib && ttsc --build tsconfig.build.json",
+    "zeus": "zeus https://api.atlassian.com/graphql --ts --es ./src "
   },
   "dependencies": {
     "bddx-core": "*",
+    "conf": "^10.2.0",
+    "graphql": "^16.6.0",
+    "graphql-zeus": "^5.2.0",
     "inquirer": "^9.1.4",
+    "node-fetch": "^3.3.0",
     "yargs": "^17.6.0"
   },
   "repository": {

@@ -17,7 +17,7 @@
       "composite": true,
       "outDir": "./lib",
       "lib": ["es6", "es7", "esnext", "dom"],
-      "rootDir": ".",
+      "rootDir": "./src",
       "paths": {
         "@/*": ["./*"]
       },
@@ -30,8 +30,9 @@
           "afterDeclarations": true
         }
       ],
-      "baseUrl": "./"
+      "baseUrl": "./src"
     },
+    "include": ["**/*.ts", "**/*.tsx" ],
     "exclude": [
       "lib",
       "node_modules",

@@ -1,4 +1,4 @@
-import { message } from "bddx-core/lib/console.js";
+import { message } from "bddx-core";
 import fs from "fs";
 import inquirer from "inquirer";
 
