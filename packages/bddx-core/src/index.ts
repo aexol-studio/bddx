@@ -1,7 +1,5 @@
-import { ConfigFile, GLOBAL_CONFIG_FILE } from "@/config.js";
-
-export const getInitialConfig = (): ConfigFile => {
-  return {
-    ...GLOBAL_CONFIG_FILE,
-  };
-};
+export * from "./config.js";
+export * from "./console.js";
+export * from "./fsAddons.js";
+export * from "./init.js";
+export * from "./paths.js";

@@ -32,5 +32,6 @@
       ],
       "baseUrl": "./src/"
     },
+    "include": ["**/*.ts", "**/*.tsx", "./src/**/*", "types.d.ts"],
     "exclude": ["node_modules", "lib", "coverage", "jest.config.ts"]
   }
