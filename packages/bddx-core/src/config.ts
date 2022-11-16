@@ -1,33 +1,60 @@
 import fs from "fs";
 import { message } from "./console.js";
-export const GLOBAL_CONFIG_FILE = {
+
+export type ConfigFile = {
+  out: string;
+  in: string;
+};
+export type ConfigJiraFile = {
+  organizationName: string;
+  projectName: string;
+  issueTypeName: string;
+  out: string;
+  in: string;
+};
+
+export const GLOBAL_CONFIG_FILE: ConfigFile = {
   out: `./bddx/results`,
   in: "./bddx/tests",
 };
 
-export type ConfigFile = typeof GLOBAL_CONFIG_FILE;
+export const EXAMPLE_JIRA_CONFIG_FILE: ConfigJiraFile = {
+  out: `./bddx/results`,
+  in: "./bddx/tests",
+  organizationName: "https://organizationName.atlassian.net/",
+  projectName: "Project",
+  issueTypeName: "Task",
+};
 
-export const readConfig = (path: string) => {
+export const readConfig = (
+  path: string,
+  withJira = false
+): ConfigJiraFile | ConfigFile | undefined => {
   if (!fs.existsSync(path)) {
-    message(
-      "No config for bddx please create one using init or create correct bddx.json",
-      "red"
-    );
+    withJira
+      ? message(
+          "No config for bddx please create one using jiraInit command or create correct bddx.json",
+          "red"
+        )
+      : message(
+          "No config for bddx please create one using init command or create correct bddx.json",
+          "red"
+        );
     return undefined;
   }
-
-  const config: ConfigFile = JSON.parse(fs.readFileSync(path).toString("utf8"));
+  const config = JSON.parse(fs.readFileSync(path).toString("utf8"));
   const errors: string[] = [];
-  Object.keys(GLOBAL_CONFIG_FILE).forEach((key) => {
-    const v = config[key as keyof ConfigFile];
-    if (typeof v === "undefined" || v === null) {
-      errors.push(
-        `Invalid config file. Please include "${key}" in your config`
-      );
+  Object.keys(withJira ? EXAMPLE_JIRA_CONFIG_FILE : GLOBAL_CONFIG_FILE).forEach(
+    (key) => {
+      const v = config[key as keyof ConfigFile];
+      if (typeof v === "undefined" || v === null) {
+        errors.push(
+          `Invalid config file. Please include "${key}" in your config`
+        );
+      }
     }
-  });
+  );
   if (errors.length > 0) {
-    message(errors.join("\n"), "red");
     message(errors.join("\n"), "red");
     return undefined;
   }
@@ -50,6 +77,8 @@ export const checkConfigDirectories = async (config: ConfigFile) => {
     );
   }
 };
-export const initConfig = async (values = GLOBAL_CONFIG_FILE) => {
-  fs.writeFileSync("bddx.json", JSON.stringify(values, null, 4));
+export const initConfig = async (
+  values: ConfigJiraFile | ConfigFile = GLOBAL_CONFIG_FILE
+) => {
+  fs.writeFileSync("bddx.json", JSON.stringify({ ...values }, null, 4));
 };

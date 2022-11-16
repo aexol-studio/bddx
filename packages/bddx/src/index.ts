@@ -1,2 +1,3 @@
 export * from "./doTests.js";
-export * from "./useJiraAPI.js";
+export * from "./CLI.js";
+export * from "./initJira.js";
