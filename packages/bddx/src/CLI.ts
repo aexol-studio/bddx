@@ -152,7 +152,7 @@ yargs(process.argv.slice(2))
     }
   })
   .command(
-    "finishPrevious",
+    "continue",
     "Start BDDX tests from output file where you did not went through al tests",
     async () => {
       //////////////////no jira integration yet

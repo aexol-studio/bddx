@@ -1,0 +1,16 @@
+{
+    "failedTests": [
+        {
+            "testPath": "./content/fileA.feature",
+            "reasonOfFail": "adsasdasdas"
+        }
+    ],
+    "testStatus": {
+        "status": "in progress",
+        "currentTestPath": "./content/fileC.feature",
+        "testFilesRoutes": [
+            "./content/display_test.feature",
+            "./content/fileA.feature"
+        ]
+    }
+}

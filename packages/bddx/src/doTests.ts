@@ -3,10 +3,16 @@ import fs from "fs";
 import inquirer from "inquirer";
 import { Version3Client } from "jira.js";
 
-const FINISHED = "tests finished";
+enum TEST_STATUS {
+  FINISHED = "finished",
+  UNFINISHED = "in progress",
+}
 type Results = {
-  testFilesRoutes: string[];
-  atTest: string;
+  testStatus: {
+    currentTestPath?: string;
+    status: TEST_STATUS;
+    testFilesRoutes: string[];
+  };
   failedTests: { testPath: string; reasonOfFail: string }[];
 };
 export const doTests = async (
@@ -14,10 +20,13 @@ export const doTests = async (
   outPath: string,
   jira?: { client: Version3Client; projectName: string; issueTypeName: string }
 ) => {
-  let results: Results = {
-    atTest: testsPaths[0],
-    testFilesRoutes: testsPaths,
+  const results: Results = {
     failedTests: [],
+    testStatus: {
+      status: TEST_STATUS.UNFINISHED,
+      currentTestPath: testsPaths[0],
+      testFilesRoutes: testsPaths,
+    },
   };
   const date = new Date().toISOString().split(".")[0];
   const fileName = `result-${date}.json`;
@@ -50,22 +59,15 @@ export const doTests = async (
           when: (answers) => !answers.confirmation,
         },
       ]);
-      results = {
-        ...results,
-        atTest: file,
-      };
-      if (!answers.confirmation && answers.message) {
-        results = {
-          ...results,
-          failedTests: [
-            ...results.failedTests,
-            {
-              testPath: file,
-              reasonOfFail: answers.message,
-            },
-          ],
-        };
 
+      if (!answers.confirmation && answers.message) {
+        results.failedTests = [
+          ...results.failedTests,
+          {
+            testPath: file,
+            reasonOfFail: answers.message,
+          },
+        ];
         if (jira && jira.client) {
           jira.client.issues
             .createIssue({
@@ -87,6 +89,16 @@ export const doTests = async (
               )
             );
         }
+      }
+
+      if (testsPaths.indexOf(file) === testsPaths.length - 1) {
+        results.testStatus = {
+          status: TEST_STATUS.FINISHED,
+          testFilesRoutes: [...results.testStatus.testFilesRoutes],
+        };
+      } else {
+        results.testStatus.currentTestPath =
+          testsPaths[testsPaths.indexOf(file) + 1];
       }
       fs.writeFileSync(
         `${outPath}/${fileName}`,
@@ -110,7 +122,7 @@ export const getUnfinishedTestsNames = async (outPath: string) => {
       fs.readFileSync(outPath + "/" + file).toString("utf8")
     );
     if (
-      fileContent.atTest !== FINISHED &&
+      fileContent.testStatus.status === TEST_STATUS.UNFINISHED &&
       file.startsWith("result-") &&
       file.endsWith(".json")
     ) {
@@ -129,16 +141,19 @@ export const doUnfinishedTest = async (
     message("Selected file does not exists", "red");
     return;
   }
-  let results: Results = JSON.parse(
-    fs.readFileSync(testFilePath).toString("utf8")
+  const results: Results = JSON.parse(
+    fs.readFileSync(testFilePath).toString("utf-8")
   );
-  if (results.atTest === FINISHED) {
+
+  if (results.testStatus.status === TEST_STATUS.FINISHED) {
     message("Selected file is a save where all test were performed", "yellow");
     return;
   }
-  const restOfTests = results.testFilesRoutes.splice(
-    results.testFilesRoutes.findIndex((e) => e === results.atTest) + 1
+  const allRoutes = [...results.testStatus.testFilesRoutes];
+  const restOfTests = allRoutes.splice(
+    allRoutes.indexOf(results.testStatus.currentTestPath || "")
   );
+
   for (const file of restOfTests) {
     const content = await fs.promises
       .readFile(file, "utf-8")
@@ -163,26 +178,26 @@ export const doUnfinishedTest = async (
           when: (answers) => !answers.confirmation,
         },
       ]);
-      results = {
-        atTest: file,
-        failedTests: results.failedTests,
-        testFilesRoutes: results.testFilesRoutes,
-      };
-
       if (!answers.confirmation && answers.message) {
-        results = {
-          atTest: results.atTest,
-          testFilesRoutes: results.testFilesRoutes,
-          failedTests: [
-            ...results.failedTests,
-            {
-              testPath: file,
-              reasonOfFail: answers.message,
-            },
-          ],
-        };
+        results.failedTests = [
+          ...results.failedTests,
+          {
+            testPath: file,
+            reasonOfFail: answers.message,
+          },
+        ];
       }
-      await fs.promises.writeFile(
+      if (restOfTests.indexOf(file) === restOfTests.length - 1) {
+        results.testStatus = {
+          status: TEST_STATUS.FINISHED,
+          testFilesRoutes: [...results.testStatus.testFilesRoutes],
+        };
+      } else {
+        results.testStatus.currentTestPath =
+          restOfTests[restOfTests.indexOf(file) + 1];
+      }
+
+      fs.writeFileSync(
         `${outTestsPath}/${fileName}`,
         JSON.stringify(results, null, 4)
       );
