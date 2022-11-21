@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 export default (req: NextApiRequest, res: NextApiResponse) => {
-  const { code } = req.query;
+  const { code } = req.body;
   return new Promise(async () => {
     if (code) {
       res.setHeader("Access-Control-Allow-Origin", "*");
@@ -21,11 +21,10 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
         }
       );
       const responseJSON = await responseToken.json();
-
-      const { access_token } = responseJSON;
-      console.log(access_token);
-      if (access_token) {
-        res.status(201).json({ access_token });
+      if (responseJSON) {
+        res
+          .status(201)
+          .json({ ...responseJSON, getDate: new Date().toUTCString() });
       } else {
         res.status(201).json("Error");
       }

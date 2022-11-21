@@ -17,8 +17,6 @@ import { Version3Client } from "jira.js";
 import inquirer from "inquirer";
 import { initJira, loginJira } from "./initJira.js";
 import conf from "conf";
-import dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
-dotenv.config();
 
 process.on("SIGINT", () => {
   message("Exiting...(file with unsuccessful test was created)", "redBright");

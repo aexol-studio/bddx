@@ -4,6 +4,7 @@ import conf from "conf";
 import { Version3Client } from "jira.js";
 import express from "express";
 import open from "open";
+import fetch from "node-fetch";
 // const dateDelta = (date1: Date, date2: Date) => {
 //   const d1 = date1.getTime();
 //   const d2 = date2.getTime();
@@ -13,79 +14,38 @@ import open from "open";
 // };
 
 export const loginJira = async () => {
-  console.log(process.env.CLIENT_SECRET);
-
   const YOUR_USER_BOUND_VALUE = "AAAA";
   await open(
     `https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=p2Zl57WIWDRKDEProBxyWt1GIz0EAfT6&scope=write%3Ajira-work%20read%3Ajira-work&redirect_uri=http%3A%2F%2Flocalhost%3A2137%2Fapi%2Fjira-callback&state=${YOUR_USER_BOUND_VALUE}&response_type=code&prompt=consent`
   );
-
+  let x: { access_token: string } = { access_token: "" };
   const app = express();
   const server = app.listen(2137);
-  app.get(
-    "/api/jira-callback",
-    async (req: { query: { code: any } }, res: any) => {
-      const { code } = req.query;
-      if (code) {
-        const responseToken = await fetch(
-          "http://localhost:3000/api/jira-callback",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ code }),
-          }
-        );
-        const responseJSON = await responseToken.json();
-        console.log(responseJSON);
-        server.close();
-      }
+  app.get("/api/jira-callback", async (req) => {
+    const { code } = req.query;
+    if (code) {
+      const responseToken = await fetch(
+        "http://localhost:3000/api/jira-callback",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ code }),
+        }
+      );
+      const responseJSON = (await responseToken.json()) as {
+        access_token: string;
+      };
+      x = responseJSON;
+      server.close();
     }
-  );
-  // app.get("/api/jira-callback", async (req, res) => {
-  //   const { code } = req.query;
-  //   if (code) {
-  //     res.setHeader("Access-Control-Allow-Origin", "*");
-  //     const responseToken = await fetch(
-  //       "https://auth.atlassian.com/oauth/token",
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         //             CLIENT_SECRET=ATOAtE69XXkAT2upUPqVJ6MZD0QMAmUa7WcGb058sjDbv75Dv4UiVRv1ycpmt39_pvPj24F3DF95
-  //         // NEXT_PUBLIC_CLIENT_ID=p2Zl57WIWDRKDEProBxyWt1GIz0EAfT6
-  //         // NEXT_PUBLIC_REDIRECT_URI=http://localhost:2137/api/jira-callback
-  //         body: JSON.stringify({
-  //           grant_type: "authorization_code",
-  //           client_id: "p2Zl57WIWDRKDEProBxyWt1GIz0EAfT6",
-  //           client_secret:
-  //             "ATOAtE69XXkAT2upUPqVJ6MZD0QMAmUa7WcGb058sjDbv75Dv4UiVRv1ycpmt39_pvPj24F3DF95",
-  //           redirect_uri: "http://localhost:2137/api/jira-callback",
-  //           code: code,
-  //         }),
-  //       }
-  //     );
-  //     const responseJSON = (await responseToken.json()) as {
-  //       access_token: string;
-  //     };
-  //     token = responseJSON.access_token;
-
-  //     // if (responseJSON) {
-  //     //   res.status(201).json({ access_token });
-  //     //   server.close();
-  //     // } else {
-  //     //   res.status(201).json("Error");
-  //     // }
-  //     server.close();
-  //   }
-  // });
-  // if (token) {
+  });
+  // if (x.access_token !== "") {
   //   const client = new Version3Client({
   //     host: `https://aexoldev.atlassian.net/`,
   //     authentication: {
-  //       oauth2: { accessToken: token },
+  //       oauth2: { accessToken: x.access_token },
   //     },
   //   });
   //   const a = await client.projects.getAllProjects();
