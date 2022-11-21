@@ -9,8 +9,7 @@
         "build": "npm run build --ws --if-present",
         "start-bddx": "npm run dev -w packages/bddx",
         "start-sandbox-example": "npm run dev -w sandbox/bddx-example",
-        "rebuild-cli-and-example":"npm run build -w packages/bddx && npx -w sandbox/bddx-example bddx"
-
+        "rebuild-cli-and-example": "npm run build -w packages/bddx && npx -w sandbox/bddx-example bddx"
     },
     "repository": {
         "type": "git",
@@ -43,6 +42,7 @@
         "./sandbox/bddx-example"
     ],
     "dependencies": {
+        "express": "^4.18.2",
         "react-scripts": "^5.0.1"
     }
 }

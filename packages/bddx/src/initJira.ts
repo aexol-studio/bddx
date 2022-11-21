@@ -95,7 +95,7 @@ export const initJira = async () => {
     }
   } else {
     message(
-      "Something went wrong. Can not access data in selected Jira project.\n Maybe credentials are incorrect",
+      "Something went wrong. Can not access data in selected Jira project.\nMaybe credentials are incorrect or API token expired.",
       "red"
     );
   }

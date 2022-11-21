@@ -17,6 +17,7 @@
     "bddx-core": "*",
     "conf": "^10.2.0",
     "inquirer": "^9.1.4",
+    "jira-client": "^8.2.2",
     "jira.js": "^2.15.14",
     "node-fetch": "^3.3.0",
     "yargs": "^17.6.0"
@@ -29,6 +30,7 @@
     "url": "https://github.com/aexol-studio/bddx/issues"
   },
   "devDependencies": {
-    "@types/inquirer": "^9.0.3"
+    "@types/inquirer": "^9.0.3",
+    "@types/jira-client": "^7.1.5"
   }
 }
