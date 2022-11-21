@@ -16,10 +16,12 @@
   "dependencies": {
     "bddx-core": "*",
     "conf": "^10.2.0",
+    "dotenv": "^16.0.3",
     "inquirer": "^9.1.4",
     "jira-client": "^8.2.2",
     "jira.js": "^2.15.14",
     "node-fetch": "^3.3.0",
+    "open": "^8.4.0",
     "yargs": "^17.6.0"
   },
   "repository": {

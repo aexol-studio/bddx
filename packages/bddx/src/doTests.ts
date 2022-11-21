@@ -202,7 +202,6 @@ export const doUnfinishedTest = async (
         JSON.stringify(results, null, 4)
       );
     }
-    ///////////usuwa ppliki w testFilesRoutes - nie wiem dlaczego
   }
   if (results && Object.keys(results).length === 0) {
     message(`All tests passed`, "bgGreen");

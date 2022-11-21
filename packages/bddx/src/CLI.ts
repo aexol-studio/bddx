@@ -15,9 +15,10 @@ import {
 import yargs from "yargs";
 import { Version3Client } from "jira.js";
 import inquirer from "inquirer";
-import { initJira } from "@/initJira.js";
+import { initJira, loginJira } from "@/initJira.js";
 import conf from "conf";
-// import express from "express";
+import dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+dotenv.config();
 
 process.on("SIGINT", () => {
   message("Exiting...(file with unsuccessful test was created)", "redBright");
@@ -183,41 +184,9 @@ yargs(process.argv.slice(2))
       }
     }
   )
-  // .command(
-  //   'login',
-  //   'Log in to Slack and get your token',
-  //   () => {},
-  //   async function handler(argv) {
-  //     const app = express();
-
-  //     let resolve:any;
-  //     const p = new Promise((_resolve) => {
-  //       resolve = _resolve;
-  //     });
-  //     app.get('/oauth', function(req, res) {
-  //       resolve(req.query.code);
-  //       res.end('');
-  //     });
-  //     const server = await app.listen(3000);
-
-  //     open(`https://slack.com/oauth/authorize?client_id=${clientId}&scope=${scope}&redirect_uri=${redirect}`);
-
-  //     // Wait for the first auth code
-  //     const code = await p;
-
-  //     // Exchange the auth code for an access token. Note that the Slack API expects a form-encoded HTTP
-  //     // body, **not** JSON.
-  //     const res = await axios.post('https://slack.com/api/oauth.access',
-  //       `client_id=${clientId}&client_secret=${clientSecret}&code=${code}&redirect_uri=${redirect}`);
-  //     const token = res.data['access_token'];
-
-  //     await server.close();
-
-  //     config.set({ token });
-
-  //     console.log('Logged in successfully with token ' + token);
-  //     process.exit(0);
-  //   })
+  .command("login", "Log in to Jira and get your token", async () => {
+    await loginJira();
+  })
   .strict()
   .demandCommand()
   .parse();

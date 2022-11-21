@@ -2,7 +2,77 @@ import inquirer from "inquirer";
 import { message } from "bddx-core";
 import conf from "conf";
 import { Version3Client } from "jira.js";
+import dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+dotenv.config();
+// import express from "express";
 
+// const dateDelta = (date1: Date, date2: Date) => {
+//   const d1 = date1.getTime();
+//   const d2 = date2.getTime();
+//   const secDiff = Math.floor((d2 - d1) / 1000);
+//   const hoursDiff = secDiff / 3600.0;
+//   return hoursDiff;
+// };
+
+export const loginJira = async () => {
+  console.log(process.env.CLIENT_SECRET);
+
+  // const YOUR_USER_BOUND_VALUE = "AAAA";
+  // await open(
+  //   `https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=p2Zl57WIWDRKDEProBxyWt1GIz0EAfT6&scope=write%3Ajira-work%20read%3Ajira-work&redirect_uri=http%3A%2F%2Flocalhost%3A2137%2Fapi%2Fjira-callback&state=${YOUR_USER_BOUND_VALUE}&response_type=code&prompt=consent`
+  // );
+  // const app = express();
+  // const server = app.listen(2137);
+  // let token;
+  // app.get("/api/jira-callback", async (req, res) => {
+  //   const { code } = req.query;
+  //   if (code) {
+  //     res.setHeader("Access-Control-Allow-Origin", "*");
+  //     const responseToken = await fetch(
+  //       "https://auth.atlassian.com/oauth/token",
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         //             CLIENT_SECRET=ATOAtE69XXkAT2upUPqVJ6MZD0QMAmUa7WcGb058sjDbv75Dv4UiVRv1ycpmt39_pvPj24F3DF95
+  //         // NEXT_PUBLIC_CLIENT_ID=p2Zl57WIWDRKDEProBxyWt1GIz0EAfT6
+  //         // NEXT_PUBLIC_REDIRECT_URI=http://localhost:2137/api/jira-callback
+  //         body: JSON.stringify({
+  //           grant_type: "authorization_code",
+  //           client_id: "p2Zl57WIWDRKDEProBxyWt1GIz0EAfT6",
+  //           client_secret:
+  //             "ATOAtE69XXkAT2upUPqVJ6MZD0QMAmUa7WcGb058sjDbv75Dv4UiVRv1ycpmt39_pvPj24F3DF95",
+  //           code: code,
+  //           redirect_uri: "http://localhost:2137/api/jira-callback",
+  //         }),
+  //       }
+  //     );
+  //     const responseJSON = (await responseToken.json()) as {
+  //       access_token: string;
+  //     };
+  //     token = responseJSON.access_token;
+
+  //     // if (responseJSON) {
+  //     //   res.status(201).json({ access_token });
+  //     //   server.close();
+  //     // } else {
+  //     //   res.status(201).json("Error");
+  //     // }
+  //     server.close();
+  //   }
+  // });
+  // if (token) {
+  //   const client = new Version3Client({
+  //     host: `https://aexoldev.atlassian.net/`,
+  //     authentication: {
+  //       oauth2: { accessToken: token },
+  //     },
+  //   });
+  //   const a = await client.projects.getAllProjects();
+  //   console.log(a);
+  // }
+};
 export const initJira = async () => {
   const answers = await inquirer.prompt<{
     mail: string;
