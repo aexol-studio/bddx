@@ -2,10 +2,8 @@ import inquirer from "inquirer";
 import { message } from "bddx-core";
 import conf from "conf";
 import { Version3Client } from "jira.js";
-import dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
-dotenv.config();
-// import express from "express";
-
+import express from "express";
+import open from "open";
 // const dateDelta = (date1: Date, date2: Date) => {
 //   const d1 = date1.getTime();
 //   const d2 = date2.getTime();
@@ -17,13 +15,34 @@ dotenv.config();
 export const loginJira = async () => {
   console.log(process.env.CLIENT_SECRET);
 
-  // const YOUR_USER_BOUND_VALUE = "AAAA";
-  // await open(
-  //   `https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=p2Zl57WIWDRKDEProBxyWt1GIz0EAfT6&scope=write%3Ajira-work%20read%3Ajira-work&redirect_uri=http%3A%2F%2Flocalhost%3A2137%2Fapi%2Fjira-callback&state=${YOUR_USER_BOUND_VALUE}&response_type=code&prompt=consent`
-  // );
-  // const app = express();
-  // const server = app.listen(2137);
-  // let token;
+  const YOUR_USER_BOUND_VALUE = "AAAA";
+  await open(
+    `https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=p2Zl57WIWDRKDEProBxyWt1GIz0EAfT6&scope=write%3Ajira-work%20read%3Ajira-work&redirect_uri=http%3A%2F%2Flocalhost%3A2137%2Fapi%2Fjira-callback&state=${YOUR_USER_BOUND_VALUE}&response_type=code&prompt=consent`
+  );
+
+  const app = express();
+  const server = app.listen(2137);
+  app.get(
+    "/api/jira-callback",
+    async (req: { query: { code: any } }, res: any) => {
+      const { code } = req.query;
+      if (code) {
+        const responseToken = await fetch(
+          "http://localhost:3000/api/jira-callback",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ code }),
+          }
+        );
+        const responseJSON = await responseToken.json();
+        console.log(responseJSON);
+        server.close();
+      }
+    }
+  );
   // app.get("/api/jira-callback", async (req, res) => {
   //   const { code } = req.query;
   //   if (code) {
@@ -43,8 +62,8 @@ export const loginJira = async () => {
   //           client_id: "p2Zl57WIWDRKDEProBxyWt1GIz0EAfT6",
   //           client_secret:
   //             "ATOAtE69XXkAT2upUPqVJ6MZD0QMAmUa7WcGb058sjDbv75Dv4UiVRv1ycpmt39_pvPj24F3DF95",
-  //           code: code,
   //           redirect_uri: "http://localhost:2137/api/jira-callback",
+  //           code: code,
   //         }),
   //       }
   //     );

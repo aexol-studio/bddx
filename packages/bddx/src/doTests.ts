@@ -28,7 +28,7 @@ export const doTests = async (
       testFilesRoutes: testsPaths,
     },
   };
-  const date = new Date().toISOString().split(".")[0];
+  const date = new Date().toISOString().split(".")[0].replaceAll(":", "-");
   const fileName = `result-${date}.json`;
   fs.writeFileSync(`${outPath}/${fileName}`, JSON.stringify(results, null, 4));
   message(

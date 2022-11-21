@@ -13,4 +13,5 @@ out
 .idea
 package-lock.json
 __tests__
+.next/
 examples
