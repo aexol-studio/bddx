@@ -24,10 +24,16 @@ Inspired by generative programming and weed :). Behavior driven development CLI
 npm i bddx
 ```
 
-#### Initializing BDDx
+#### Initializing BDDx with optional Jira integration
 
 ```
 bddx init
+```
+
+#### Initializing only BDDx Jira integration without changing basic configuration
+
+```
+bddx jiraInit
 ```
 
 #### After initalizing the config file contains:
@@ -39,23 +45,47 @@ bddx init
 }
 ```
 
-- in: string - means folder with test files, **(default: "./bddx/tests")**
-- out: string - means folder to generate test result files, **(default: "./bddx/results")**
-
-#### You can set custom in and out directory by --in and --out arguments in init (or one of those)
-
-```
-bddx init --in ./yourInDirectory --out ./yourOutDirectory
-```
-
-#### Result:
+or when Jira is integrated
 
 ```
 {
-  "in": "./yourInDirectory",
-  "out": "./yourOutDirectory",
+   "in": "./bddx/tests",
+   "out": "./bddx/results",
+    "organizationName": "organizationName.atlassian.net",
+    "projectName": "ProjectName",
+    "issueTypeName": "TASK"
 }
 ```
+
+- in: string - means folder with test files, **(default: "./bddx/tests")**
+- out: string - means folder to generate test result files, **(default: "./bddx/results")**
+
+E-mail and Jira API token are saved localy on machine so they are safe!
+
+#### Run all .feature tests and save result in file in output directory 
+
+```
+bddx 
+```
+
+#### Run all .feature tests and when reporting failed one task on configured Jira will be created
+
+```
+bddx jira
+```
+
+#### Also you can select unfinished session and do rest of tests by (question of jira usage will be asked):
+
+```
+bddx continue
+```
+
+#### Check if Jira API token is working correctly. If there is any problem the loop will force user to provide correct token value.
+
+```
+bddx checkToken
+```
+
 
 #### [Readme CORE](https://github.com/aexol-studio/bddx/blob/main/Readme.md)
 
