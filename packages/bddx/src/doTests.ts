@@ -32,7 +32,7 @@ export const doTests = async (
   const fileName = `result-${date}.json`;
   fs.writeFileSync(`${outPath}/${fileName}`, JSON.stringify(results, null, 4));
   message(
-    `This run fo bddx was saved as ${fileName} in ${outPath}\nEach test result is saved and you can reenter session by finishPrevious command`,
+    `This run fo bddx was saved as ${fileName} in ${outPath}\nEach test result is saved and you can reenter session by continue command`,
     "bgGreen"
   );
   for (const file of testsPaths) {
@@ -203,6 +203,7 @@ export const doUnfinishedTest = async (
                   .split(".")[0]
                   .replace(":", "-")}`,
                 description: answers.message,
+                assignee: { id: undefined },
               },
             })
             .catch(() =>

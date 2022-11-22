@@ -27,7 +27,7 @@ yargs(process.argv.slice(2))
   .usage(
     `BDDX 🤯 - Perform and save BDD tests results. Run to watch directory with .feature files and perform each test`
   )
-  .command("$0", "the default command", async () => {
+  .command("$0", "the default command to run all bdd tests", async () => {
     const config = readConfig("./bddx.json");
     if (config) {
       message(

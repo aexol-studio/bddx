@@ -1,4 +1,7 @@
 {
-    "in": "./content1",
-    "out": "./src2"
+    "in": "./content",
+    "out": "./src",
+    "organizationName": "aexoldev.atlassian.net",
+    "projectName": "MDTX",
+    "issueTypeName": "Błąd w programie"
 }
