@@ -1,57 +1,8 @@
 import inquirer from "inquirer";
-import { message } from "bddx-core";
+import { message, readConfig } from "bddx-core";
 import conf from "conf";
 import { Version3Client } from "jira.js";
-import express from "express";
-import open from "open";
-import fetch from "node-fetch";
-// const dateDelta = (date1: Date, date2: Date) => {
-//   const d1 = date1.getTime();
-//   const d2 = date2.getTime();
-//   const secDiff = Math.floor((d2 - d1) / 1000);
-//   const hoursDiff = secDiff / 3600.0;
-//   return hoursDiff;
-// };
 
-export const loginJira = async () => {
-  const YOUR_USER_BOUND_VALUE = "AAAA";
-  await open(
-    `https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=p2Zl57WIWDRKDEProBxyWt1GIz0EAfT6&scope=write%3Ajira-work%20read%3Ajira-work&redirect_uri=http%3A%2F%2Flocalhost%3A2137%2Fapi%2Fjira-callback&state=${YOUR_USER_BOUND_VALUE}&response_type=code&prompt=consent`
-  );
-  let x: { access_token: string } = { access_token: "" };
-  const app = express();
-  const server = app.listen(2137);
-  app.get("/api/jira-callback", async (req) => {
-    const { code } = req.query;
-    if (code) {
-      const responseToken = await fetch(
-        "http://localhost:3000/api/jira-callback",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ code }),
-        }
-      );
-      const responseJSON = (await responseToken.json()) as {
-        access_token: string;
-      };
-      x = responseJSON;
-      server.close();
-    }
-  });
-  // if (x.access_token !== "") {
-  //   const client = new Version3Client({
-  //     host: `https://aexoldev.atlassian.net/`,
-  //     authentication: {
-  //       oauth2: { accessToken: x.access_token },
-  //     },
-  //   });
-  //   const a = await client.projects.getAllProjects();
-  //   console.log(a);
-  // }
-};
 export const initJira = async () => {
   const answers = await inquirer.prompt<{
     mail: string;
@@ -148,4 +99,66 @@ export const initJira = async () => {
       "red"
     );
   }
+};
+
+export const checkJiraToken = async (): Promise<boolean> => {
+  const con = new conf.default();
+  const mail = con.get("bddxJ.mail") as string;
+  const token = con.get("bddxJ.token") as string;
+  const config = readConfig("./bddx.json", true);
+  let success = !!config && !!mail && !!token;
+  if (config && "organizationName" in config) {
+    const testClient = new Version3Client({
+      host: `https://${config.organizationName}`,
+      authentication: {
+        basic: {
+          email: mail,
+          apiToken: token,
+        },
+      },
+    });
+    const project = await testClient.projects
+      .getProject({
+        projectIdOrKey: config.projectName,
+      })
+      .catch(() => {
+        message(
+          "Something went wrong. Can not access project from config. Check if API token exists on your Jira account",
+          "red"
+        );
+      });
+    if (!(project && project.key === config.projectName)) {
+      success = false;
+    }
+  } else {
+    message(
+      "Something went wrong. Can not access types of issues in selected Jira project",
+      "red"
+    );
+    success = false;
+  }
+  if (success) {
+    return success;
+  } else {
+    if (!success && config && "organizationName" in config) {
+      message(
+        `Your Jira config: mail: ${mail},\n organization: ${config.organizationName},\n project: ${config.projectName},\n issue type: ${config.issueTypeName}`,
+        "yellow"
+      );
+      const answers = await inquirer.prompt<{
+        apiToken: string;
+      }>([
+        {
+          type: "input",
+          name: "apiToken",
+          message:
+            "You can create API token at\n https://id.atlassian.com/manage-profile/security/api-tokens \nType your new API token from your JIRA. ",
+        },
+      ]);
+      con.set("bddxJ.token", answers.apiToken);
+      const retry = await checkJiraToken();
+      return retry;
+    }
+  }
+  return false;
 };

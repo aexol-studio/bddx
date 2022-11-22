@@ -76,9 +76,10 @@ export const doTests = async (
                   name: jira.issueTypeName,
                 },
                 project: { key: jira.projectName },
-                summary: `Test ${file} failed at ${
-                  new Date().toISOString().split(".")[0]
-                }`,
+                summary: `Test ${file} failed at ${new Date()
+                  .toISOString()
+                  .split(".")[0]
+                  .replace(":", "-")}`,
                 description: answers.message,
               },
             })
@@ -108,6 +109,8 @@ export const doTests = async (
   }
   if (results && Object.keys(results).length === 0) {
     message(`All tests passed`, "bgGreen");
+  } else {
+    message(`End of test files`, "blue");
   }
 };
 
@@ -134,7 +137,8 @@ export const getUnfinishedTestsNames = async (outPath: string) => {
 
 export const doUnfinishedTest = async (
   outTestsPath: string,
-  fileName: string
+  fileName: string,
+  jira?: { client: Version3Client; projectName: string; issueTypeName: string }
 ) => {
   const testFilePath = `${outTestsPath}/${fileName}`;
   if (!fs.existsSync(testFilePath)) {
@@ -186,6 +190,28 @@ export const doUnfinishedTest = async (
             reasonOfFail: answers.message,
           },
         ];
+        if (jira && jira.client) {
+          jira.client.issues
+            .createIssue({
+              fields: {
+                issuetype: {
+                  name: jira.issueTypeName,
+                },
+                project: { key: jira.projectName },
+                summary: `Test ${file} failed at ${new Date()
+                  .toISOString()
+                  .split(".")[0]
+                  .replace(":", "-")}`,
+                description: answers.message,
+              },
+            })
+            .catch(() =>
+              message(
+                "Task was not created in Jira. Something went wrong",
+                "red"
+              )
+            );
+        }
       }
       if (restOfTests.indexOf(file) === restOfTests.length - 1) {
         results.testStatus = {
@@ -204,6 +230,8 @@ export const doUnfinishedTest = async (
     }
   }
   if (results && Object.keys(results).length === 0) {
-    message(`All tests passed`, "bgGreen");
+    message(`All of unfinished earlier tests passed`, "bgGreen");
+  } else {
+    message(`End of test files`, "blue");
   }
 };

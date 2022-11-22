@@ -26,6 +26,18 @@ export const CustomHelmet: React.FC<{
       <meta name="twitter:title" content="twitter title" />
       <meta name="twitter:description" content="twitter desc" />
       <meta name="twitter:url" content="https://yourdomain.pl123" />
+      <link
+        rel="icon"
+        type="image/png"
+        href="/favicon-32x32.png"
+        sizes="32x32"
+      />
+      <link
+        rel="icon"
+        type="image/png"
+        href="/favicon-16x16.png"
+        sizes="16x16"
+      />
     </Head>
   );
 };

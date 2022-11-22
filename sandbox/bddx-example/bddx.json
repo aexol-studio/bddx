@@ -1,7 +1,4 @@
 {
-    "in": "./content",
-    "out": "./src",
-    "organizationName": "aexoldev.atlassian.net",
-    "projectName": "TEST",
-    "issueTypeName": "Zadanie"
+    "in": "./content1",
+    "out": "./src2"
 }
