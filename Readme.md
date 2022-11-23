@@ -1,6 +1,6 @@
 # BDDx [![NPM Version](https://img.shields.io/npm/v/bddx.svg?style=flat)](https://www.npmjs.com/package/bddx) [![NPM Version](https://img.shields.io/github/checks-status/aexol-studio/bddx/main)](https://www.npmjs.com/package/bddx) [![NPM Version](https://img.shields.io/github/last-commit/aexol-studio/bddx)](https://github.com/aexol-studio/bddx)
 
-Inspired by generative programming: a behavior driven development CLI
+Run Behavior-Driven Development tests inside a command interface.
 
 ![Alt Text](sandbox/mdtx-nextjs-example/public/PresentationOfMDtx.gif)
 
