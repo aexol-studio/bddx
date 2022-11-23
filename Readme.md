@@ -1,6 +1,6 @@
 # BDDx [![NPM Version](https://img.shields.io/npm/v/bddx.svg?style=flat)](https://www.npmjs.com/package/bddx) [![NPM Version](https://img.shields.io/github/checks-status/aexol-studio/bddx/main)](https://www.npmjs.com/package/bddx) [![NPM Version](https://img.shields.io/github/last-commit/aexol-studio/bddx)](https://github.com/aexol-studio/bddx)
 
-Inspired by generative programming and weed :). Behavior driven development CLI
+Inspired by generative programming: a behavior driven development CLI
 
 ![Alt Text](sandbox/mdtx-nextjs-example/public/PresentationOfMDtx.gif)
 
@@ -12,31 +12,31 @@ Inspired by generative programming and weed :). Behavior driven development CLI
 - Get a detailed summary on **what** failed and **why**
 - Failed tests can be made to automatically result in a Jira task or Github issue to automate the fixing process
 
-# What we serve?
+# What do we serve?
 
 ## [![GitHub package.json version (subfolder of monorepo)](https://img.shields.io/github/package-json/v/aexol-studio/bddx?color=yellow&filename=%2Fpackages%2Fbddx%2Fpackage.json&label=CLI&style=for-the-badge)](https://github.com/aexol-studio/bddx) | [![GitHub package.json version (subfolder of monorepo)](https://img.shields.io/github/package-json/v/aexol-studio/bddx?color=green&filename=%2Fpackages%2Fbddx-core%2Fpackage.json&label=CORE&style=for-the-badge)](https://github.com/aexol-studio/bddx/tree/main/packages/bddx-core)
 
 ## Readme CLI
 
-#### Instaling BDDx
+#### Installing BDDx:
 
 ```
 npm i bddx
 ```
 
-#### Initializing BDDx with optional Jira integration
+#### Initializing BDDx with optional Jira integration:
 
 ```
 bddx init
 ```
 
-#### Initializing only BDDx Jira integration without changing basic configuration
+#### Initializing only BDDx Jira integration without changing the basic configuration:
 
 ```
 bddx jiraInit
 ```
 
-#### After initalizing the config file contains:
+#### After initializing the config file contains:
 
 ```
 {
@@ -45,7 +45,7 @@ bddx jiraInit
 }
 ```
 
-or when Jira is integrated
+or when Jira is integrated:
 
 ```
 {
@@ -57,30 +57,30 @@ or when Jira is integrated
 }
 ```
 
-- in: string - means folder with test files, **(default: "./bddx/tests")**
-- out: string - means folder to generate test result files, **(default: "./bddx/results")**
+- in: string - input folder with the test files, **(default: "./bddx/tests")**
+- out: string - output folder where the test result files are saved, **(default: "./bddx/results")**
 
-E-mail and Jira API token are saved localy on machine so they are safe!
+E-mail and Jira API token are saved locally on the machine so that they are safe!
 
-#### Run all .feature tests and save result in file in output directory 
+#### Run all .feature tests and save results in a file in the output directory: 
 
 ```
 bddx 
 ```
 
-#### Run all .feature tests and when reporting failed one task on configured Jira will be created
+#### Run all .feature tests and when reporting a failed one, create a task on the configured Jira:
 
 ```
 bddx jira
 ```
 
-#### Also you can select unfinished session and do rest of tests by (question of jira usage will be asked):
+#### You can also select an unfinished session and continue the tests (you will also be asked about Jira usage):
 
 ```
 bddx continue
 ```
 
-#### Check if Jira API token is working correctly. If there is any problem the loop will force user to provide correct token value.
+#### Check if the Jira API token is working correctly. If there's a problem with the loop BDDx will ask the user to provide the correct token value:
 
 ```
 bddx checkToken
@@ -92,6 +92,6 @@ bddx checkToken
 ## Roadmap
 
 - [x] 2 test scenarios: display test & pass or fail test
-- [ ] Jira plugin
+- [x] Jira plugin
 - [ ] GitHub plugin
 
