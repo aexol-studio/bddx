@@ -92,6 +92,6 @@ bddx checkToken
 ## Roadmap
 
 - [x] 2 test scenarios: display test & pass or fail test
-- [ ] Jira plugin
+- [x] Jira plugin
 - [ ] GitHub plugin
 
