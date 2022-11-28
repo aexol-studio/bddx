@@ -1,6 +1,6 @@
 # BDDx [![NPM Version](https://img.shields.io/npm/v/bddx.svg?style=flat)](https://www.npmjs.com/package/bddx) [![NPM Version](https://img.shields.io/github/checks-status/aexol-studio/bddx/main)](https://www.npmjs.com/package/bddx) [![NPM Version](https://img.shields.io/github/last-commit/aexol-studio/bddx)](https://github.com/aexol-studio/bddx)
 
-Run Behavior-Driven Development test inside a CLI
+Run Behavior-Driven Development tests inside a CLI
 
 ![Alt Text](packages/bddx-landing/src/components/Site/PresentationOfMDtx.gif)
 
