@@ -28,13 +28,13 @@ npm i bddx
 #### Initializing BDDx with optional Jira integration:
 
 ```
-bddx init
+npx bddx init
 ```
 
 #### Initializing only BDDx Jira integration without changing the basic configuration:
 
 ```
-bddx jiraInit
+npx bddx jiraInit
 ```
 
 #### After initializing the config file contains:
@@ -66,25 +66,25 @@ E-mail and Jira API token are saved locally on the machine so that they are safe
 #### Run all .feature tests and save results in a file in the output directory: 
 
 ```
-bddx 
+npx bddx 
 ```
 
 #### Run all .feature tests and when reporting a failed one, create a task on the configured Jira:
 
 ```
-bddx jira
+npx bddx jira
 ```
 
 #### You can also select an unfinished session and continue the tests (you will also be asked about Jira usage):
 
 ```
-bddx continue
+npx bddx continue
 ```
 
 #### Check if the Jira API token is working correctly. If there's a problem with the loop BDDx will ask the user to provide the correct token value:
 
 ```
-bddx checkToken
+npx bddx checkToken
 ```
 
 
