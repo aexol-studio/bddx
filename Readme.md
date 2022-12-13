@@ -5,7 +5,7 @@ Run Behavior-Driven Development tests inside a CLI
 ![Alt Text](packages/bddx-landing/src/components/Site/PresentationOfMDtx.gif)
 
 
-# What is BDDx?
+### What is BDDx?
 
 - Write tests in Gherkin, Cucumber's simply structured plain-text language
 - Upload BDD test files in bulk,
@@ -13,31 +13,27 @@ Run Behavior-Driven Development tests inside a CLI
 - Get a detailed summary on **what** failed and **why**
 - Failed tests can be made to automatically result in a Jira task or Github issue to automate the fixing process
 
-# What we serve:
+# Downloads:
 
-## [![GitHub package.json version (subfolder of monorepo)](https://img.shields.io/github/package-json/v/aexol-studio/bddx?color=yellow&filename=%2Fpackages%2Fbddx%2Fpackage.json&label=CLI&style=for-the-badge)](https://github.com/aexol-studio/bddx) | [![GitHub package.json version (subfolder of monorepo)](https://img.shields.io/github/package-json/v/aexol-studio/bddx?color=green&filename=%2Fpackages%2Fbddx-core%2Fpackage.json&label=CORE&style=for-the-badge)](https://github.com/aexol-studio/bddx/tree/main/packages/bddx-core)
+## <span class="buttons-wrapper">[![GitHub package.json version (subfolder of monorepo)](https://img.shields.io/github/package-json/v/aexol-studio/bddx?color=yellow&filename=%2Fpackages%2Fbddx%2Fpackage.json&label=CLI&style=for-the-badge)](https://github.com/aexol-studio/bddx) [![GitHub package.json version (subfolder of monorepo)](https://img.shields.io/github/package-json/v/aexol-studio/bddx?color=green&filename=%2Fpackages%2Fbddx-core%2Fpackage.json&label=CORE&style=for-the-badge)](https://github.com/aexol-studio/bddx/tree/main/packages/bddx-core)</span>
+
 
 ## CLI commands:
 
-#### Installing BDDx:
 
-```
-npm i bddx
-```
+### Installation and initialization:
 
-#### Initializing BDDx with optional Jira integration:
+| Description | Command |
+| --- | --- |
+| to install BDDx: | `npm i bddx` |
+| to initialize BDDx (with optional Jira integration): | `npx bddx init` |
+| to initialize only BDDx Jira integration without changing the basic configuration: | `npx bddx jiraInit` |
+| to check if the Jira API token is working correctly<sup>1</sup> : | `npx bddx checkToken`
 
-```
-npx bddx init
-```
+<sup>1</sup>If there's a problem with the loop BDDx will ask the user to provide the correct token value.
 
-#### Initializing only BDDx Jira integration without changing the basic configuration:
-
-```
-npx bddx jiraInit
-```
-
-#### After initializing the config file contains:
+### Config file:
+After initializing the config file contains:
 
 ```
 {
@@ -61,31 +57,15 @@ or when Jira is integrated:
 - in: string - input folder with the test files, **(default: "./bddx/tests")**
 - out: string - output folder where the test result files are saved, **(default: "./bddx/results")**
 
-E-mail and Jira API token are saved locally on the machine so that they are safe!
+The e-mail and Jira API token are saved locally on the machine to ensure safety!
 
-#### Run all .feature tests and save results in a file in the output directory: 
+### Running tests
 
-```
-npx bddx 
-```
-
-#### Run all .feature tests and when reporting a failed one, create a task on the configured Jira:
-
-```
-npx bddx jira
-```
-
-#### You can also select an unfinished session and continue the tests (you will also be asked about Jira usage):
-
-```
-npx bddx continue
-```
-
-#### Check if the Jira API token is working correctly. If there's a problem with the loop BDDx will ask the user to provide the correct token value:
-
-```
-npx bddx checkToken
-```
+| Description | Command |
+| --- | --- |
+| to run all .feature tests and save results in a file in the output directory: | `npx bddx` |
+| to run all .feature tests and create a task for each failed one on the configured Jira: | `npx bddx jira` |
+|to select an unfinished session and continue the tests from that point (you will also be asked about Jira usage): | `npx bddx continue` |
 
 
 #### [Readme CORE](https://github.com/aexol-studio/bddx/blob/main/Readme.md)
