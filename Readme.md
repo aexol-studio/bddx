@@ -1,6 +1,6 @@
 # BDDx [![NPM Version](https://img.shields.io/npm/v/bddx.svg?style=flat)](https://www.npmjs.com/package/bddx) [![NPM Version](https://img.shields.io/github/checks-status/aexol-studio/bddx/main)](https://www.npmjs.com/package/bddx) [![NPM Version](https://img.shields.io/github/last-commit/aexol-studio/bddx)](https://github.com/aexol-studio/bddx)
 
-Inspired by generative programming and weed :). Behavior driven development CLI
+Inspired by generative programming and weed :). Behavior-driven development CLI
 
 ![Alt Text](sandbox/mdtx-nextjs-example/public/PresentationOfMDtx.gif)
 
@@ -30,7 +30,7 @@ npm i bddx
 bddx init
 ```
 
-#### After initalizing the config file contains:
+#### After initializing the config file contains:
 
 ```
 {
@@ -42,7 +42,7 @@ bddx init
 - in: string - means folder with test files, **(default: "./bddx/tests")**
 - out: string - means folder to generate test result files, **(default: "./bddx/results")**
 
-#### You can set custom in and out directory by --in and --out arguments in init (or one of those)
+#### You can set custom in and out directories by --in and --out arguments in init (or one of those)
 
 ```
 bddx init --in ./yourInDirectory --out ./yourOutDirectory
@@ -62,6 +62,6 @@ bddx init --in ./yourInDirectory --out ./yourOutDirectory
 ## Roadmap
 
 - [x] 2 test scenarios: display test & pass or fail test
-- [ ] Jira plugin
+- [x] Jira plugin
 - [ ] GitHub plugin
 
