@@ -1,35 +1,34 @@
-Feature: Forget password
-	
-    In order to gain access to assets stored within a system as any user
-	I would like to be able to get a new password if I forget my password
-	
-	Scenario: Forgot password and email is found
-		Given I am not authenticated
-		And all email has been delivered
-		And a user exists with email: "someuser@someuser.com", password: "somePassword"
-		And I go to the forgot password page
-		
-        When I fill in "user_email" with "someuser@someuser.com"
-		
-        And I press "Send me reset password instructions"
-		Then I should see "You will receive an email with instructions about how to reset your password in a few minutes."
-		And 1 email should be delivered to someuser@someuser.com
-		And the email should contain "Hello someuser@someuser.com!"
-		And show me the emails
+Feature: Forgot password
 
-		When I click the first link in the email
-		Then I should see "Change your password"
-		And I should see "Sign in"
-		And I should not see "Sign up"
-		
-		When I fill in "user_password" with "some_new_password"
-		And I fill in "user_password_confirmation" with "some_new_password"
-		And I press "Change my password"
-		Then I should not see "Reset password token is invalid"
-		
-		Given I am not authenticated
-		When I go to the sign in page
-		And I fill in "user_email" with "someuser@someuser.com"
-		And I fill in "user_password" with "some_new_password"
-		And I press "Sign in"
-		Then I should see "Signed in as someuser@someuser.com."
+  As a user who has forgotten my password
+  I want to be able to reset my password
+  So that I can regain access to my account
+
+  Scenario: Successfully reset password
+	Given the user is on the login page
+	
+	When the user clicks on the "Forgot password" link
+	And the user enters their registered email address
+	And clicks the "Send reset link" button
+	
+	Then the user should receive an email with a password reset link
+	And the user should be able to click the password reset link and reset their password
+	And the user should be able to login with their new password
+
+  Scenario: Enter invalid email
+	Given the user is on the login page
+	
+	When the user clicks on the "Forgot password" link
+	And the user enters an email that is not registered
+	And clicks the "Send reset link" button
+	
+	Then the user should see an error message stating that the email is not registered
+
+  Scenario: Try to reset password with expired link
+	Given the user has requested a password reset and received a reset link
+	
+	When the user clicks the password reset link
+	And the link has expired
+	
+	Then the user should see an error message stating that the link has expired
+	And the user should be prompted to request a new password reset link
