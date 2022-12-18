@@ -1,17 +1,11 @@
 {
-    "files": [],
-    "references": [
-      {
-        "path": "./packages/bddx-core"
-      },
-      {
-        "path": "./packages/bddx"
-      },
-      {
-        "path": "./sandbox/bddx-example"
-      },
-      {
-        "path": "./packages/bddx-landing"
-      },
-    ]
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/bddx-core"
+    },
+    {
+      "path": "./packages/bddx"
+    }
+  ]
 }

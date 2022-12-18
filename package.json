@@ -6,7 +6,6 @@
   "description": "Behavior driven development CLI. Write tests in Gherkin and integrate with Git and JIRA",
   "homepage": "https://github.com/aexol-studio/bddx/#readme",
   "scripts": {
-    "landing": "npm run dev -w packages/bddx-landing",
     "build": "npm run build --ws --if-present",
     "start-bddx": "npm run dev -w packages/bddx",
     "start-sandbox-example": "npm run dev -w sandbox/bddx-example",
@@ -33,17 +32,12 @@
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
     "ttypescript": "^1.5.13",
-    "typescript": "^4.8.4",
+    "typescript": "4.8.4",
     "typescript-transform-paths": "^3.3.1"
   },
   "workspaces": [
     "./packages/bddx-core",
     "./packages/bddx",
-    "./packages/bddx-landing",
     "./sandbox/bddx-example"
-  ],
-  "dependencies": {
-    "express": "^4.18.2",
-    "react-scripts": "^5.0.1"
-  }
+  ]
 }

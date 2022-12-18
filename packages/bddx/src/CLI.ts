@@ -6,6 +6,7 @@ import {
   GLOBAL_CONFIG_FILE,
   message,
   getTestsDirectories,
+  getResultsDirectories,
 } from "bddx-core";
 import {
   doTests,
@@ -17,6 +18,7 @@ import { Version3Client } from "jira.js";
 import inquirer from "inquirer";
 import { checkJiraToken, initJira } from "./initJira.js";
 import conf from "conf";
+import { cloudIntegration } from "./cloudIntegration.js";
 
 process.on("SIGINT", () => {
   message("Exiting...(file with unsuccessful test was created)", "redBright");
@@ -40,6 +42,20 @@ yargs(process.argv.slice(2))
         await doTests(fileRoutes, config.out);
       }
     }
+  })
+  .command("cloud", "Run bddx tests with BDDX Cloud integration", async () => {
+    message("We are currently working on this version", "red");
+    const config = readConfig("./bddx.json");
+    if (config) {
+      const resultsRoutes = getResultsDirectories(config.out);
+      if (resultsRoutes.length > 0) {
+        await cloudIntegration(resultsRoutes);
+      }
+    } else {
+      message("Invalid jira BDDX config", "yellow");
+    }
+
+    return;
   })
   .command("jira", "Run bddx tests with Jira integration", async () => {
     const confi = new conf.default();
