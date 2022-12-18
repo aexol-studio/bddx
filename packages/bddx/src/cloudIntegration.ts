@@ -1,21 +1,25 @@
-// import { message } from "bddx-core";
 import { message } from "bddx-core";
 import fs from "fs";
+import inquirer from "inquirer";
 import { Results } from "./doTests.js";
 import { Chain, ModelTypes } from "./zeus/index.js";
 
-const chain = (option: "query" | "mutation") =>
+const chain = (option: "query" | "mutation", Key: string) =>
   Chain("https://bddx-api.azurewebsites.net/graphql", {
     headers: {
       "Content-type": "application/json",
-      Key: "----",
+      Key,
     },
   })(option);
 
 const uploadReports = async (
-  uploadReportInput: ModelTypes["UploadReportInput"]
+  uploadReportInput: ModelTypes["UploadReportInput"],
+  key: string
 ) => {
-  const response = await chain("mutation")({
+  const response = await chain(
+    "mutation",
+    key
+  )({
     cli: {
       uploadReport: [
         {
@@ -33,6 +37,17 @@ const uploadReports = async (
 };
 
 export const cloudIntegration = async (resultsPaths: string[]) => {
+  const answers = await inquirer.prompt<{
+    confirmation: boolean;
+    key?: string;
+  }>([
+    {
+      type: "input",
+      name: "key",
+      message: "Insert your project key from BDDX Cloud:",
+      when: (answers) => !answers.confirmation,
+    },
+  ]);
   const resultsContent = resultsPaths.map((path) => {
     const content = JSON.parse(fs.readFileSync(path).toString("utf-8"));
     return {
@@ -54,13 +69,12 @@ export const cloudIntegration = async (resultsPaths: string[]) => {
       });
     });
   });
-  if (arrayToSend.results.length) {
-    console.log(arrayToSend.results);
-    const response = await uploadReports({ results: arrayToSend.results });
+  if (arrayToSend.results.length && answers.key) {
+    const response = await uploadReports(arrayToSend, answers.key);
     if (!response) {
       message("Error", "red");
       return;
     }
-    message(`Success ${response}`, "blue");
+    message(`Success upload results id: ${response}`, "blue");
   }
 };
