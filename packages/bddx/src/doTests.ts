@@ -7,7 +7,7 @@ enum TEST_STATUS {
   FINISHED = "finished",
   UNFINISHED = "in progress",
 }
-type Results = {
+export type Results = {
   testStatus: {
     currentTestPath?: string;
     status: TEST_STATUS;
