@@ -1,0 +1,22 @@
+{
+    "failedTests": [
+        {
+            "testPath": "./content/display_test.feature",
+            "reasonOfFail": "jujhi"
+        },
+        {
+            "testPath": "./content/fileB.feature",
+            "reasonOfFail": "uiui"
+        }
+    ],
+    "testStatus": {
+        "status": "finished",
+        "testFilesRoutes": [
+            "./content/display_test.feature",
+            "./content/fileA.feature",
+            "./content/fileB.feature",
+            "./content/fileC.feature",
+            "./content/pass_or_fail_test.feature"
+        ]
+    }
+}

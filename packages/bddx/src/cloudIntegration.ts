@@ -1,4 +1,4 @@
-import { message } from "bddx-core";
+import { message, GLOBAL_CONFIG_FILE } from "bddx-core";
 import fs from "fs";
 import inquirer from "inquirer";
 import { Results } from "./doTests.js";
@@ -37,27 +37,28 @@ const uploadReports = async (
 };
 
 export const cloudIntegration = async (resultsPaths: string[]) => {
-  const answers = await inquirer.prompt<{
-    confirmation: boolean;
-    key?: string;
+  const selected = await inquirer.prompt<{
+    pathtoresult: string;
+    key: string;
   }>([
+    {
+      type: "list",
+      name: "pathtoresult",
+      choices: resultsPaths,
+      message: "Select file to publish on cloud",
+      default: GLOBAL_CONFIG_FILE.in,
+    },
     {
       type: "input",
       name: "key",
       message: "Insert your project key from BDDX Cloud:",
-      when: (answers) => !answers.confirmation,
     },
   ]);
-  const resultsContent = resultsPaths.map((path) => {
-    const content = JSON.parse(fs.readFileSync(path).toString("utf-8"));
-    return {
-      path,
-      content,
-    };
-  });
-  const arrayToSend: ModelTypes["UploadReportInput"] = { results: [] };
-  resultsContent.map((o) => {
-    const content: Results = JSON.parse(fs.readFileSync(o.path).toString());
+  if (selected.key && selected.pathtoresult) {
+    const content: Results = JSON.parse(
+      fs.readFileSync(selected.pathtoresult).toString("utf-8")
+    );
+    const arrayToSend: ModelTypes["UploadReportInput"] = { results: [] };
     content.failedTests.map((test) => {
       const testContent = fs.readFileSync(test.testPath).toString();
       const feature = testContent.split("\n")[0].replace("\r", "");
@@ -68,13 +69,27 @@ export const cloudIntegration = async (resultsPaths: string[]) => {
         testContent: testContent,
       });
     });
-  });
-  if (arrayToSend.results.length && answers.key) {
-    const response = await uploadReports(arrayToSend, answers.key);
-    if (!response) {
-      message("Error", "red");
+    if (content.failedTests.length === 0 || arrayToSend.results.length === 0) {
+      message("No results to send.", "red");
       return;
     }
-    message(`Success upload results id: ${response}`, "blue");
+    if (!selected.key) {
+      message("Missing BDDX Cloud key.", "red");
+      return;
+    }
+    if (arrayToSend.results.length) {
+      try {
+        const response = await uploadReports(arrayToSend, selected.key);
+        if (!response) {
+          message("Error occured while uploading results.", "red");
+          return;
+        }
+        message(`Success upload results with id: ${response}.`, "blue");
+      } catch {
+        message("Cannot upload results now, try again.", "red");
+      }
+    }
+  } else {
+    message("You provided wrong value into fields.", "red");
   }
 };

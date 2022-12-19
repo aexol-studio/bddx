@@ -1,6 +1,15 @@
 /* eslint-disable */
 
 export const AllTypesProps: Record<string,any> = {
+	UpdateProjectInput:{
+
+	},
+	TestResultInput:{
+
+	},
+	LoginInput:{
+
+	},
 	Mutation:{
 		login:{
 			user:"LoginInput"
@@ -49,15 +58,6 @@ export const AllTypesProps: Record<string,any> = {
 		updateProject:{
 			updateProjectInput:"UpdateProjectInput"
 		}
-	},
-	UpdateProjectInput:{
-
-	},
-	TestResultInput:{
-
-	},
-	LoginInput:{
-
 	}
 }
 

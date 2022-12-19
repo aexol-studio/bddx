@@ -11,8 +11,8 @@
   },
   "type": "module",
   "scripts": {
-    "build": "rimraf tsconfig.build.tsbuildinfo lib && ttsc --build tsconfig.build.json",
-    "zeus": "zeus https://bddx-api.azurewebsites.net/graphql ./src --es"
+    "build": "rimraf tsconfig.build.tsbuildinfo lib && ttsc --build tsconfig.build.json && chmod +x ./lib/CLI.js",
+    "zeus": "zeus https://bddx-api.azurewebsites.net/graphql ./src --es --node"
   },
   "devDependencies": {
     "@types/inquirer": "^9.0.3"
@@ -20,10 +20,11 @@
   "dependencies": {
     "bddx-core": "*",
     "conf": "^10.2.0",
-    "cross-fetch": "^3.1.5",
     "graphql-zeus": "^5.2.3",
     "inquirer": "^9.1.4",
     "jira.js": "^2.15.14",
+    "node-fetch": "^3.3.0",
+    "ws": "^8.11.0",
     "yargs": "^17.6.0"
   },
   "repository": {
