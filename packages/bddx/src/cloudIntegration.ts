@@ -59,17 +59,26 @@ export const cloudIntegration = async (resultsPaths: string[]) => {
       fs.readFileSync(selected.pathtoresult).toString("utf-8")
     );
     const arrayToSend: ModelTypes["UploadReportInput"] = { results: [] };
+    content.testStatus.testFilesRoutes.map((testPath) => {
+      const testContent = fs.readFileSync(testPath).toString();
+      const feature = testContent.split("\n")[0].replace("\r", "");
+      arrayToSend.results.push({
+        testPath: testPath,
+        testContent: testContent,
+        feature: feature,
+      });
+    });
     content.failedTests.map((test) => {
       const testContent = fs.readFileSync(test.testPath).toString();
       const feature = testContent.split("\n")[0].replace("\r", "");
       arrayToSend.results.push({
         testPath: test.testPath,
+        testContent: testContent,
         reasonOfFail: test.reasonOfFail,
         feature: feature,
-        testContent: testContent,
       });
     });
-    if (content.failedTests.length === 0 || arrayToSend.results.length === 0) {
+    if (arrayToSend.results.length === 0) {
       message("No results to send.", "red");
       return;
     }
