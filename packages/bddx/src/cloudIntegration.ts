@@ -5,7 +5,7 @@ import { Results } from "./doTests.js";
 import { Chain, ModelTypes } from "./zeus/index.js";
 
 const chain = (option: "query" | "mutation", Key: string) =>
-  Chain("https://bddx-api.azurewebsites.net/graphql", {
+  Chain("https://bddx-p-api.azurewebsites.net/graphql", {
     headers: {
       "Content-type": "application/json",
       Key,
