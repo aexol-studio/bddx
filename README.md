@@ -22,15 +22,18 @@ Run Behavior-Driven Development tests inside a CLI
 
 
 ### Installation and initialization:
-
+[**Remember that Node is required**](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 | Description | Command |
 | --- | --- |
 | to install BDDx: | `npm i bddx` |
 | to initialize BDDx (with optional Jira integration): | `npx bddx init` |
 | to initialize only BDDx Jira integration without changing the basic configuration: | `npx bddx jiraInit` |
 | to check if the Jira API token is working correctly<sup>1</sup> : | `npx bddx checkToken`
+| to connect to bddx cloud<sup>2</sup> : | `npx bddx cloud`
 
 <sup>1</sup>If there's a problem with the loop BDDx will ask the user to provide the correct token value.
+
+<sup>2</sup>User should create project and generate project key 
 
 ### Config file:
 After initializing the config file contains:
