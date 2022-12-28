@@ -59,11 +59,11 @@ export const cloudIntegration = async (resultsPaths: string[]) => {
       fs.readFileSync(selected.pathtoresult).toString("utf-8")
     );
     const arrayToSend: ModelTypes["UploadReportInput"] = { results: [] };
-    content.testStatus.testFilesRoutes.map((testPath) => {
-      const testContent = fs.readFileSync(testPath).toString();
+    content.passedTest.map((o) => {
+      const testContent = fs.readFileSync(o.testPath).toString();
       const feature = testContent.split("\n")[0].replace("\r", "");
       arrayToSend.results.push({
-        testPath: testPath,
+        testPath: o.testPath,
         testContent: testContent,
         feature: feature,
       });
@@ -90,7 +90,7 @@ export const cloudIntegration = async (resultsPaths: string[]) => {
       try {
         const response = await uploadReports(arrayToSend, selected.key);
         if (!response) {
-          message("Error occured while uploading results.", "red");
+          message("Error occurred while uploading results.", "red");
           return;
         }
         message(`Success upload results with id: ${response}.`, "blue");

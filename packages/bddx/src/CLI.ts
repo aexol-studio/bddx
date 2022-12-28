@@ -7,6 +7,7 @@ import {
   message,
   getTestsDirectories,
   getResultsDirectories,
+  // messageWithoutLog,
 } from "bddx-core";
 import {
   doTests,
@@ -38,6 +39,31 @@ yargs(process.argv.slice(2))
       );
       await checkConfigDirectories(config);
       const fileRoutes = getTestsDirectories(config.in);
+      // const resultsRoutes = fileRoutes.map((x) => x);
+      // const answers = await inquirer.prompt<{
+      //   newRoutes: string[];
+      // }>([
+      //   {
+      //     type: "checkbox",
+      //     name: "newRoutes",
+      //     message: `Select the tests in the order to be shown ${messageWithoutLog(
+      //       "(space to accept)",
+      //       "red"
+      //     )}:`,
+      //     choices: resultsRoutes,
+      //     multiple: true,
+      //     root: config.in,
+      //     hideRoot: true,
+      //     validate: function (answer) {
+      //       if (answer.length < resultsRoutes.length) {
+      //         return "You must choose order of all tests";
+      //       }
+      //       return true;
+      //     },
+      //   },
+      // ]);
+
+      // console.log(answers.newRoutes);
       if (fileRoutes.length > 0) {
         await doTests(fileRoutes, config.out);
       }
