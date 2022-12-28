@@ -27,12 +27,18 @@ export const message = (m: string, color: Colors) => {
 
 export const rebuildToGherkin = (val: string) => {
   return val
+    .replaceAll("Feature:", chalk["yellow"]("Feature:"))
+    .replaceAll("Rule:", chalk["red"]("Rule:"))
+    .replaceAll("Example:", chalk["red"]("Example:"))
+    .replaceAll("Scenario:", chalk["red"]("Scenario:"))
     .replaceAll("Given", chalk["blueBright"]("Given"))
-    .replaceAll("And", chalk["blueBright"]("And"))
     .replaceAll("When", chalk["blueBright"]("When"))
     .replaceAll("Then", chalk["blueBright"]("Then"))
     .replaceAll("And", chalk["blueBright"]("And"))
-    .replaceAll("But", chalk["blueBright"]("But"));
+    .replaceAll("But", chalk["blueBright"]("But"))
+    .replaceAll("Background:", chalk["red"]("Background:"))
+    .replaceAll("Scenario Outline:", chalk["red"]("Scenario Outline:"))
+    .replaceAll("Scenario Template:", chalk["red"]("Scenario Template:"));
 };
 
 export const messageWithContent = (

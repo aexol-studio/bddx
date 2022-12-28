@@ -39,38 +39,12 @@ yargs(process.argv.slice(2))
       );
       await checkConfigDirectories(config);
       const fileRoutes = getTestsDirectories(config.in);
-      // const resultsRoutes = fileRoutes.map((x) => x);
-      // const answers = await inquirer.prompt<{
-      //   newRoutes: string[];
-      // }>([
-      //   {
-      //     type: "checkbox",
-      //     name: "newRoutes",
-      //     message: `Select the tests in the order to be shown ${messageWithoutLog(
-      //       "(space to accept)",
-      //       "red"
-      //     )}:`,
-      //     choices: resultsRoutes,
-      //     multiple: true,
-      //     root: config.in,
-      //     hideRoot: true,
-      //     validate: function (answer) {
-      //       if (answer.length < resultsRoutes.length) {
-      //         return "You must choose order of all tests";
-      //       }
-      //       return true;
-      //     },
-      //   },
-      // ]);
-
-      // console.log(answers.newRoutes);
       if (fileRoutes.length > 0) {
         await doTests(fileRoutes, config.out);
       }
     }
   })
   .command("cloud", "Run bddx tests with BDDX Cloud integration", async () => {
-    message("We are currently working on this version", "red");
     const config = readConfig("./bddx.json");
     if (config) {
       const resultsRoutes = getResultsDirectories(config.out);
@@ -78,7 +52,7 @@ yargs(process.argv.slice(2))
         await cloudIntegration(resultsRoutes);
       }
     } else {
-      message("Invalid jira BDDX config", "yellow");
+      message("Invalid BDDX config", "yellow");
     }
 
     return;

@@ -1,9 +1,9 @@
-import { message, messageWithContent, rebuildToGherkin } from "bddx-core";
+import { message, rebuildToGherkin } from "bddx-core";
 import fs from "fs";
 import inquirer from "inquirer";
 import { Version3Client } from "jira.js";
 
-enum TEST_STATUS {
+export enum TEST_STATUS {
   FINISHED = "finished",
   UNFINISHED = "in progress",
 }
@@ -14,18 +14,12 @@ export type Results = {
     status: TEST_STATUS;
     testFilesRoutes: string[];
   };
-  passedTest: {
+  passedTests: {
     testPath: string;
-    scenarioTitle: string;
-  }[];
-  skippedTest: {
-    testPath: string;
-    scenarioTitle: string;
   }[];
   failedTests: {
     testPath: string;
     reasonOfFail: string;
-    scenarioTitle: string;
   }[];
 };
 
@@ -36,8 +30,7 @@ export const doTests = async (
 ) => {
   const results: Results = {
     failedTests: [],
-    passedTest: [],
-    skippedTest: [],
+    passedTests: [],
     testStatus: {
       status: TEST_STATUS.UNFINISHED,
       currentTestPath: testsPaths[0],
@@ -125,7 +118,10 @@ export const getUnfinishedTestsNames = async (outPath: string) => {
     const fileContent: Results = JSON.parse(
       fs.readFileSync(outPath + "/" + file).toString("utf8")
     );
-    if (fileContent.skippedTest.length && file.endsWith(".json")) {
+    if (
+      fileContent.testStatus.status === TEST_STATUS.UNFINISHED &&
+      file.endsWith(".json")
+    ) {
       fileNames.push(file);
     }
   });
@@ -146,14 +142,16 @@ export const doUnfinishedTest = async (
     fs.readFileSync(testFilePath).toString("utf-8")
   );
 
-  if (!results.skippedTest.length) {
+  if (results.testStatus?.status === TEST_STATUS.FINISHED) {
     message("Selected file is a save where all test were performed", "yellow");
     return;
   }
 
-  const allRoutes = results.skippedTest.map((o) => o.testPath);
-
-  await doTestsFunction(allRoutes, results, fileName, outTestsPath, jira);
+  const allRoutes = [...results.testStatus.testFilesRoutes];
+  const restOfTests = allRoutes.splice(
+    allRoutes.indexOf(results.testStatus.currentTestPath || "")
+  );
+  await doTestsFunction(restOfTests, results, fileName, outTestsPath, jira);
 };
 
 const doTestsFunction = async (
@@ -169,112 +167,82 @@ const doTestsFunction = async (
       .catch((e) => message(e.message, "bgRed"));
     if (content) {
       message(`Test file content in ${file}`, "blueBright");
-      const splittedByScenario: string[] = content.split("Scenario:");
-      for (let i = 1; i < splittedByScenario.length; i++) {
-        messageWithContent(
-          "Feature:",
-          splittedByScenario[0].replace("Feature:", ""),
-          "yellow"
-        );
-        messageWithContent(
-          "Scenario:",
-          rebuildToGherkin(splittedByScenario[i]),
-          "red"
-        );
-        const scenarioTitle: string = splittedByScenario[i]
-          .split("\n")[0]
-          .replaceAll("\r", "")
-          .trim();
-        const answers = await inquirer.prompt<{
-          confirmation: "✅ Pass" | "❌ Report issue" | "⏭️ Skip";
-          message?: string;
-        }>([
+
+      console.log(rebuildToGherkin(content));
+
+      const answers = await inquirer.prompt<{
+        confirmation: "✅ Pass" | "❌ Report issue";
+        message?: string;
+      }>([
+        {
+          type: "list",
+          name: "confirmation",
+          message: "What to do with this Scenario?",
+          choices: ["✅ Pass", "❌ Report issue"],
+          default: `✅ Pass`,
+        },
+        {
+          type: "input",
+          name: "message",
+          message: "Type what gone wrong in Scenario:",
+          when: (answers) => answers.confirmation === "❌ Report issue",
+        },
+      ]);
+      if (answers.confirmation === "✅ Pass") {
+        results.passedTests = [
+          ...results.passedTests,
           {
-            type: "list",
-            name: "confirmation",
-            message: "What to do with this Scenario?",
-            choices: ["✅ Pass", "❌ Report issue", "⏭️ Skip"],
-            default: "⏭️ Skip",
+            testPath: file,
           },
-          {
-            type: "input",
-            name: "message",
-            message: "Type what gone wrong in test:",
-            when: (answers) => answers.confirmation === "❌ Report issue",
-          },
-        ]);
-        if (answers.confirmation === "✅ Pass") {
-          results.skippedTest = [
-            ...results.skippedTest.filter((x) => x.testPath !== file),
-          ];
-          results.passedTest = [
-            ...results.passedTest,
-            {
-              testPath: file,
-              scenarioTitle,
-            },
-          ];
-        }
-        if (answers.confirmation === "⏭️ Skip") {
-          results.skippedTest = [
-            ...results.skippedTest,
-            {
-              testPath: file,
-              scenarioTitle,
-            },
-          ];
-        }
-        if (answers.confirmation === "❌ Report issue" && answers.message) {
-          results.skippedTest = [
-            ...results.skippedTest.filter((x) => x.testPath !== file),
-          ];
-          results.failedTests = [
-            ...results.failedTests,
-            {
-              testPath: file,
-              reasonOfFail: answers.message,
-              scenarioTitle,
-            },
-          ];
-          if (jira && jira.client) {
-            jira.client.issues
-              .createIssue({
-                fields: {
-                  issuetype: {
-                    name: jira.issueTypeName,
-                  },
-                  project: { key: jira.projectName },
-                  summary: `Test ${file} failed at ${new Date()
-                    .toISOString()
-                    .split(".")[0]
-                    .replace(":", "-")}`,
-                  description: answers.message,
-                },
-              })
-              .catch(() =>
-                message(
-                  "Task was not created in Jira. Something went wrong",
-                  "red"
-                )
-              );
-          }
-        }
+        ];
       }
 
-      if (testsPaths.indexOf(file) === testsPaths.length - 1) {
-        results.testStatus = {
-          status: TEST_STATUS.FINISHED,
-          testFilesRoutes: [...results.testStatus.testFilesRoutes],
-        };
-      } else {
-        results.testStatus.currentTestPath =
-          testsPaths[testsPaths.indexOf(file) + 1];
+      if (answers.confirmation === "❌ Report issue" && answers.message) {
+        results.failedTests = [
+          ...results.failedTests,
+          {
+            testPath: file,
+            reasonOfFail: answers.message,
+          },
+        ];
+        if (jira && jira.client) {
+          jira.client.issues
+            .createIssue({
+              fields: {
+                issuetype: {
+                  name: jira.issueTypeName,
+                },
+                project: { key: jira.projectName },
+                summary: `Test ${file} failed at ${new Date()
+                  .toISOString()
+                  .split(".")[0]
+                  .replace(":", "-")}`,
+                description: answers.message,
+              },
+            })
+            .catch(() =>
+              message(
+                "Task was not created in Jira. Something went wrong",
+                "red"
+              )
+            );
+        }
       }
-      fs.writeFileSync(
-        `${outPath}/${fileName}`,
-        JSON.stringify(results, null, 4)
-      );
     }
+
+    if (testsPaths.indexOf(file) === testsPaths.length - 1) {
+      results.testStatus = {
+        status: TEST_STATUS.FINISHED,
+        testFilesRoutes: [...results.testStatus.testFilesRoutes],
+      };
+    } else {
+      results.testStatus.currentTestPath =
+        testsPaths[testsPaths.indexOf(file) + 1];
+    }
+    fs.writeFileSync(
+      `${outPath}/${fileName}`,
+      JSON.stringify(results, null, 4)
+    );
   }
   if (results && Object.keys(results).length === 0) {
     message(`All tests passed`, "bgGreen");
