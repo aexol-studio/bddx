@@ -1,6 +1,6 @@
 {
   "name": "bddx-repo",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": false,
   "license": "MIT",
   "description": "Behavior driven development CLI. Write tests in Gherkin and integrate with Git and JIRA",

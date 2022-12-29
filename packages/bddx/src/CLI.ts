@@ -7,7 +7,6 @@ import {
   message,
   getTestsDirectories,
   getResultsDirectories,
-  // messageWithoutLog,
 } from "bddx-core";
 import {
   doTests,

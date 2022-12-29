@@ -19,8 +19,6 @@ type Colors = keyof Pick<
   | "yellowBright"
 >;
 
-export const messageWithoutLog = (m: string, color: Colors) => chalk[color](m);
-
 export const message = (m: string, color: Colors) => {
   console.log(chalk[color](m));
 };
