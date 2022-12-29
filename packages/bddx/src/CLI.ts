@@ -7,6 +7,7 @@ import {
   message,
   getTestsDirectories,
   getResultsDirectories,
+  // messageWithoutLog,
 } from "bddx-core";
 import {
   doTests,
@@ -44,7 +45,6 @@ yargs(process.argv.slice(2))
     }
   })
   .command("cloud", "Run bddx tests with BDDX Cloud integration", async () => {
-    message("We are currently working on this version", "red");
     const config = readConfig("./bddx.json");
     if (config) {
       const resultsRoutes = getResultsDirectories(config.out);
@@ -52,7 +52,7 @@ yargs(process.argv.slice(2))
         await cloudIntegration(resultsRoutes);
       }
     } else {
-      message("Invalid jira BDDX config", "yellow");
+      message("Invalid BDDX config", "yellow");
     }
 
     return;

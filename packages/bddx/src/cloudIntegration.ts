@@ -1,7 +1,7 @@
 import { message, GLOBAL_CONFIG_FILE } from "bddx-core";
 import fs from "fs";
 import inquirer from "inquirer";
-import { Results } from "./doTests.js";
+import { Results, TEST_STATUS } from "./doTests.js";
 import { Chain, ModelTypes } from "./zeus/index.js";
 
 const chain = (option: "query" | "mutation", Key: string) =>
@@ -58,47 +58,55 @@ export const cloudIntegration = async (resultsPaths: string[]) => {
     const content: Results = JSON.parse(
       fs.readFileSync(selected.pathtoresult).toString("utf-8")
     );
-    const arrayToSend: ModelTypes["UploadReportInput"] = { results: [] };
-    content.testStatus.testFilesRoutes.map((testPath) => {
-      const testContent = fs.readFileSync(testPath).toString();
-      const feature = testContent.split("\n")[0].replace("\r", "");
-      arrayToSend.results.push({
-        testPath: testPath,
-        testContent: testContent,
-        feature: feature,
+    if (content.testStatus.status === TEST_STATUS.FINISHED) {
+      const arrayToSend: ModelTypes["UploadReportInput"] = { results: [] };
+      content.passedTests.map((o) => {
+        const testContent = fs.readFileSync(o.testPath).toString();
+        const feature = testContent.split("\n")[0].replace("\r", "");
+        arrayToSend.results.push({
+          testPath: o.testPath,
+          testContent: testContent,
+          feature: feature,
+        });
       });
-    });
-    content.failedTests.map((test) => {
-      const testContent = fs.readFileSync(test.testPath).toString();
-      const feature = testContent.split("\n")[0].replace("\r", "");
-      arrayToSend.results.push({
-        testPath: test.testPath,
-        testContent: testContent,
-        reasonOfFail: test.reasonOfFail,
-        feature: feature,
+      content.failedTests.map((test) => {
+        const testContent = fs.readFileSync(test.testPath).toString();
+        const feature = testContent.split("\n")[0].replace("\r", "");
+        arrayToSend.results.push({
+          testPath: test.testPath,
+          testContent: testContent,
+          reasonOfFail: test.reasonOfFail,
+          feature: feature,
+        });
       });
-    });
-    if (arrayToSend.results.length === 0) {
-      message("No results to send.", "red");
-      return;
-    }
-    if (!selected.key) {
-      message("Missing BDDX Cloud key.", "red");
-      return;
-    }
-    if (arrayToSend.results.length) {
-      try {
-        const response = await uploadReports(arrayToSend, selected.key);
-        if (!response) {
-          message("Error occured while uploading results.", "red");
+      if (arrayToSend.results.length === 0) {
+        message("No results to send.", "red");
+        return;
+      }
+      if (!selected.key) {
+        message("Missing BDDX Cloud key.", "red");
+        return;
+      }
+      if (arrayToSend.results.length) {
+        try {
+          const response = await uploadReports(arrayToSend, selected.key);
+          if (!response) {
+            message("Error occurred while uploading results.", "red");
+            return;
+          }
+          message(`Success upload results with id: ${response}.`, "blue");
+          return;
+        } catch {
+          message("Cannot upload results now, try again.", "red");
           return;
         }
-        message(`Success upload results with id: ${response}.`, "blue");
-      } catch {
-        message("Cannot upload results now, try again.", "red");
       }
+    } else {
+      message("This results have status of unfinished.", "red");
+      return;
     }
   } else {
     message("You provided wrong value into fields.", "red");
+    return;
   }
 };

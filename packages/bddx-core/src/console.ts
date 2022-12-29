@@ -18,8 +18,35 @@ type Colors = keyof Pick<
   | "yellow"
   | "yellowBright"
 >;
+
+export const messageWithoutLog = (m: string, color: Colors) => chalk[color](m);
+
 export const message = (m: string, color: Colors) => {
   console.log(chalk[color](m));
+};
+
+export const rebuildToGherkin = (val: string) => {
+  return val
+    .replaceAll("Feature:", chalk["yellow"]("Feature:"))
+    .replaceAll("Rule:", chalk["red"]("Rule:"))
+    .replaceAll("Example:", chalk["red"]("Example:"))
+    .replaceAll("Scenario:", chalk["red"]("Scenario:"))
+    .replaceAll("Given", chalk["blueBright"]("Given"))
+    .replaceAll("When", chalk["blueBright"]("When"))
+    .replaceAll("Then", chalk["blueBright"]("Then"))
+    .replaceAll("And", chalk["blueBright"]("And"))
+    .replaceAll("But", chalk["blueBright"]("But"))
+    .replaceAll("Background:", chalk["red"]("Background:"))
+    .replaceAll("Scenario Outline:", chalk["red"]("Scenario Outline:"))
+    .replaceAll("Scenario Template:", chalk["red"]("Scenario Template:"));
+};
+
+export const messageWithContent = (
+  m: string,
+  content: string,
+  color: Colors
+) => {
+  console.log(`${chalk[color](m)}${content}`);
 };
 
 export const calcTime = (m: string, color: Colors) => {
