@@ -18,7 +18,7 @@
     "@types/inquirer": "^9.0.3"
   },
   "dependencies": {
-    "bddx-core": "*",
+    "bddx-core": "^0.1.2",
     "conf": "^10.2.0",
     "graphql-zeus": "^5.2.3",
     "inquirer": "^9.1.4",
