@@ -1,6 +1,6 @@
 {
   "name": "bddx",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "license": "MIT",
   "description": "Behavior driven development CLI. Write tests in Gherkin and integrate with Git and JIRA",
