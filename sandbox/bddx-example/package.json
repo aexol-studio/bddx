@@ -6,7 +6,10 @@
   "main": "index.js",
   "scripts": {
     "init": "bddx init",
-    "start": "bddx"
+    "start": "bddx",
+    "cloud": "bddx cloud",
+    "continue": "bddx continue",
+    "jira": "bddx jira"
   },
   "dependencies": {
     "bddx": "*"
