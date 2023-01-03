@@ -1,4 +1,4 @@
-import { message, rebuildToGherkin } from "bddx-core";
+import { message, messageWithContent, rebuildToGherkin } from "bddx-core";
 import fs from "fs";
 import inquirer from "inquirer";
 import { Version3Client } from "jira.js";
@@ -11,15 +11,18 @@ export enum TEST_STATUS {
 export type Results = {
   testStatus: {
     currentTestPath?: string;
+    currentScenario?: number;
     status: TEST_STATUS;
     testFilesRoutes: string[];
   };
   passedTests: {
     testPath: string;
+    scenarioTitle: string;
   }[];
   failedTests: {
     testPath: string;
     reasonOfFail: string;
+    scenarioTitle: string;
   }[];
 };
 
@@ -32,6 +35,7 @@ export const doTests = async (
     failedTests: [],
     passedTests: [],
     testStatus: {
+      currentScenario: 0,
       status: TEST_STATUS.UNFINISHED,
       currentTestPath: testsPaths[0],
       testFilesRoutes: testsPaths,
@@ -168,64 +172,105 @@ const doTestsFunction = async (
     if (content) {
       message(`Test file content in ${file}`, "blueBright");
 
-      console.log(rebuildToGherkin(content));
-
-      const answers = await inquirer.prompt<{
-        confirmation: "✅ Pass" | "❌ Report issue";
-        message?: string;
-      }>([
-        {
-          type: "list",
-          name: "confirmation",
-          message: "What to do with this Scenario?",
-          choices: ["✅ Pass", "❌ Report issue"],
-          default: `✅ Pass`,
-        },
-        {
-          type: "input",
-          name: "message",
-          message: "Type what gone wrong in Scenario:",
-          when: (answers) => answers.confirmation === "❌ Report issue",
-        },
-      ]);
-      if (answers.confirmation === "✅ Pass") {
-        results.passedTests = [
-          ...results.passedTests,
+      const splittedByScenario: string[] = content.split("Scenario:");
+      for (
+        let i = results.testStatus.currentScenario
+          ? results.testStatus.currentScenario + 1
+          : 1;
+        i < splittedByScenario.length;
+        i++
+      ) {
+        const scenarioTitle: string = splittedByScenario[i]
+          .split("\n")[0]
+          .replaceAll("\r", "")
+          .trim();
+        messageWithContent(
+          "Feature:",
+          splittedByScenario[0].replace("Feature:", ""),
+          "yellow"
+        );
+        messageWithContent(
+          "Scenario:",
+          rebuildToGherkin(splittedByScenario[i]),
+          "red"
+        );
+        const answers = await inquirer.prompt<{
+          confirmation: "✅ Pass" | "❌ Report issue";
+          message?: string;
+        }>([
           {
-            testPath: file,
+            type: "list",
+            name: "confirmation",
+            message: "What to do with this Scenario?",
+            choices: ["✅ Pass", "❌ Report issue"],
+            default: `✅ Pass`,
           },
-        ];
-      }
-
-      if (answers.confirmation === "❌ Report issue" && answers.message) {
-        results.failedTests = [
-          ...results.failedTests,
           {
-            testPath: file,
-            reasonOfFail: answers.message,
+            type: "input",
+            name: "message",
+            message: "Type what gone wrong in Scenario:",
+            when: (answers) => answers.confirmation === "❌ Report issue",
           },
-        ];
-        if (jira && jira.client) {
-          jira.client.issues
-            .createIssue({
-              fields: {
-                issuetype: {
-                  name: jira.issueTypeName,
+        ]);
+        if (answers.confirmation === "✅ Pass") {
+          results.passedTests = [
+            ...results.passedTests,
+            {
+              testPath: file,
+              scenarioTitle,
+            },
+          ];
+          if (i === splittedByScenario.length - 1) {
+            results.testStatus.currentScenario = 0;
+          } else {
+            results.testStatus.currentScenario = i;
+          }
+          fs.writeFileSync(
+            `${outPath}/${fileName}`,
+            JSON.stringify(results, null, 4)
+          );
+        }
+
+        if (answers.confirmation === "❌ Report issue" && answers.message) {
+          results.failedTests = [
+            ...results.failedTests,
+            {
+              testPath: file,
+              reasonOfFail: answers.message,
+              scenarioTitle,
+            },
+          ];
+          if (i === splittedByScenario.length - 1) {
+            results.testStatus.currentScenario = 0;
+          } else {
+            results.testStatus.currentScenario = i;
+          }
+          fs.writeFileSync(
+            `${outPath}/${fileName}`,
+            JSON.stringify(results, null, 4)
+          );
+          if (jira && jira.client) {
+            jira.client.issues
+              .createIssue({
+                fields: {
+                  issuetype: {
+                    name: jira.issueTypeName,
+                  },
+                  project: { key: jira.projectName },
+                  summary: `Test ${file} failed at ${new Date()
+                    .toISOString()
+                    .split(".")[0]
+                    .replace(":", "-")}`,
+                  description: answers.message,
                 },
-                project: { key: jira.projectName },
-                summary: `Test ${file} failed at ${new Date()
-                  .toISOString()
-                  .split(".")[0]
-                  .replace(":", "-")}`,
-                description: answers.message,
-              },
-            })
-            .catch(() =>
-              message(
-                "Task was not created in Jira. Something went wrong",
-                "red"
-              )
-            );
+              })
+              .catch(() =>
+                message(
+                  "Task was not created in Jira. Something went wrong",
+                  "red"
+                )
+              );
+          }
         }
       }
     }
