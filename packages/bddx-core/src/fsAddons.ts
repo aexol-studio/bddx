@@ -112,7 +112,10 @@ export const getTestsDirectories = (inPath: string) => {
   if (!fs.existsSync(inPath)) {
     throw new Error(`There is no input directory: ${inPath}`);
   }
-  const testFilesNames = getFeatureFilesPathsRecursive(inPath, ".feature");
+  const testFilesNames = getFeatureFilesPathsRecursive(inPath, ".feature").sort(
+    (a, b) =>
+      a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" })
+  );
   if (testFilesNames.length === 0) {
     message(`No .feature files found in input directory`, "yellowBright");
   } else {
