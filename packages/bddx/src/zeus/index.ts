@@ -1,16 +1,15 @@
 /* eslint-disable */
 
-import { AllTypesProps, ReturnTypes, Ops } from './const.js';
-import fetch, { Response } from 'node-fetch';
-import WebSocket from 'ws';
-export const HOST = "https://bddx-api.azurewebsites.net/graphql"
+import { AllTypesProps, ReturnTypes, Ops } from "./const.js";
+import fetch, { Response } from "node-fetch";
+import WebSocket from "ws";
+export const HOST = "https://bddx-api.azurewebsites.net/graphql";
 
-
-export const HEADERS = {}
+export const HEADERS = {};
 export const apiSubscription = (options: chainOptions) => (query: string) => {
   try {
-    const queryString = options[0] + '?query=' + encodeURIComponent(query);
-    const wsString = queryString.replace('http', 'ws');
+    const queryString = options[0] + "?query=" + encodeURIComponent(query);
+    const wsString = queryString.replace("http", "ws");
     const host = (options.length > 1 && options[1]?.websocket?.[0]) || wsString;
     const webSocketOptions = options[1]?.websocket || [host];
     const ws = new WebSocket(...webSocketOptions);
@@ -36,7 +35,7 @@ export const apiSubscription = (options: chainOptions) => (query: string) => {
       },
     };
   } catch {
-    throw new Error('No websockets implemented');
+    throw new Error("No websockets implemented");
   }
 };
 const handleFetchResponse = (response: Response): Promise<GraphQLResponse> => {
@@ -61,8 +60,11 @@ export const apiFetch =
   (options: fetchOptions) =>
   (query: string, variables: Record<string, unknown> = {}) => {
     const fetchOptions = options[1] || {};
-    if (fetchOptions.method && fetchOptions.method === 'GET') {
-      return fetch(`${options[0]}?query=${encodeURIComponent(query)}`, fetchOptions)
+    if (fetchOptions.method && fetchOptions.method === "GET") {
+      return fetch(
+        `${options[0]}?query=${encodeURIComponent(query)}`,
+        fetchOptions
+      )
         .then(handleFetchResponse)
         .then((response: GraphQLResponse) => {
           if (response.errors) {
@@ -73,9 +75,9 @@ export const apiFetch =
     }
     return fetch(`${options[0]}`, {
       body: JSON.stringify({ query, variables }),
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       ...fetchOptions,
     })
@@ -104,19 +106,19 @@ export const InternalsBuildQuery = ({
   const ibb = (
     k: string,
     o: InputValueType | VType,
-    p = '',
+    p = "",
     root = true,
-    vars: Array<{ name: string; graphQLType: string }> = [],
+    vars: Array<{ name: string; graphQLType: string }> = []
   ): string => {
     const keyForPath = purifyGraphQLKey(k);
     const newPath = [p, keyForPath].join(SEPARATOR);
     if (!o) {
-      return '';
+      return "";
     }
-    if (typeof o === 'boolean' || typeof o === 'number') {
+    if (typeof o === "boolean" || typeof o === "number") {
       return k;
     }
-    if (typeof o === 'string') {
+    if (typeof o === "string") {
       return `${k} ${o}`;
     }
     if (Array.isArray(o)) {
@@ -129,48 +131,65 @@ export const InternalsBuildQuery = ({
       })(o[0], newPath);
       return `${ibb(args ? `${k}(${args})` : k, o[1], p, false, vars)}`;
     }
-    if (k === '__alias') {
+    if (k === "__alias") {
       return Object.entries(o)
         .map(([alias, objectUnderAlias]) => {
-          if (typeof objectUnderAlias !== 'object' || Array.isArray(objectUnderAlias)) {
+          if (
+            typeof objectUnderAlias !== "object" ||
+            Array.isArray(objectUnderAlias)
+          ) {
             throw new Error(
-              'Invalid alias it should be __alias:{ YOUR_ALIAS_NAME: { OPERATION_NAME: { ...selectors }}}',
+              "Invalid alias it should be __alias:{ YOUR_ALIAS_NAME: { OPERATION_NAME: { ...selectors }}}"
             );
           }
           const operationName = Object.keys(objectUnderAlias)[0];
           const operation = objectUnderAlias[operationName];
           return ibb(`${alias}:${operationName}`, operation, p, false, vars);
         })
-        .join('\n');
+        .join("\n");
     }
-    const hasOperationName = root && options?.operationName ? ' ' + options.operationName : '';
-    const keyForDirectives = o.__directives ?? '';
+    const hasOperationName =
+      root && options?.operationName ? " " + options.operationName : "";
+    const keyForDirectives = o.__directives ?? "";
     const query = `{${Object.entries(o)
-      .filter(([k]) => k !== '__directives')
-      .map((e) => ibb(...e, [p, `field<>${keyForPath}`].join(SEPARATOR), false, vars))
-      .join('\n')}}`;
+      .filter(([k]) => k !== "__directives")
+      .map((e) =>
+        ibb(...e, [p, `field<>${keyForPath}`].join(SEPARATOR), false, vars)
+      )
+      .join("\n")}}`;
     if (!root) {
       return `${k} ${keyForDirectives}${hasOperationName} ${query}`;
     }
-    const varsString = vars.map((v) => `${v.name}: ${v.graphQLType}`).join(', ');
-    return `${k} ${keyForDirectives}${hasOperationName}${varsString ? `(${varsString})` : ''} ${query}`;
+    const varsString = vars
+      .map((v) => `${v.name}: ${v.graphQLType}`)
+      .join(", ");
+    return `${k} ${keyForDirectives}${hasOperationName}${
+      varsString ? `(${varsString})` : ""
+    } ${query}`;
   };
   return ibb;
 };
 
 export const Thunder =
   (fn: FetchFunction) =>
-  <O extends keyof typeof Ops, SCLR extends ScalarDefinition, R extends keyof ValueTypes = GenericOperation<O>>(
+  <
+    O extends keyof typeof Ops,
+    SCLR extends ScalarDefinition,
+    R extends keyof ValueTypes = GenericOperation<O>
+  >(
     operation: O,
-    graphqlOptions?: ThunderGraphQLOptions<SCLR>,
+    graphqlOptions?: ThunderGraphQLOptions<SCLR>
   ) =>
-  <Z extends ValueTypes[R]>(o: Z | ValueTypes[R], ops?: OperationOptions & { variables?: Record<string, unknown> }) =>
+  <Z extends ValueTypes[R]>(
+    o: Z | ValueTypes[R],
+    ops?: OperationOptions & { variables?: Record<string, unknown> }
+  ) =>
     fn(
       Zeus(operation, o, {
         operationOptions: ops,
         scalars: graphqlOptions?.scalars,
       }),
-      ops?.variables,
+      ops?.variables
     ).then((data) => {
       if (graphqlOptions?.scalars) {
         return decodeScalarsInResponse({
@@ -189,20 +208,29 @@ export const Chain = (...options: chainOptions) => Thunder(apiFetch(options));
 
 export const SubscriptionThunder =
   (fn: SubscriptionFunction) =>
-  <O extends keyof typeof Ops, SCLR extends ScalarDefinition, R extends keyof ValueTypes = GenericOperation<O>>(
+  <
+    O extends keyof typeof Ops,
+    SCLR extends ScalarDefinition,
+    R extends keyof ValueTypes = GenericOperation<O>
+  >(
     operation: O,
-    graphqlOptions?: ThunderGraphQLOptions<SCLR>,
+    graphqlOptions?: ThunderGraphQLOptions<SCLR>
   ) =>
-  <Z extends ValueTypes[R]>(o: Z | ValueTypes[R], ops?: OperationOptions & { variables?: ExtractVariables<Z> }) => {
+  <Z extends ValueTypes[R]>(
+    o: Z | ValueTypes[R],
+    ops?: OperationOptions & { variables?: ExtractVariables<Z> }
+  ) => {
     const returnedFunction = fn(
       Zeus(operation, o, {
         operationOptions: ops,
         scalars: graphqlOptions?.scalars,
-      }),
+      })
     ) as SubscriptionToGraphQL<Z, GraphQLTypes[R], SCLR>;
     if (returnedFunction?.on && graphqlOptions?.scalars) {
       const wrapped = returnedFunction.on;
-      returnedFunction.on = (fnToCall: (args: InputType<GraphQLTypes[R], Z, SCLR>) => void) =>
+      returnedFunction.on = (
+        fnToCall: (args: InputType<GraphQLTypes[R], Z, SCLR>) => void
+      ) =>
         wrapped((data: InputType<GraphQLTypes[R], Z, SCLR>) => {
           if (graphqlOptions?.scalars) {
             return fnToCall(
@@ -213,7 +241,7 @@ export const SubscriptionThunder =
                 returns: ReturnTypes,
                 scalars: graphqlOptions.scalars,
                 ops: Ops,
-              }),
+              })
             );
           }
           return fnToCall(data);
@@ -222,18 +250,19 @@ export const SubscriptionThunder =
     return returnedFunction;
   };
 
-export const Subscription = (...options: chainOptions) => SubscriptionThunder(apiSubscription(options));
+export const Subscription = (...options: chainOptions) =>
+  SubscriptionThunder(apiSubscription(options));
 export const Zeus = <
   Z extends ValueTypes[R],
   O extends keyof typeof Ops,
-  R extends keyof ValueTypes = GenericOperation<O>,
+  R extends keyof ValueTypes = GenericOperation<O>
 >(
   operation: O,
   o: Z | ValueTypes[R],
   ops?: {
     operationOptions?: OperationOptions;
     scalars?: ScalarDefinition;
-  },
+  }
 ) =>
   InternalsBuildQuery({
     props: AllTypesProps,
@@ -245,12 +274,14 @@ export const Zeus = <
 
 export const ZeusSelect = <T>() => ((t: unknown) => t) as SelectionFunction<T>;
 
-export const Selector = <T extends keyof ValueTypes>(key: T) => key && ZeusSelect<ValueTypes[T]>();
+export const Selector = <T extends keyof ValueTypes>(key: T) =>
+  key && ZeusSelect<ValueTypes[T]>();
 
-export const TypeFromSelector = <T extends keyof ValueTypes>(key: T) => key && ZeusSelect<ValueTypes[T]>();
+export const TypeFromSelector = <T extends keyof ValueTypes>(key: T) =>
+  key && ZeusSelect<ValueTypes[T]>();
 export const Gql = Chain(HOST, {
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
     ...HEADERS,
   },
 });
@@ -280,9 +311,17 @@ export const decodeScalarsInResponse = <O extends Operations>({
     returns,
   });
 
-  const scalarPaths = builder(initialOp as string, ops[initialOp], initialZeusQuery);
+  const scalarPaths = builder(
+    initialOp as string,
+    ops[initialOp],
+    initialZeusQuery
+  );
   if (scalarPaths) {
-    const r = traverseResponse({ scalarPaths, resolvers: scalars })(initialOp as string, response, [ops[initialOp]]);
+    const r = traverseResponse({ scalarPaths, resolvers: scalars })(
+      initialOp as string,
+      response,
+      [ops[initialOp]]
+    );
     return r;
   }
   return response;
@@ -297,7 +336,11 @@ export const traverseResponse = ({
     [x: string]: ScalarResolver | undefined;
   };
 }) => {
-  const ibb = (k: string, o: InputValueType | VType, p: string[] = []): unknown => {
+  const ibb = (
+    k: string,
+    o: InputValueType | VType,
+    p: string[] = []
+  ): unknown => {
     if (Array.isArray(o)) {
       return o.map((eachO) => ibb(k, eachO, p));
     }
@@ -307,19 +350,30 @@ export const traverseResponse = ({
     const scalarPathString = p.join(SEPARATOR);
     const currentScalarString = scalarPaths[scalarPathString];
     if (currentScalarString) {
-      const currentDecoder = resolvers[currentScalarString.split('.')[1]]?.decode;
+      const currentDecoder =
+        resolvers[currentScalarString.split(".")[1]]?.decode;
       if (currentDecoder) {
         return currentDecoder(o);
       }
     }
-    if (typeof o === 'boolean' || typeof o === 'number' || typeof o === 'string' || !o) {
+    if (
+      typeof o === "boolean" ||
+      typeof o === "number" ||
+      typeof o === "string" ||
+      !o
+    ) {
       return o;
     }
-    const entries = Object.entries(o).map(([k, v]) => [k, ibb(k, v, [...p, purifyGraphQLKey(k)])] as const);
-    const objectFromEntries = entries.reduce<Record<string, unknown>>((a, [k, v]) => {
-      a[k] = v;
-      return a;
-    }, {});
+    const entries = Object.entries(o).map(
+      ([k, v]) => [k, ibb(k, v, [...p, purifyGraphQLKey(k)])] as const
+    );
+    const objectFromEntries = entries.reduce<Record<string, unknown>>(
+      (a, [k, v]) => {
+        a[k] = v;
+        return a;
+      },
+      {}
+    );
     return objectFromEntries;
   };
   return ibb;
@@ -329,7 +383,7 @@ export type AllTypesPropsType = {
   [x: string]:
     | undefined
     | `scalar.${string}`
-    | 'enum'
+    | "enum"
     | {
         [x: string]:
           | undefined
@@ -349,7 +403,13 @@ export type ReturnTypesType = {
     | undefined;
 };
 export type InputValueType = {
-  [x: string]: undefined | boolean | string | number | [any, undefined | boolean | InputValueType] | InputValueType;
+  [x: string]:
+    | undefined
+    | boolean
+    | string
+    | number
+    | [any, undefined | boolean | InputValueType]
+    | InputValueType;
 };
 export type VType =
   | undefined
@@ -373,15 +433,26 @@ export type VariableDefinition = {
   [x: string]: unknown;
 };
 
-export const SEPARATOR = '|';
+export const SEPARATOR = "|";
 
 export type fetchOptions = Parameters<typeof fetch>;
-type websocketOptions = typeof WebSocket extends new (...args: infer R) => WebSocket ? R : never;
-export type chainOptions = [fetchOptions[0], fetchOptions[1] & { websocket?: websocketOptions }] | [fetchOptions[0]];
-export type FetchFunction = (query: string, variables?: Record<string, unknown>) => Promise<any>;
+type websocketOptions = typeof WebSocket extends new (
+  ...args: infer R
+) => WebSocket
+  ? R
+  : never;
+export type chainOptions =
+  | [fetchOptions[0], fetchOptions[1] & { websocket?: websocketOptions }]
+  | [fetchOptions[0]];
+export type FetchFunction = (
+  query: string,
+  variables?: Record<string, unknown>
+) => Promise<any>;
 export type SubscriptionFunction = (query: string) => any;
 type NotUndefined<T> = T extends undefined ? never : T;
-export type ResolverType<F> = NotUndefined<F extends [infer ARGS, any] ? ARGS : undefined>;
+export type ResolverType<F> = NotUndefined<
+  F extends [infer ARGS, any] ? ARGS : undefined
+>;
 
 export type OperationOptions = {
   operationName?: string;
@@ -397,25 +468,30 @@ export interface GraphQLResponse {
 }
 export class GraphQLError extends Error {
   constructor(public response: GraphQLResponse) {
-    super('');
+    super("");
     console.error(response);
   }
   toString() {
-    return 'GraphQL Response Error';
+    return "GraphQL Response Error";
   }
 }
-export type GenericOperation<O> = O extends keyof typeof Ops ? typeof Ops[O] : never;
+export type GenericOperation<O> = O extends keyof typeof Ops
+  ? typeof Ops[O]
+  : never;
 export type ThunderGraphQLOptions<SCLR extends ScalarDefinition> = {
   scalars?: SCLR | ScalarCoders;
 };
 
-const ExtractScalar = (mappedParts: string[], returns: ReturnTypesType): `scalar.${string}` | undefined => {
+const ExtractScalar = (
+  mappedParts: string[],
+  returns: ReturnTypesType
+): `scalar.${string}` | undefined => {
   if (mappedParts.length === 0) {
     return;
   }
   const oKey = mappedParts[0];
   const returnP1 = returns[oKey];
-  if (typeof returnP1 === 'object') {
+  if (typeof returnP1 === "object") {
     const returnP2 = returnP1[mappedParts[1]];
     if (returnP2) {
       return ExtractScalar([returnP2, ...mappedParts.slice(2)], returns);
@@ -425,22 +501,32 @@ const ExtractScalar = (mappedParts: string[], returns: ReturnTypesType): `scalar
   return returnP1 as `scalar.${string}` | undefined;
 };
 
-export const PrepareScalarPaths = ({ ops, returns }: { returns: ReturnTypesType; ops: Operations }) => {
+export const PrepareScalarPaths = ({
+  ops,
+  returns,
+}: {
+  returns: ReturnTypesType;
+  ops: Operations;
+}) => {
   const ibb = (
     k: string,
     originalKey: string,
     o: InputValueType | VType,
     p: string[] = [],
     pOriginals: string[] = [],
-    root = true,
+    root = true
   ): { [x: string]: `scalar.${string}` } | undefined => {
     if (!o) {
       return;
     }
-    if (typeof o === 'boolean' || typeof o === 'number' || typeof o === 'string') {
+    if (
+      typeof o === "boolean" ||
+      typeof o === "number" ||
+      typeof o === "string"
+    ) {
       const extractionArray = [...pOriginals, originalKey];
       const isScalar = ExtractScalar(extractionArray, returns);
-      if (isScalar?.startsWith('scalar')) {
+      if (isScalar?.startsWith("scalar")) {
         const partOfTree = {
           [[...p, k].join(SEPARATOR)]: isScalar,
         };
@@ -451,12 +537,15 @@ export const PrepareScalarPaths = ({ ops, returns }: { returns: ReturnTypesType;
     if (Array.isArray(o)) {
       return ibb(k, k, o[1], p, pOriginals, false);
     }
-    if (k === '__alias') {
+    if (k === "__alias") {
       return Object.entries(o)
         .map(([alias, objectUnderAlias]) => {
-          if (typeof objectUnderAlias !== 'object' || Array.isArray(objectUnderAlias)) {
+          if (
+            typeof objectUnderAlias !== "object" ||
+            Array.isArray(objectUnderAlias)
+          ) {
             throw new Error(
-              'Invalid alias it should be __alias:{ YOUR_ALIAS_NAME: { OPERATION_NAME: { ...selectors }}}',
+              "Invalid alias it should be __alias:{ YOUR_ALIAS_NAME: { OPERATION_NAME: { ...selectors }}}"
             );
           }
           const operationName = Object.keys(objectUnderAlias)[0];
@@ -470,7 +559,7 @@ export const PrepareScalarPaths = ({ ops, returns }: { returns: ReturnTypesType;
     }
     const keyName = root ? ops[k] : k;
     return Object.entries(o)
-      .filter(([k]) => k !== '__directives')
+      .filter(([k]) => k !== "__directives")
       .map(([k, v]) => {
         // Inline fragments shouldn't be added to the path as they aren't a field
         const isInlineFragment = originalKey.match(/^...\s*on/) != null;
@@ -479,8 +568,10 @@ export const PrepareScalarPaths = ({ ops, returns }: { returns: ReturnTypesType;
           k,
           v,
           isInlineFragment ? p : [...p, purifyGraphQLKey(keyName || k)],
-          isInlineFragment ? pOriginals : [...pOriginals, purifyGraphQLKey(originalKey)],
-          false,
+          isInlineFragment
+            ? pOriginals
+            : [...pOriginals, purifyGraphQLKey(originalKey)],
+          false
         );
       })
       .reduce((a, b) => ({
@@ -491,58 +582,67 @@ export const PrepareScalarPaths = ({ ops, returns }: { returns: ReturnTypesType;
   return ibb;
 };
 
-export const purifyGraphQLKey = (k: string) => k.replace(/\([^)]*\)/g, '').replace(/^[^:]*\:/g, '');
+export const purifyGraphQLKey = (k: string) =>
+  k.replace(/\([^)]*\)/g, "").replace(/^[^:]*\:/g, "");
 
 const mapPart = (p: string) => {
-  const [isArg, isField] = p.split('<>');
+  const [isArg, isField] = p.split("<>");
   if (isField) {
     return {
       v: isField,
-      __type: 'field',
+      __type: "field",
     } as const;
   }
   return {
     v: isArg,
-    __type: 'arg',
+    __type: "arg",
   } as const;
 };
 
 type Part = ReturnType<typeof mapPart>;
 
-export const ResolveFromPath = (props: AllTypesPropsType, returns: ReturnTypesType, ops: Operations) => {
+export const ResolveFromPath = (
+  props: AllTypesPropsType,
+  returns: ReturnTypesType,
+  ops: Operations
+) => {
   const ResolvePropsType = (mappedParts: Part[]) => {
     const oKey = ops[mappedParts[0].v];
     const propsP1 = oKey ? props[oKey] : props[mappedParts[0].v];
-    if (propsP1 === 'enum' && mappedParts.length === 1) {
-      return 'enum';
+    if (propsP1 === "enum" && mappedParts.length === 1) {
+      return "enum";
     }
-    if (typeof propsP1 === 'string' && propsP1.startsWith('scalar.') && mappedParts.length === 1) {
+    if (
+      typeof propsP1 === "string" &&
+      propsP1.startsWith("scalar.") &&
+      mappedParts.length === 1
+    ) {
       return propsP1;
     }
-    if (typeof propsP1 === 'object') {
+    if (typeof propsP1 === "object") {
       if (mappedParts.length < 2) {
-        return 'not';
+        return "not";
       }
       const propsP2 = propsP1[mappedParts[1].v];
-      if (typeof propsP2 === 'string') {
+      if (typeof propsP2 === "string") {
         return rpp(
           `${propsP2}${SEPARATOR}${mappedParts
             .slice(2)
             .map((mp) => mp.v)
-            .join(SEPARATOR)}`,
+            .join(SEPARATOR)}`
         );
       }
-      if (typeof propsP2 === 'object') {
+      if (typeof propsP2 === "object") {
         if (mappedParts.length < 3) {
-          return 'not';
+          return "not";
         }
         const propsP3 = propsP2[mappedParts[2].v];
-        if (propsP3 && mappedParts[2].__type === 'arg') {
+        if (propsP3 && mappedParts[2].__type === "arg") {
           return rpp(
             `${propsP3}${SEPARATOR}${mappedParts
               .slice(3)
               .map((mp) => mp.v)
-              .join(SEPARATOR)}`,
+              .join(SEPARATOR)}`
           );
         }
       }
@@ -550,24 +650,24 @@ export const ResolveFromPath = (props: AllTypesPropsType, returns: ReturnTypesTy
   };
   const ResolveReturnType = (mappedParts: Part[]) => {
     if (mappedParts.length === 0) {
-      return 'not';
+      return "not";
     }
     const oKey = ops[mappedParts[0].v];
     const returnP1 = oKey ? returns[oKey] : returns[mappedParts[0].v];
-    if (typeof returnP1 === 'object') {
-      if (mappedParts.length < 2) return 'not';
+    if (typeof returnP1 === "object") {
+      if (mappedParts.length < 2) return "not";
       const returnP2 = returnP1[mappedParts[1].v];
       if (returnP2) {
         return rpp(
           `${returnP2}${SEPARATOR}${mappedParts
             .slice(2)
             .map((mp) => mp.v)
-            .join(SEPARATOR)}`,
+            .join(SEPARATOR)}`
         );
       }
     }
   };
-  const rpp = (path: string): 'enum' | 'not' | `scalar.${string}` => {
+  const rpp = (path: string): "enum" | "not" | `scalar.${string}` => {
     const parts = path.split(SEPARATOR).filter((l) => l.length > 0);
     const mappedParts = parts.map(mapPart);
     const propsP1 = ResolvePropsType(mappedParts);
@@ -578,7 +678,7 @@ export const ResolveFromPath = (props: AllTypesPropsType, returns: ReturnTypesTy
     if (returnP1) {
       return returnP1;
     }
-    return 'not';
+    return "not";
   };
   return rpp;
 };
@@ -596,10 +696,12 @@ export const InternalArgsBuilt = ({
   scalars?: ScalarDefinition;
   vars: Array<{ name: string; graphQLType: string }>;
 }) => {
-  const arb = (a: ZeusArgsType, p = '', root = true): string => {
-    if (typeof a === 'string') {
+  const arb = (a: ZeusArgsType, p = "", root = true): string => {
+    if (typeof a === "string") {
       if (a.startsWith(START_VAR_NAME)) {
-        const [varName, graphQLType] = a.replace(START_VAR_NAME, '$').split(GRAPHQL_TYPE_SEPARATOR);
+        const [varName, graphQLType] = a
+          .replace(START_VAR_NAME, "$")
+          .split(GRAPHQL_TYPE_SEPARATOR);
         const v = vars.find((v) => v.name === varName);
         if (!v) {
           vars.push({
@@ -609,7 +711,7 @@ export const InternalArgsBuilt = ({
         } else {
           if (v.graphQLType !== graphQLType) {
             throw new Error(
-              `Invalid variable exists with two different GraphQL Types, "${v.graphQLType}" and ${graphQLType}`,
+              `Invalid variable exists with two different GraphQL Types, "${v.graphQLType}" and ${graphQLType}`
             );
           }
         }
@@ -617,29 +719,29 @@ export const InternalArgsBuilt = ({
       }
     }
     const checkType = ResolveFromPath(props, returns, ops)(p);
-    if (checkType.startsWith('scalar.')) {
+    if (checkType.startsWith("scalar.")) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [_, ...splittedScalar] = checkType.split('.');
-      const scalarKey = splittedScalar.join('.');
+      const [_, ...splittedScalar] = checkType.split(".");
+      const scalarKey = splittedScalar.join(".");
       return (scalars?.[scalarKey]?.encode?.(a) as string) || JSON.stringify(a);
     }
     if (Array.isArray(a)) {
-      return `[${a.map((arr) => arb(arr, p, false)).join(', ')}]`;
+      return `[${a.map((arr) => arb(arr, p, false)).join(", ")}]`;
     }
-    if (typeof a === 'string') {
-      if (checkType === 'enum') {
+    if (typeof a === "string") {
+      if (checkType === "enum") {
         return a;
       }
       return `${JSON.stringify(a)}`;
     }
-    if (typeof a === 'object') {
+    if (typeof a === "object") {
       if (a === null) {
         return `null`;
       }
       const returnedObjectString = Object.entries(a)
-        .filter(([, v]) => typeof v !== 'undefined')
+        .filter(([, v]) => typeof v !== "undefined")
         .map(([k, v]) => `${k}: ${arb(v, [p, k].join(SEPARATOR), false)}`)
-        .join(',\n');
+        .join(",\n");
       if (!root) {
         return `{${returnedObjectString}}`;
       }
@@ -650,20 +752,32 @@ export const InternalArgsBuilt = ({
   return arb;
 };
 
-export const resolverFor = <X, T extends keyof ResolverInputTypes, Z extends keyof ResolverInputTypes[T]>(
+export const resolverFor = <
+  X,
+  T extends keyof ResolverInputTypes,
+  Z extends keyof ResolverInputTypes[T]
+>(
   type: T,
   field: Z,
   fn: (
-    args: Required<ResolverInputTypes[T]>[Z] extends [infer Input, any] ? Input : any,
-    source: any,
-  ) => Z extends keyof ModelTypes[T] ? ModelTypes[T][Z] | Promise<ModelTypes[T][Z]> | X : any,
+    args: Required<ResolverInputTypes[T]>[Z] extends [infer Input, any]
+      ? Input
+      : any,
+    source: any
+  ) => Z extends keyof ModelTypes[T]
+    ? ModelTypes[T][Z] | Promise<ModelTypes[T][Z]> | X
+    : any
 ) => fn as (args?: any, source?: any) => any;
 
 export type UnwrapPromise<T> = T extends Promise<infer R> ? R : T;
-export type ZeusState<T extends (...args: any[]) => Promise<any>> = NonNullable<UnwrapPromise<ReturnType<T>>>;
+export type ZeusState<T extends (...args: any[]) => Promise<any>> = NonNullable<
+  UnwrapPromise<ReturnType<T>>
+>;
 export type ZeusHook<
-  T extends (...args: any[]) => Record<string, (...args: any[]) => Promise<any>>,
-  N extends keyof ReturnType<T>,
+  T extends (
+    ...args: any[]
+  ) => Record<string, (...args: any[]) => Promise<any>>,
+  N extends keyof ReturnType<T>
 > = ZeusState<ReturnType<T>[N]>;
 
 export type WithTypeNameValue<T> = T & {
@@ -679,10 +793,12 @@ type DeepAnify<T> = {
 type IsPayLoad<T> = T extends [any, infer PayLoad] ? PayLoad : T;
 export type ScalarDefinition = Record<string, ScalarResolver>;
 
-type IsScalar<S, SCLR extends ScalarDefinition> = S extends 'scalar' & { name: infer T }
+type IsScalar<S, SCLR extends ScalarDefinition> = S extends "scalar" & {
+  name: infer T;
+}
   ? T extends keyof SCLR
-    ? SCLR[T]['decode'] extends (s: unknown) => unknown
-      ? ReturnType<SCLR[T]['decode']>
+    ? SCLR[T]["decode"] extends (s: unknown) => unknown
+      ? ReturnType<SCLR[T]["decode"]>
       : unknown
     : unknown
   : S;
@@ -692,55 +808,86 @@ type IsArray<T, U, SCLR extends ScalarDefinition> = T extends Array<infer R>
 type FlattenArray<T> = T extends Array<infer R> ? R : T;
 type BaseZeusResolver = boolean | 1 | string | Variable<any, string>;
 
-type IsInterfaced<SRC extends DeepAnify<DST>, DST, SCLR extends ScalarDefinition> = FlattenArray<SRC> extends
-  | ZEUS_INTERFACES
-  | ZEUS_UNIONS
+type IsInterfaced<
+  SRC extends DeepAnify<DST>,
+  DST,
+  SCLR extends ScalarDefinition
+> = FlattenArray<SRC> extends ZEUS_INTERFACES | ZEUS_UNIONS
   ? {
-      [P in keyof SRC]: SRC[P] extends '__union' & infer R
+      [P in keyof SRC]: SRC[P] extends "__union" & infer R
         ? P extends keyof DST
-          ? IsArray<R, '__typename' extends keyof DST ? DST[P] & { __typename: true } : DST[P], SCLR>
-          : IsArray<R, '__typename' extends keyof DST ? { __typename: true } : never, SCLR>
+          ? IsArray<
+              R,
+              "__typename" extends keyof DST
+                ? DST[P] & { __typename: true }
+                : DST[P],
+              SCLR
+            >
+          : IsArray<
+              R,
+              "__typename" extends keyof DST ? { __typename: true } : never,
+              SCLR
+            >
         : never;
     }[keyof SRC] & {
       [P in keyof Omit<
         Pick<
           SRC,
           {
-            [P in keyof DST]: SRC[P] extends '__union' & infer R ? never : P;
+            [P in keyof DST]: SRC[P] extends "__union" & infer R ? never : P;
           }[keyof DST]
         >,
-        '__typename'
-      >]: IsPayLoad<DST[P]> extends BaseZeusResolver ? IsScalar<SRC[P], SCLR> : IsArray<SRC[P], DST[P], SCLR>;
+        "__typename"
+      >]: IsPayLoad<DST[P]> extends BaseZeusResolver
+        ? IsScalar<SRC[P], SCLR>
+        : IsArray<SRC[P], DST[P], SCLR>;
     }
   : {
-      [P in keyof Pick<SRC, keyof DST>]: IsPayLoad<DST[P]> extends BaseZeusResolver
+      [P in keyof Pick<SRC, keyof DST>]: IsPayLoad<
+        DST[P]
+      > extends BaseZeusResolver
         ? IsScalar<SRC[P], SCLR>
         : IsArray<SRC[P], DST[P], SCLR>;
     };
 
-export type MapType<SRC, DST, SCLR extends ScalarDefinition> = SRC extends DeepAnify<DST>
-  ? IsInterfaced<SRC, DST, SCLR>
-  : never;
+export type MapType<
+  SRC,
+  DST,
+  SCLR extends ScalarDefinition
+> = SRC extends DeepAnify<DST> ? IsInterfaced<SRC, DST, SCLR> : never;
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type InputType<SRC, DST, SCLR extends ScalarDefinition = {}> = IsPayLoad<DST> extends { __alias: infer R }
+export type InputType<
+  SRC,
+  DST,
+  SCLR extends ScalarDefinition = {}
+> = IsPayLoad<DST> extends { __alias: infer R }
   ? {
       [P in keyof R]: MapType<SRC, R[P], SCLR>[keyof MapType<SRC, R[P], SCLR>];
-    } & MapType<SRC, Omit<IsPayLoad<DST>, '__alias'>, SCLR>
+    } & MapType<SRC, Omit<IsPayLoad<DST>, "__alias">, SCLR>
   : MapType<SRC, IsPayLoad<DST>, SCLR>;
 export type SubscriptionToGraphQL<Z, T, SCLR extends ScalarDefinition> = {
   ws: WebSocket;
   on: (fn: (args: InputType<T, Z, SCLR>) => void) => void;
-  off: (fn: (e: { data?: InputType<T, Z, SCLR>; code?: number; reason?: string; message?: string }) => void) => void;
-  error: (fn: (e: { data?: InputType<T, Z, SCLR>; errors?: string[] }) => void) => void;
+  off: (
+    fn: (e: {
+      data?: InputType<T, Z, SCLR>;
+      code?: number;
+      reason?: string;
+      message?: string;
+    }) => void
+  ) => void;
+  error: (
+    fn: (e: { data?: InputType<T, Z, SCLR>; errors?: string[] }) => void
+  ) => void;
   open: () => void;
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type FromSelector<SELECTOR, NAME extends keyof GraphQLTypes, SCLR extends ScalarDefinition = {}> = InputType<
-  GraphQLTypes[NAME],
+export type FromSelector<
   SELECTOR,
-  SCLR
->;
+  NAME extends keyof GraphQLTypes,
+  SCLR extends ScalarDefinition = {}
+> = InputType<GraphQLTypes[NAME], SELECTOR, SCLR>;
 
 export type ScalarResolver = {
   encode?: (s: unknown) => string;
@@ -750,14 +897,20 @@ export type ScalarResolver = {
 export type SelectionFunction<V> = <T>(t: T | V) => T;
 
 type BuiltInVariableTypes = {
-  ['String']: string;
-  ['Int']: number;
-  ['Float']: number;
-  ['ID']: unknown;
-  ['Boolean']: boolean;
+  ["String"]: string;
+  ["Int"]: number;
+  ["Float"]: number;
+  ["ID"]: unknown;
+  ["Boolean"]: boolean;
 };
 type AllVariableTypes = keyof BuiltInVariableTypes | keyof ZEUS_VARIABLES;
-type VariableRequired<T extends string> = `${T}!` | T | `[${T}]` | `[${T}]!` | `[${T}!]` | `[${T}!]!`;
+type VariableRequired<T extends string> =
+  | `${T}!`
+  | T
+  | `[${T}]`
+  | `[${T}]!`
+  | `[${T}!]`
+  | `[${T}!]!`;
 type VR<T extends string> = VariableRequired<VariableRequired<T>>;
 
 export type GraphQLVariableType = VR<AllVariableTypes>;
@@ -780,11 +933,12 @@ type DecomposeType<T, Type> = T extends `[${infer R}]`
   ? NonNullable<DecomposeType<R, Type>>
   : Type | undefined;
 
-type ExtractTypeFromGraphQLType<T extends string> = T extends keyof ZEUS_VARIABLES
-  ? ZEUS_VARIABLES[T]
-  : T extends keyof BuiltInVariableTypes
-  ? BuiltInVariableTypes[T]
-  : any;
+type ExtractTypeFromGraphQLType<T extends string> =
+  T extends keyof ZEUS_VARIABLES
+    ? ZEUS_VARIABLES[T]
+    : T extends keyof BuiltInVariableTypes
+    ? BuiltInVariableTypes[T]
+    : any;
 
 export type GetVariableType<T extends string> = DecomposeType<
   T,
@@ -802,380 +956,488 @@ type OptionalKeys<T> = {
   [P in keyof T]?: T[P];
 };
 
-export type WithOptionalNullables<T> = OptionalKeys<WithNullableKeys<T>> & WithNonNullableKeys<T>;
+export type WithOptionalNullables<T> = OptionalKeys<WithNullableKeys<T>> &
+  WithNonNullableKeys<T>;
 
 export type Variable<T extends GraphQLVariableType, Name extends string> = {
-  ' __zeus_name': Name;
-  ' __zeus_type': T;
+  " __zeus_name": Name;
+  " __zeus_type": T;
 };
 
-export type ExtractVariables<Query> = Query extends Variable<infer VType, infer VName>
+export type ExtractVariables<Query> = Query extends Variable<
+  infer VType,
+  infer VName
+>
   ? { [key in VName]: GetVariableType<VType> }
   : Query extends [infer Inputs, infer Outputs]
   ? ExtractVariables<Inputs> & ExtractVariables<Outputs>
   : Query extends string | number | boolean
   ? // eslint-disable-next-line @typescript-eslint/ban-types
     {}
-  : UnionToIntersection<{ [K in keyof Query]: WithOptionalNullables<ExtractVariables<Query[K]>> }[keyof Query]>;
+  : UnionToIntersection<
+      {
+        [K in keyof Query]: WithOptionalNullables<ExtractVariables<Query[K]>>;
+      }[keyof Query]
+    >;
 
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
+type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
+  k: infer I
+) => void
+  ? I
+  : never;
 
 export const START_VAR_NAME = `$ZEUS_VAR`;
 export const GRAPHQL_TYPE_SEPARATOR = `__$GRAPHQL__`;
 
-export const $ = <Type extends GraphQLVariableType, Name extends string>(name: Name, graphqlType: Type) => {
-  return (START_VAR_NAME + name + GRAPHQL_TYPE_SEPARATOR + graphqlType) as unknown as Variable<Type, Name>;
+export const $ = <Type extends GraphQLVariableType, Name extends string>(
+  name: Name,
+  graphqlType: Type
+) => {
+  return (START_VAR_NAME +
+    name +
+    GRAPHQL_TYPE_SEPARATOR +
+    graphqlType) as unknown as Variable<Type, Name>;
 };
-type ZEUS_INTERFACES = never
-export type ScalarCoders = {
-}
-type ZEUS_UNIONS = never
+type ZEUS_INTERFACES = never;
+export type ScalarCoders = {};
+type ZEUS_UNIONS = never;
 
 export type ValueTypes = {
-    ["UpdateProjectInput"]: {
-	name?: string | undefined | null | Variable<any, string>
+  ["ProjectMutation"]: AliasType<{
+    createKey?: boolean | `@${string}`;
+    deleteKey?: [
+      { key: string | Variable<any, string> },
+      boolean | `@${string}`
+    ];
+    __typename?: boolean | `@${string}`;
+  }>;
+  ["TestResult"]: AliasType<{
+    /** content of the main feature */
+    featureContent?: boolean | `@${string}`;
+    reasonOfFail?: boolean | `@${string}`;
+    scenario?: boolean | `@${string}`;
+    /** Content of the scenario */
+    testContent?: boolean | `@${string}`;
+    testPath?: boolean | `@${string}`;
+    __typename?: boolean | `@${string}`;
+  }>;
+  ["Mutation"]: AliasType<{
+    admin?: ValueTypes["AdminMutation"];
+    cli?: ValueTypes["CLIMutation"];
+    login?: [
+      { user: ValueTypes["LoginInput"] | Variable<any, string> },
+      boolean | `@${string}`
+    ];
+    register?: [
+      { user: ValueTypes["RegisterInput"] | Variable<any, string> },
+      boolean | `@${string}`
+    ];
+    __typename?: boolean | `@${string}`;
+  }>;
+  ["TestResultInput"]: {
+    testPath: string | Variable<any, string>;
+    testContent: string | Variable<any, string>;
+    featureContent?: string | undefined | null | Variable<any, string>;
+    reasonOfFail?: string | undefined | null | Variable<any, string>;
+    scenario?: string | undefined | null | Variable<any, string>;
+  };
+  ["AdminMutation"]: AliasType<{
+    createProject?: [
+      { projectInput: ValueTypes["ProjectInput"] | Variable<any, string> },
+      boolean | `@${string}`
+    ];
+    deleteProject?: [
+      { _id: string | Variable<any, string> },
+      boolean | `@${string}`
+    ];
+    project?: [
+      { _id: string | Variable<any, string> },
+      ValueTypes["ProjectMutation"]
+    ];
+    updateProject?: [
+      {
+        _id: string | Variable<any, string>;
+        updateProjectInput:
+          | ValueTypes["UpdateProjectInput"]
+          | Variable<any, string>;
+      },
+      boolean | `@${string}`
+    ];
+    __typename?: boolean | `@${string}`;
+  }>;
+  ["UpdateProjectInput"]: {
+    name?: string | undefined | null | Variable<any, string>;
+    issueAddUrl?: string | undefined | null | Variable<any, string>;
+  };
+  ["UploadReportInput"]: {
+    results: Array<ValueTypes["TestResultInput"]> | Variable<any, string>;
+  };
+  ["RegisterInput"]: {
+    username: string | Variable<any, string>;
+    password: string | Variable<any, string>;
+  };
+  ["User"]: AliasType<{
+    username?: boolean | `@${string}`;
+    __typename?: boolean | `@${string}`;
+  }>;
+  ["CLIMutation"]: AliasType<{
+    uploadReport?: [
+      {
+        uploadReportInput:
+          | ValueTypes["UploadReportInput"]
+          | Variable<any, string>;
+      },
+      boolean | `@${string}`
+    ];
+    __typename?: boolean | `@${string}`;
+  }>;
+  ["DateInput"]: {
+    from: string | Variable<any, string>;
+    to?: string | undefined | null | Variable<any, string>;
+  };
+  ["ProjectInput"]: {
+    name: string | Variable<any, string>;
+    issueAddUrl?: string | undefined | null | Variable<any, string>;
+  };
+  ["AdminQuery"]: AliasType<{
+    me?: ValueTypes["User"];
+    projects?: ValueTypes["Project"];
+    reportById?: [
+      { _id: string | Variable<any, string> },
+      ValueTypes["TestReport"]
+    ];
+    __typename?: boolean | `@${string}`;
+  }>;
+  ["Query"]: AliasType<{
+    admin?: ValueTypes["AdminQuery"];
+    __typename?: boolean | `@${string}`;
+  }>;
+  ["TestReport"]: AliasType<{
+    _id?: boolean | `@${string}`;
+    createdAt?: boolean | `@${string}`;
+    project?: ValueTypes["Project"];
+    results?: ValueTypes["TestResult"];
+    __typename?: boolean | `@${string}`;
+  }>;
+  ["LoginInput"]: {
+    username: string | Variable<any, string>;
+    password: string | Variable<any, string>;
+  };
+  ["Project"]: AliasType<{
+    _id?: boolean | `@${string}`;
+    issueAddUrl?: boolean | `@${string}`;
+    keys?: boolean | `@${string}`;
+    name?: boolean | `@${string}`;
+    reports?: [
+      { filterDate: ValueTypes["DateInput"] | Variable<any, string> },
+      ValueTypes["TestReport"]
+    ];
+    __typename?: boolean | `@${string}`;
+  }>;
 };
-	["TestResultInput"]: {
-	testContent: string | Variable<any, string>,
-	reasonOfFail?: string | undefined | null | Variable<any, string>,
-	feature?: string | undefined | null | Variable<any, string>,
-	testPath: string | Variable<any, string>
-};
-	["LoginInput"]: {
-	username: string | Variable<any, string>,
-	password: string | Variable<any, string>
-};
-	["Query"]: AliasType<{
-	admin?:ValueTypes["AdminQuery"],
-		__typename?: boolean | `@${string}`
-}>;
-	["Mutation"]: AliasType<{
-	admin?:ValueTypes["AdminMutation"],
-	cli?:ValueTypes["CLIMutation"],
-login?: [{	user: ValueTypes["LoginInput"] | Variable<any, string>},boolean | `@${string}`],
-register?: [{	user: ValueTypes["RegisterInput"] | Variable<any, string>},boolean | `@${string}`],
-		__typename?: boolean | `@${string}`
-}>;
-	["RegisterInput"]: {
-	username: string | Variable<any, string>,
-	password: string | Variable<any, string>
-};
-	["User"]: AliasType<{
-	username?:boolean | `@${string}`,
-		__typename?: boolean | `@${string}`
-}>;
-	["DateInput"]: {
-	to?: string | undefined | null | Variable<any, string>,
-	from: string | Variable<any, string>
-};
-	["TestResult"]: AliasType<{
-	feature?:boolean | `@${string}`,
-	reasonOfFail?:boolean | `@${string}`,
-	testContent?:boolean | `@${string}`,
-	testPath?:boolean | `@${string}`,
-		__typename?: boolean | `@${string}`
-}>;
-	["ProjectInput"]: {
-	name: string | Variable<any, string>
-};
-	["UploadReportInput"]: {
-	results: Array<ValueTypes["TestResultInput"]> | Variable<any, string>
-};
-	["AdminQuery"]: AliasType<{
-	me?:ValueTypes["User"],
-	projects?:ValueTypes["Project"],
-		__typename?: boolean | `@${string}`
-}>;
-	["ProjectMutation"]: AliasType<{
-	createKey?:boolean | `@${string}`,
-deleteKey?: [{	key: string | Variable<any, string>},boolean | `@${string}`],
-		__typename?: boolean | `@${string}`
-}>;
-	["CLIMutation"]: AliasType<{
-uploadReport?: [{	uploadReportInput: ValueTypes["UploadReportInput"] | Variable<any, string>},boolean | `@${string}`],
-		__typename?: boolean | `@${string}`
-}>;
-	["Project"]: AliasType<{
-	_id?:boolean | `@${string}`,
-	keys?:boolean | `@${string}`,
-	name?:boolean | `@${string}`,
-reports?: [{	filterDate: ValueTypes["DateInput"] | Variable<any, string>},ValueTypes["TestReport"]],
-		__typename?: boolean | `@${string}`
-}>;
-	["TestReport"]: AliasType<{
-	_id?:boolean | `@${string}`,
-	createdAt?:boolean | `@${string}`,
-	project?:ValueTypes["Project"],
-	results?:ValueTypes["TestResult"],
-		__typename?: boolean | `@${string}`
-}>;
-	["AdminMutation"]: AliasType<{
-createProject?: [{	projectInput: ValueTypes["ProjectInput"] | Variable<any, string>},boolean | `@${string}`],
-deleteProject?: [{	_id: string | Variable<any, string>},boolean | `@${string}`],
-project?: [{	_id: string | Variable<any, string>},ValueTypes["ProjectMutation"]],
-updateProject?: [{	_id: string | Variable<any, string>,	updateProjectInput: ValueTypes["UpdateProjectInput"] | Variable<any, string>},boolean | `@${string}`],
-		__typename?: boolean | `@${string}`
-}>
-  }
 
 export type ResolverInputTypes = {
-    ["UpdateProjectInput"]: {
-	name?: string | undefined | null
+  ["ProjectMutation"]: AliasType<{
+    createKey?: boolean | `@${string}`;
+    deleteKey?: [{ key: string }, boolean | `@${string}`];
+    __typename?: boolean | `@${string}`;
+  }>;
+  ["TestResult"]: AliasType<{
+    /** content of the main feature */
+    featureContent?: boolean | `@${string}`;
+    reasonOfFail?: boolean | `@${string}`;
+    scenario?: boolean | `@${string}`;
+    /** Content of the scenario */
+    testContent?: boolean | `@${string}`;
+    testPath?: boolean | `@${string}`;
+    __typename?: boolean | `@${string}`;
+  }>;
+  ["Mutation"]: AliasType<{
+    admin?: ResolverInputTypes["AdminMutation"];
+    cli?: ResolverInputTypes["CLIMutation"];
+    login?: [
+      { user: ResolverInputTypes["LoginInput"] },
+      boolean | `@${string}`
+    ];
+    register?: [
+      { user: ResolverInputTypes["RegisterInput"] },
+      boolean | `@${string}`
+    ];
+    __typename?: boolean | `@${string}`;
+  }>;
+  ["TestResultInput"]: {
+    testPath: string;
+    testContent: string;
+    featureContent?: string | undefined | null;
+    reasonOfFail?: string | undefined | null;
+    scenario?: string | undefined | null;
+  };
+  ["AdminMutation"]: AliasType<{
+    createProject?: [
+      { projectInput: ResolverInputTypes["ProjectInput"] },
+      boolean | `@${string}`
+    ];
+    deleteProject?: [{ _id: string }, boolean | `@${string}`];
+    project?: [{ _id: string }, ResolverInputTypes["ProjectMutation"]];
+    updateProject?: [
+      {
+        _id: string;
+        updateProjectInput: ResolverInputTypes["UpdateProjectInput"];
+      },
+      boolean | `@${string}`
+    ];
+    __typename?: boolean | `@${string}`;
+  }>;
+  ["UpdateProjectInput"]: {
+    name?: string | undefined | null;
+    issueAddUrl?: string | undefined | null;
+  };
+  ["UploadReportInput"]: {
+    results: Array<ResolverInputTypes["TestResultInput"]>;
+  };
+  ["RegisterInput"]: {
+    username: string;
+    password: string;
+  };
+  ["User"]: AliasType<{
+    username?: boolean | `@${string}`;
+    __typename?: boolean | `@${string}`;
+  }>;
+  ["CLIMutation"]: AliasType<{
+    uploadReport?: [
+      { uploadReportInput: ResolverInputTypes["UploadReportInput"] },
+      boolean | `@${string}`
+    ];
+    __typename?: boolean | `@${string}`;
+  }>;
+  ["DateInput"]: {
+    from: string;
+    to?: string | undefined | null;
+  };
+  ["ProjectInput"]: {
+    name: string;
+    issueAddUrl?: string | undefined | null;
+  };
+  ["AdminQuery"]: AliasType<{
+    me?: ResolverInputTypes["User"];
+    projects?: ResolverInputTypes["Project"];
+    reportById?: [{ _id: string }, ResolverInputTypes["TestReport"]];
+    __typename?: boolean | `@${string}`;
+  }>;
+  ["Query"]: AliasType<{
+    admin?: ResolverInputTypes["AdminQuery"];
+    __typename?: boolean | `@${string}`;
+  }>;
+  ["TestReport"]: AliasType<{
+    _id?: boolean | `@${string}`;
+    createdAt?: boolean | `@${string}`;
+    project?: ResolverInputTypes["Project"];
+    results?: ResolverInputTypes["TestResult"];
+    __typename?: boolean | `@${string}`;
+  }>;
+  ["LoginInput"]: {
+    username: string;
+    password: string;
+  };
+  ["Project"]: AliasType<{
+    _id?: boolean | `@${string}`;
+    issueAddUrl?: boolean | `@${string}`;
+    keys?: boolean | `@${string}`;
+    name?: boolean | `@${string}`;
+    reports?: [
+      { filterDate: ResolverInputTypes["DateInput"] },
+      ResolverInputTypes["TestReport"]
+    ];
+    __typename?: boolean | `@${string}`;
+  }>;
 };
-	["TestResultInput"]: {
-	testContent: string,
-	reasonOfFail?: string | undefined | null,
-	feature?: string | undefined | null,
-	testPath: string
-};
-	["LoginInput"]: {
-	username: string,
-	password: string
-};
-	["Query"]: AliasType<{
-	admin?:ResolverInputTypes["AdminQuery"],
-		__typename?: boolean | `@${string}`
-}>;
-	["Mutation"]: AliasType<{
-	admin?:ResolverInputTypes["AdminMutation"],
-	cli?:ResolverInputTypes["CLIMutation"],
-login?: [{	user: ResolverInputTypes["LoginInput"]},boolean | `@${string}`],
-register?: [{	user: ResolverInputTypes["RegisterInput"]},boolean | `@${string}`],
-		__typename?: boolean | `@${string}`
-}>;
-	["RegisterInput"]: {
-	username: string,
-	password: string
-};
-	["User"]: AliasType<{
-	username?:boolean | `@${string}`,
-		__typename?: boolean | `@${string}`
-}>;
-	["DateInput"]: {
-	to?: string | undefined | null,
-	from: string
-};
-	["TestResult"]: AliasType<{
-	feature?:boolean | `@${string}`,
-	reasonOfFail?:boolean | `@${string}`,
-	testContent?:boolean | `@${string}`,
-	testPath?:boolean | `@${string}`,
-		__typename?: boolean | `@${string}`
-}>;
-	["ProjectInput"]: {
-	name: string
-};
-	["UploadReportInput"]: {
-	results: Array<ResolverInputTypes["TestResultInput"]>
-};
-	["AdminQuery"]: AliasType<{
-	me?:ResolverInputTypes["User"],
-	projects?:ResolverInputTypes["Project"],
-		__typename?: boolean | `@${string}`
-}>;
-	["ProjectMutation"]: AliasType<{
-	createKey?:boolean | `@${string}`,
-deleteKey?: [{	key: string},boolean | `@${string}`],
-		__typename?: boolean | `@${string}`
-}>;
-	["CLIMutation"]: AliasType<{
-uploadReport?: [{	uploadReportInput: ResolverInputTypes["UploadReportInput"]},boolean | `@${string}`],
-		__typename?: boolean | `@${string}`
-}>;
-	["Project"]: AliasType<{
-	_id?:boolean | `@${string}`,
-	keys?:boolean | `@${string}`,
-	name?:boolean | `@${string}`,
-reports?: [{	filterDate: ResolverInputTypes["DateInput"]},ResolverInputTypes["TestReport"]],
-		__typename?: boolean | `@${string}`
-}>;
-	["TestReport"]: AliasType<{
-	_id?:boolean | `@${string}`,
-	createdAt?:boolean | `@${string}`,
-	project?:ResolverInputTypes["Project"],
-	results?:ResolverInputTypes["TestResult"],
-		__typename?: boolean | `@${string}`
-}>;
-	["AdminMutation"]: AliasType<{
-createProject?: [{	projectInput: ResolverInputTypes["ProjectInput"]},boolean | `@${string}`],
-deleteProject?: [{	_id: string},boolean | `@${string}`],
-project?: [{	_id: string},ResolverInputTypes["ProjectMutation"]],
-updateProject?: [{	_id: string,	updateProjectInput: ResolverInputTypes["UpdateProjectInput"]},boolean | `@${string}`],
-		__typename?: boolean | `@${string}`
-}>
-  }
 
 export type ModelTypes = {
-    ["UpdateProjectInput"]: {
-	name?: string | undefined
+  ["ProjectMutation"]: {
+    createKey?: string | undefined;
+    deleteKey?: boolean | undefined;
+  };
+  ["TestResult"]: {
+    /** content of the main feature */
+    featureContent?: string | undefined;
+    reasonOfFail?: string | undefined;
+    scenario?: string | undefined;
+    /** Content of the scenario */
+    testContent: string;
+    testPath: string;
+  };
+  ["Mutation"]: {
+    admin?: ModelTypes["AdminMutation"] | undefined;
+    cli?: ModelTypes["CLIMutation"] | undefined;
+    login?: string | undefined;
+    register?: boolean | undefined;
+  };
+  ["TestResultInput"]: {
+    testPath: string;
+    testContent: string;
+    featureContent?: string | undefined;
+    reasonOfFail?: string | undefined;
+    scenario?: string | undefined;
+  };
+  ["AdminMutation"]: {
+    createProject?: string | undefined;
+    deleteProject?: boolean | undefined;
+    project?: ModelTypes["ProjectMutation"] | undefined;
+    updateProject?: boolean | undefined;
+  };
+  ["UpdateProjectInput"]: {
+    name?: string | undefined;
+    issueAddUrl?: string | undefined;
+  };
+  ["UploadReportInput"]: {
+    results: Array<ModelTypes["TestResultInput"]>;
+  };
+  ["RegisterInput"]: {
+    username: string;
+    password: string;
+  };
+  ["User"]: {
+    username: string;
+  };
+  ["CLIMutation"]: {
+    uploadReport?: string | undefined;
+  };
+  ["DateInput"]: {
+    from: string;
+    to?: string | undefined;
+  };
+  ["ProjectInput"]: {
+    name: string;
+    issueAddUrl?: string | undefined;
+  };
+  ["AdminQuery"]: {
+    me: ModelTypes["User"];
+    projects: Array<ModelTypes["Project"]>;
+    reportById?: ModelTypes["TestReport"] | undefined;
+  };
+  ["Query"]: {
+    admin?: ModelTypes["AdminQuery"] | undefined;
+  };
+  ["TestReport"]: {
+    _id: string;
+    createdAt: string;
+    project: ModelTypes["Project"];
+    results: Array<ModelTypes["TestResult"]>;
+  };
+  ["LoginInput"]: {
+    username: string;
+    password: string;
+  };
+  ["Project"]: {
+    _id: string;
+    issueAddUrl?: string | undefined;
+    keys?: Array<string> | undefined;
+    name: string;
+    reports?: Array<ModelTypes["TestReport"]> | undefined;
+  };
 };
-	["TestResultInput"]: {
-	testContent: string,
-	reasonOfFail?: string | undefined,
-	feature?: string | undefined,
-	testPath: string
-};
-	["LoginInput"]: {
-	username: string,
-	password: string
-};
-	["Query"]: {
-		admin?: ModelTypes["AdminQuery"] | undefined
-};
-	["Mutation"]: {
-		admin?: ModelTypes["AdminMutation"] | undefined,
-	cli?: ModelTypes["CLIMutation"] | undefined,
-	login?: string | undefined,
-	register?: boolean | undefined
-};
-	["RegisterInput"]: {
-	username: string,
-	password: string
-};
-	["User"]: {
-		username: string
-};
-	["DateInput"]: {
-	to?: string | undefined,
-	from: string
-};
-	["TestResult"]: {
-		feature?: string | undefined,
-	reasonOfFail?: string | undefined,
-	testContent: string,
-	testPath: string
-};
-	["ProjectInput"]: {
-	name: string
-};
-	["UploadReportInput"]: {
-	results: Array<ModelTypes["TestResultInput"]>
-};
-	["AdminQuery"]: {
-		me: ModelTypes["User"],
-	projects: Array<ModelTypes["Project"]>
-};
-	["ProjectMutation"]: {
-		createKey?: string | undefined,
-	deleteKey?: boolean | undefined
-};
-	["CLIMutation"]: {
-		uploadReport?: string | undefined
-};
-	["Project"]: {
-		_id: string,
-	keys?: Array<string> | undefined,
-	name: string,
-	reports?: Array<ModelTypes["TestReport"]> | undefined
-};
-	["TestReport"]: {
-		_id: string,
-	createdAt: string,
-	project: ModelTypes["Project"],
-	results: Array<ModelTypes["TestResult"]>
-};
-	["AdminMutation"]: {
-		createProject?: string | undefined,
-	deleteProject?: boolean | undefined,
-	project?: ModelTypes["ProjectMutation"] | undefined,
-	updateProject?: boolean | undefined
-}
-    }
 
 export type GraphQLTypes = {
-    ["UpdateProjectInput"]: {
-		name?: string | undefined
+  ["ProjectMutation"]: {
+    __typename: "ProjectMutation";
+    createKey?: string | undefined;
+    deleteKey?: boolean | undefined;
+  };
+  ["TestResult"]: {
+    __typename: "TestResult";
+    /** content of the main feature */
+    featureContent?: string | undefined;
+    reasonOfFail?: string | undefined;
+    scenario?: string | undefined;
+    /** Content of the scenario */
+    testContent: string;
+    testPath: string;
+  };
+  ["Mutation"]: {
+    __typename: "Mutation";
+    admin?: GraphQLTypes["AdminMutation"] | undefined;
+    cli?: GraphQLTypes["CLIMutation"] | undefined;
+    login?: string | undefined;
+    register?: boolean | undefined;
+  };
+  ["TestResultInput"]: {
+    testPath: string;
+    testContent: string;
+    featureContent?: string | undefined;
+    reasonOfFail?: string | undefined;
+    scenario?: string | undefined;
+  };
+  ["AdminMutation"]: {
+    __typename: "AdminMutation";
+    createProject?: string | undefined;
+    deleteProject?: boolean | undefined;
+    project?: GraphQLTypes["ProjectMutation"] | undefined;
+    updateProject?: boolean | undefined;
+  };
+  ["UpdateProjectInput"]: {
+    name?: string | undefined;
+    issueAddUrl?: string | undefined;
+  };
+  ["UploadReportInput"]: {
+    results: Array<GraphQLTypes["TestResultInput"]>;
+  };
+  ["RegisterInput"]: {
+    username: string;
+    password: string;
+  };
+  ["User"]: {
+    __typename: "User";
+    username: string;
+  };
+  ["CLIMutation"]: {
+    __typename: "CLIMutation";
+    uploadReport?: string | undefined;
+  };
+  ["DateInput"]: {
+    from: string;
+    to?: string | undefined;
+  };
+  ["ProjectInput"]: {
+    name: string;
+    issueAddUrl?: string | undefined;
+  };
+  ["AdminQuery"]: {
+    __typename: "AdminQuery";
+    me: GraphQLTypes["User"];
+    projects: Array<GraphQLTypes["Project"]>;
+    reportById?: GraphQLTypes["TestReport"] | undefined;
+  };
+  ["Query"]: {
+    __typename: "Query";
+    admin?: GraphQLTypes["AdminQuery"] | undefined;
+  };
+  ["TestReport"]: {
+    __typename: "TestReport";
+    _id: string;
+    createdAt: string;
+    project: GraphQLTypes["Project"];
+    results: Array<GraphQLTypes["TestResult"]>;
+  };
+  ["LoginInput"]: {
+    username: string;
+    password: string;
+  };
+  ["Project"]: {
+    __typename: "Project";
+    _id: string;
+    issueAddUrl?: string | undefined;
+    keys?: Array<string> | undefined;
+    name: string;
+    reports?: Array<GraphQLTypes["TestReport"]> | undefined;
+  };
 };
-	["TestResultInput"]: {
-		testContent: string,
-	reasonOfFail?: string | undefined,
-	feature?: string | undefined,
-	testPath: string
-};
-	["LoginInput"]: {
-		username: string,
-	password: string
-};
-	["Query"]: {
-	__typename: "Query",
-	admin?: GraphQLTypes["AdminQuery"] | undefined
-};
-	["Mutation"]: {
-	__typename: "Mutation",
-	admin?: GraphQLTypes["AdminMutation"] | undefined,
-	cli?: GraphQLTypes["CLIMutation"] | undefined,
-	login?: string | undefined,
-	register?: boolean | undefined
-};
-	["RegisterInput"]: {
-		username: string,
-	password: string
-};
-	["User"]: {
-	__typename: "User",
-	username: string
-};
-	["DateInput"]: {
-		to?: string | undefined,
-	from: string
-};
-	["TestResult"]: {
-	__typename: "TestResult",
-	feature?: string | undefined,
-	reasonOfFail?: string | undefined,
-	testContent: string,
-	testPath: string
-};
-	["ProjectInput"]: {
-		name: string
-};
-	["UploadReportInput"]: {
-		results: Array<GraphQLTypes["TestResultInput"]>
-};
-	["AdminQuery"]: {
-	__typename: "AdminQuery",
-	me: GraphQLTypes["User"],
-	projects: Array<GraphQLTypes["Project"]>
-};
-	["ProjectMutation"]: {
-	__typename: "ProjectMutation",
-	createKey?: string | undefined,
-	deleteKey?: boolean | undefined
-};
-	["CLIMutation"]: {
-	__typename: "CLIMutation",
-	uploadReport?: string | undefined
-};
-	["Project"]: {
-	__typename: "Project",
-	_id: string,
-	keys?: Array<string> | undefined,
-	name: string,
-	reports?: Array<GraphQLTypes["TestReport"]> | undefined
-};
-	["TestReport"]: {
-	__typename: "TestReport",
-	_id: string,
-	createdAt: string,
-	project: GraphQLTypes["Project"],
-	results: Array<GraphQLTypes["TestResult"]>
-};
-	["AdminMutation"]: {
-	__typename: "AdminMutation",
-	createProject?: string | undefined,
-	deleteProject?: boolean | undefined,
-	project?: GraphQLTypes["ProjectMutation"] | undefined,
-	updateProject?: boolean | undefined
-}
-    }
-
 
 type ZEUS_VARIABLES = {
-	["UpdateProjectInput"]: ValueTypes["UpdateProjectInput"];
-	["TestResultInput"]: ValueTypes["TestResultInput"];
-	["LoginInput"]: ValueTypes["LoginInput"];
-	["RegisterInput"]: ValueTypes["RegisterInput"];
-	["DateInput"]: ValueTypes["DateInput"];
-	["ProjectInput"]: ValueTypes["ProjectInput"];
-	["UploadReportInput"]: ValueTypes["UploadReportInput"];
-}
+  ["TestResultInput"]: ValueTypes["TestResultInput"];
+  ["UpdateProjectInput"]: ValueTypes["UpdateProjectInput"];
+  ["UploadReportInput"]: ValueTypes["UploadReportInput"];
+  ["RegisterInput"]: ValueTypes["RegisterInput"];
+  ["DateInput"]: ValueTypes["DateInput"];
+  ["ProjectInput"]: ValueTypes["ProjectInput"];
+  ["LoginInput"]: ValueTypes["LoginInput"];
+};

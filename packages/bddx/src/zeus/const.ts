@@ -1,14 +1,10 @@
 /* eslint-disable */
 
 export const AllTypesProps: Record<string,any> = {
-	UpdateProjectInput:{
+	ProjectMutation:{
+		deleteKey:{
 
-	},
-	TestResultInput:{
-
-	},
-	LoginInput:{
-
+		}
 	},
 	Mutation:{
 		login:{
@@ -18,32 +14,8 @@ export const AllTypesProps: Record<string,any> = {
 			user:"RegisterInput"
 		}
 	},
-	RegisterInput:{
+	TestResultInput:{
 
-	},
-	DateInput:{
-
-	},
-	ProjectInput:{
-
-	},
-	UploadReportInput:{
-		results:"TestResultInput"
-	},
-	ProjectMutation:{
-		deleteKey:{
-
-		}
-	},
-	CLIMutation:{
-		uploadReport:{
-			uploadReportInput:"UploadReportInput"
-		}
-	},
-	Project:{
-		reports:{
-			filterDate:"DateInput"
-		}
 	},
 	AdminMutation:{
 		createProject:{
@@ -58,12 +30,53 @@ export const AllTypesProps: Record<string,any> = {
 		updateProject:{
 			updateProjectInput:"UpdateProjectInput"
 		}
+	},
+	UpdateProjectInput:{
+
+	},
+	UploadReportInput:{
+		results:"TestResultInput"
+	},
+	RegisterInput:{
+
+	},
+	CLIMutation:{
+		uploadReport:{
+			uploadReportInput:"UploadReportInput"
+		}
+	},
+	DateInput:{
+
+	},
+	ProjectInput:{
+
+	},
+	AdminQuery:{
+		reportById:{
+
+		}
+	},
+	LoginInput:{
+
+	},
+	Project:{
+		reports:{
+			filterDate:"DateInput"
+		}
 	}
 }
 
 export const ReturnTypes: Record<string,any> = {
-	Query:{
-		admin:"AdminQuery"
+	ProjectMutation:{
+		createKey:"String",
+		deleteKey:"Boolean"
+	},
+	TestResult:{
+		featureContent:"String",
+		reasonOfFail:"String",
+		scenario:"String",
+		testContent:"String",
+		testPath:"String"
 	},
 	Mutation:{
 		admin:"AdminMutation",
@@ -71,31 +84,25 @@ export const ReturnTypes: Record<string,any> = {
 		login:"String",
 		register:"Boolean"
 	},
+	AdminMutation:{
+		createProject:"String",
+		deleteProject:"Boolean",
+		project:"ProjectMutation",
+		updateProject:"Boolean"
+	},
 	User:{
 		username:"String"
-	},
-	TestResult:{
-		feature:"String",
-		reasonOfFail:"String",
-		testContent:"String",
-		testPath:"String"
-	},
-	AdminQuery:{
-		me:"User",
-		projects:"Project"
-	},
-	ProjectMutation:{
-		createKey:"String",
-		deleteKey:"Boolean"
 	},
 	CLIMutation:{
 		uploadReport:"String"
 	},
-	Project:{
-		_id:"String",
-		keys:"String",
-		name:"String",
-		reports:"TestReport"
+	AdminQuery:{
+		me:"User",
+		projects:"Project",
+		reportById:"TestReport"
+	},
+	Query:{
+		admin:"AdminQuery"
 	},
 	TestReport:{
 		_id:"String",
@@ -103,15 +110,16 @@ export const ReturnTypes: Record<string,any> = {
 		project:"Project",
 		results:"TestResult"
 	},
-	AdminMutation:{
-		createProject:"String",
-		deleteProject:"Boolean",
-		project:"ProjectMutation",
-		updateProject:"Boolean"
+	Project:{
+		_id:"String",
+		issueAddUrl:"String",
+		keys:"String",
+		name:"String",
+		reports:"TestReport"
 	}
 }
 
 export const Ops = {
-query: "Query" as const,
-	mutation: "Mutation" as const
+mutation: "Mutation" as const,
+	query: "Query" as const
 }
