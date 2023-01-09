@@ -61,20 +61,20 @@ export const cloudIntegration = async (resultsPaths: string[]) => {
     if (content.testStatus.status === TEST_STATUS.FINISHED) {
       const arrayToSend: ModelTypes["UploadReportInput"] = { results: [] };
       content.passedTests.map((test) => {
-        const testContent = fs.readFileSync(test.testPath).toString();
         arrayToSend.results.push({
           testPath: test.testPath,
-          testContent: testContent,
-          feature: test.scenarioTitle,
+          featureContent: test.featureContent,
+          testContent: test.scenarioContent,
+          scenario: test.scenarioTitle,
         });
       });
       content.failedTests.map((test) => {
-        const testContent = fs.readFileSync(test.testPath).toString();
         arrayToSend.results.push({
           testPath: test.testPath,
-          testContent: testContent,
+          featureContent: test.featureContent,
+          scenario: test.scenarioTitle,
+          testContent: test.scenarioContent,
           reasonOfFail: test.reasonOfFail,
-          feature: test.scenarioTitle,
         });
       });
       if (arrayToSend.results.length === 0) {

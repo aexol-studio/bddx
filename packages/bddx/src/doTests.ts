@@ -18,11 +18,15 @@ export type Results = {
   passedTests: {
     testPath: string;
     scenarioTitle: string;
+    scenarioContent: string;
+    featureContent: string;
   }[];
   failedTests: {
     testPath: string;
     reasonOfFail: string;
+    scenarioContent: string;
     scenarioTitle: string;
+    featureContent: string;
   }[];
 };
 
@@ -180,10 +184,15 @@ const doTestsFunction = async (
         i < splittedByScenario.length;
         i++
       ) {
-        const scenarioTitle: string = splittedByScenario[i]
-          .split("\n")[0]
+        const splitSplittedScenario = splittedByScenario[i].split("\n");
+        const featureContent = splittedByScenario[0]
+          .split("Feature:")[1]
+          .trim();
+        const scenarioTitle: string = splitSplittedScenario[0]
           .replaceAll("\r", "")
           .trim();
+        splitSplittedScenario.shift();
+        const scenarioContent: string = splitSplittedScenario.join("\n").trim();
         messageWithContent(
           "Feature:",
           splittedByScenario[0].replace("Feature:", ""),
@@ -218,6 +227,8 @@ const doTestsFunction = async (
             {
               testPath: file,
               scenarioTitle,
+              scenarioContent,
+              featureContent,
             },
           ];
           if (i === splittedByScenario.length - 1) {
@@ -238,6 +249,8 @@ const doTestsFunction = async (
               testPath: file,
               reasonOfFail: answers.message,
               scenarioTitle,
+              scenarioContent,
+              featureContent,
             },
           ];
           if (i === splittedByScenario.length - 1) {
