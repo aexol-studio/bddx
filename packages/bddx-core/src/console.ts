@@ -23,20 +23,22 @@ export const message = (m: string, color: Colors) => {
   console.log(chalk[color](m));
 };
 
+const regex = (word: string) => new RegExp(`(?<!\\S)${word}(?!\\S)`, "g");
+
 export const rebuildToGherkin = (val: string) => {
   return val
-    .replaceAll("Feature:", chalk["yellow"]("Feature:"))
-    .replaceAll("Rule:", chalk["red"]("Rule:"))
-    .replaceAll("Example:", chalk["red"]("Example:"))
-    .replaceAll("Scenario:", chalk["red"]("Scenario:"))
-    .replaceAll("Given", chalk["blueBright"]("Given"))
-    .replaceAll("When", chalk["blueBright"]("When"))
-    .replaceAll("Then", chalk["blueBright"]("Then"))
-    .replaceAll("And", chalk["blueBright"]("And"))
-    .replaceAll("But", chalk["blueBright"]("But"))
-    .replaceAll("Background:", chalk["red"]("Background:"))
-    .replaceAll("Scenario Outline:", chalk["red"]("Scenario Outline:"))
-    .replaceAll("Scenario Template:", chalk["red"]("Scenario Template:"));
+    .replaceAll(regex("Feature:"), chalk["yellow"]("Feature:"))
+    .replaceAll(regex("Rule:"), chalk["red"]("Rule:"))
+    .replaceAll(regex("Example:"), chalk["red"]("Example:"))
+    .replaceAll(regex("Scenario:"), chalk["red"]("Scenario:"))
+    .replaceAll(regex("Background:"), chalk["red"]("Background:"))
+    .replaceAll(regex("Scenario Outline:"), chalk["red"]("Scenario Outline:"))
+    .replaceAll(regex("Scenario Template:"), chalk["red"]("Scenario Template:"))
+    .replaceAll(regex("Given"), chalk["blueBright"]("Given"))
+    .replaceAll(regex("When"), chalk["blueBright"]("When"))
+    .replaceAll(regex("Then"), chalk["blueBright"]("Then"))
+    .replaceAll(regex("And"), chalk["blueBright"]("And"))
+    .replaceAll(regex("But"), chalk["blueBright"]("But"));
 };
 
 export const messageWithContent = (
