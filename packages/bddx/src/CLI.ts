@@ -12,20 +12,26 @@ import {
   doTests,
   doUnfinishedTest,
   getUnfinishedTestsNames,
+  getFailedTestsNames,
+  Results,
 } from "./doTests.js";
+import fs from "fs";
 import yargs from "yargs";
 import { Version3Client } from "jira.js";
 import inquirer from "inquirer";
 import { checkJiraToken, initJira } from "./initJira.js";
 import conf from "conf";
 import { cloudIntegration } from "./cloudIntegration.js";
-
 process.on("SIGINT", () => {
   message("Exiting...(file with unsuccessful test was created)", "redBright");
   process.exit();
 });
 
 yargs(process.argv.slice(2))
+  .command("version", "BDDX Version", async () => {
+    message(`0.1.6`, "red");
+    return;
+  })
   .usage(
     `BDDX 🤯 - Perform and save BDD tests results. Run to watch directory with .feature files and perform each test`
   )
@@ -43,6 +49,7 @@ yargs(process.argv.slice(2))
       }
     }
   })
+
   .command("cloud", "Run bddx tests with BDDX Cloud integration", async () => {
     const config = readConfig("./bddx.json");
     if (config) {
@@ -155,6 +162,32 @@ yargs(process.argv.slice(2))
       }
     }
   })
+  .command(
+    "failedTests",
+    "Run bddx test for failed test from cloud",
+    async () => {
+      const config = readConfig("./bddx.json");
+      if (config) {
+        message(
+          `Read config: tests files are in ${config.in} and result of tests will be saved in ${config.out}`,
+          "blueBright"
+        );
+        await checkConfigDirectories(config);
+        const failed = await getFailedTestsNames(config.out);
+        if (!failed || failed.length === 0) {
+          message("There are no failed BDDX files", "yellow");
+          return;
+        } else if (failed.length > 0) {
+          for (const file of failed) {
+            const fileContent: Results = JSON.parse(
+              fs.readFileSync(config.out + "/" + file).toString("utf8")
+            );
+            console.log(fileContent.failedTests.length);
+          }
+        }
+      }
+    }
+  )
   .command(
     "continue",
     "Start BDDX tests from output file where you did not went through al tests",

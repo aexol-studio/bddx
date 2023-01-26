@@ -116,6 +116,23 @@ export const doTests = async (
   }
 };
 
+export const getFailedTestsNames = async (outPath: string) => {
+  if (!fs.existsSync(outPath)) {
+    message("Output path does not exists", "red");
+    return;
+  }
+  const fileNames: string[] = [];
+  fs.readdirSync(outPath).forEach((file) => {
+    const fileContent: Results = JSON.parse(
+      fs.readFileSync(outPath + "/" + file).toString("utf8")
+    );
+    if (file.endsWith(".json") && fileContent.failedTests.length > 0) {
+      fileNames.push(file);
+    }
+  });
+  return fileNames;
+};
+
 export const getUnfinishedTestsNames = async (outPath: string) => {
   if (!fs.existsSync(outPath)) {
     message("Output path does not exists", "red");
@@ -162,7 +179,7 @@ export const doUnfinishedTest = async (
   await doTestsFunction(restOfTests, results, fileName, outTestsPath, jira);
 };
 
-const doTestsFunction = async (
+export const doTestsFunction = async (
   testsPaths: string[],
   results: Results,
   fileName: string,
