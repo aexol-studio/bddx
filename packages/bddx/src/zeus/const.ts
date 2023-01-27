@@ -1,21 +1,66 @@
 /* eslint-disable */
 
 export const AllTypesProps: Record<string,any> = {
-	ProjectMutation:{
-		deleteKey:{
+	DateInput:{
 
+	},
+	GenerateOAuthTokenInput:{
+		social:"SocialKind"
+	},
+	SocialKind: "enum" as const,
+	VerifyEmailInput:{
+
+	},
+	CLIMutation:{
+		updateReport:{
+			uploadReportInput:"UpdateReportInput"
+		},
+		uploadReport:{
+			uploadReportInput:"UploadReportInput"
 		}
 	},
+	Project:{
+		reports:{
+			filterDate:"DateInput"
+		}
+	},
+	ProjectInput:{
+
+	},
+	SimpleUserInput:{
+
+	},
+	ProviderErrors: "enum" as const,
 	Mutation:{
-		login:{
-			user:"LoginInput"
+		changePassword:{
+			changePasswordData:"ChangePasswordInput"
+		},
+		generateOAuthToken:{
+			tokenData:"GenerateOAuthTokenInput"
+		},
+		integrateSocialAccount:{
+			userData:"SimpleUserInput"
 		},
 		register:{
 			user:"RegisterInput"
+		},
+		verifyEmail:{
+			verifyData:"VerifyEmailInput"
 		}
 	},
-	TestResultInput:{
+	UploadReportInput:{
+		results:"TestResultInput"
+	},
+	ChangePasswordInput:{
 
+	},
+	CLIQuery:{
+		getReport:{
+
+		},
+		getReports:{
+
+		}
 	},
 	AdminMutation:{
 		createProject:{
@@ -31,84 +76,66 @@ export const AllTypesProps: Record<string,any> = {
 			updateProjectInput:"UpdateProjectInput"
 		}
 	},
+	UpdateReportInput:{
+		results:"TestResultInput"
+	},
+	LoginQuery:{
+		password:{
+			user:"LoginInput"
+		},
+		provider:{
+			params:"ProviderLoginInput"
+		}
+	},
+	ProviderLoginInput:{
+
+	},
+	LoginErrors: "enum" as const,
+	AdminQuery:{
+		reportById:{
+
+		}
+	},
 	UpdateProjectInput:{
 
 	},
-	UploadReportInput:{
-		results:"TestResultInput"
-	},
-	RegisterInput:{
+	ProjectMutation:{
+		deleteKey:{
 
-	},
-	CLIMutation:{
-		uploadReport:{
-			uploadReportInput:"UploadReportInput"
 		}
 	},
-	DateInput:{
+	Query:{
+		getGithubOAuthLink:{
 
-	},
-	ProjectInput:{
-
-	},
-	AdminQuery:{
-		reportById:{
+		},
+		requestForForgotPassword:{
 
 		}
 	},
 	LoginInput:{
 
 	},
-	Project:{
-		reports:{
-			filterDate:"DateInput"
-		}
-	}
+	TestResultInput:{
+
+	},
+	RegisterInput:{
+
+	},
+	RegisterErrors: "enum" as const
 }
 
 export const ReturnTypes: Record<string,any> = {
-	ProjectMutation:{
-		createKey:"String",
-		deleteKey:"Boolean"
+	CLIMutation:{
+		updateReport:"Boolean",
+		uploadReport:"String"
 	},
 	TestResult:{
 		featureContent:"String",
+		inherited:"String",
 		reasonOfFail:"String",
 		scenario:"String",
 		testContent:"String",
 		testPath:"String"
-	},
-	Mutation:{
-		admin:"AdminMutation",
-		cli:"CLIMutation",
-		login:"String",
-		register:"Boolean"
-	},
-	AdminMutation:{
-		createProject:"String",
-		deleteProject:"Boolean",
-		project:"ProjectMutation",
-		updateProject:"Boolean"
-	},
-	User:{
-		username:"String"
-	},
-	CLIMutation:{
-		uploadReport:"String"
-	},
-	AdminQuery:{
-		me:"User",
-		projects:"Project",
-		reportById:"TestReport"
-	},
-	Query:{
-		admin:"AdminQuery"
-	},
-	TestReport:{
-		_id:"String",
-		createdAt:"String",
-		project:"Project",
-		results:"TestResult"
 	},
 	Project:{
 		_id:"String",
@@ -116,6 +143,74 @@ export const ReturnTypes: Record<string,any> = {
 		keys:"String",
 		name:"String",
 		reports:"TestReport"
+	},
+	Mutation:{
+		admin:"AdminMutation",
+		changePassword:"Boolean",
+		cli:"CLIMutation",
+		generateOAuthToken:"Boolean",
+		integrateSocialAccount:"Boolean",
+		register:"RegisterResponse",
+		verifyEmail:"Boolean"
+	},
+	CLIQuery:{
+		getReport:"TestReport",
+		getReports:"TestReport"
+	},
+	User:{
+		username:"String"
+	},
+	AdminMutation:{
+		createProject:"String",
+		deleteProject:"Boolean",
+		project:"ProjectMutation",
+		updateProject:"Boolean"
+	},
+	ProviderLoginQuery:{
+		apple:"ProviderResponse",
+		github:"ProviderResponse",
+		google:"ProviderResponse"
+	},
+	LoginQuery:{
+		password:"LoginResponse",
+		provider:"ProviderLoginQuery"
+	},
+	AdminQuery:{
+		me:"User",
+		projects:"Project",
+		reportById:"TestReport"
+	},
+	ProjectMutation:{
+		createKey:"String",
+		deleteKey:"Boolean"
+	},
+	Query:{
+		admin:"AdminQuery",
+		cli:"CLIQuery",
+		getAppleOAuthLink:"String",
+		getGithubOAuthLink:"String",
+		getGoogleOAuthLink:"String",
+		login:"LoginQuery",
+		requestForForgotPassword:"Boolean"
+	},
+	ProviderResponse:{
+		access_token:"String",
+		hasError:"ProviderErrors",
+		jwt:"String"
+	},
+	LoginResponse:{
+		hasError:"LoginErrors",
+		login:"String"
+	},
+	RegisterResponse:{
+		hasError:"RegisterErrors",
+		registered:"Boolean"
+	},
+	TestReport:{
+		_id:"String",
+		createdAt:"String",
+		project:"Project",
+		results:"TestResult"
 	}
 }
 

@@ -19,25 +19,18 @@ process.on("SIGINT", () => {
 
 const BDDX = `
  _
-|_)  _|  _|  
-|_) (_| (_| >< 
-\n
+|_)  _|  _| \\/ 
+|_) (_| (_| /\\ 
 `;
 
 yargs(process.argv.slice(2))
-  .usage(
-    BDDX +
-      "Perform and save BDD tests results. \n" +
-      "Make run. \n" +
-      "Watch directory with .feature files. \n" +
-      "Then perform each test. \n"
-  )
+  .usage(BDDX)
   .command(
     "$0",
     "the default command to run all bdd tests",
     {
       help: {
-        describe: "bddx [command] --help",
+        describe: "Command help bddx [command] --help",
       },
     },
     async () => {

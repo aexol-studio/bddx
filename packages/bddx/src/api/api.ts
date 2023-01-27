@@ -10,6 +10,24 @@ const chain = (option: "query" | "mutation", Key: string) =>
     },
   })(option);
 
+export const getReport = async (key: string) => {
+  const response = await chain(
+    "query",
+    key
+  )({
+    cli: { getReport: [{ reportId: "" }, { _id: true }] },
+  });
+};
+
+export const getReports = async (key: string) => {
+  const response = await chain(
+    "query",
+    key
+  )({
+    cli: { getReports: [{ projectKey: "" }, {}] },
+  });
+};
+
 export const uploadReports = async (
   uploadReportInput: ModelTypes["UploadReportInput"],
   key: string
