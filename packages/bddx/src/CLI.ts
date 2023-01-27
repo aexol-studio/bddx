@@ -27,7 +27,7 @@ yargs(process.argv.slice(2))
   .usage(BDDX)
   .command(
     "$0",
-    "the default command to run all bdd tests",
+    "The default command to run all BDD tests.",
     {
       help: {
         describe: "Command help bddx [command] --help",
@@ -42,10 +42,10 @@ yargs(process.argv.slice(2))
   )
   .command(
     "init",
-    "Init BDDX config",
+    "Initialize BDDX configuration",
     {
       help: {
-        describe: `This command will create for You simple bddx config, called "bddx.json". You can edit config as you needed.`,
+        describe: `This command will create a simple BDDX configuration file named "bddx.json". You can edit the config file as needed.`,
       },
     },
     async () => await initCLI()
@@ -63,52 +63,54 @@ yargs(process.argv.slice(2))
   )
   .command(
     "failedTest",
-    "Run BDDX test for failed test from BDDX cloud",
+    "Run all the failed BDDX tests.",
     {
       help: {
-        describe: "INC",
+        describe:
+          "This command will run all the failed BDDX tests in a folder.",
       },
     },
     async () => await failedTestsCLI()
   )
   .command(
     "continue",
-    "Start BDDX tests from output file where you did not went through al tests",
+    "Continue BDDX tests from the from the point where you left off.",
     {
       help: {
         describe:
-          "This command allow to continue unfinished tests, saved in config `IN` path",
+          "This command allows you to continue unfinished tests from the output file, saved in the config `IN` path",
       },
     },
     async () => await continueTestsCLI()
   )
   .command(
     "jira",
-    "Run BDDX tests with Jira integration",
+    "Run BDDX tests integrated with Jira.",
     {
       help: {
-        describe: "Run BDDX tests with Jira integration",
+        describe: "Run BDDX tests with the Jira integration.",
       },
     },
     async () => await jiraCLI()
   )
   .command(
     "jiraInit",
-    "Init BDDX Jira integration config",
+    "Initialize the BDDX Jira integration configuration.",
     {
       help: {
-        describe: "Init BDDX Jira integration config",
+        describe:
+          "This command lets you set up or configure the Jira integration",
       },
     },
     async () => await jiraCLIinit()
   )
   .command(
     "checkToken",
-    "Check if Jira API Token is valid and set new if previous expired",
+    "Check if the Jira API Token is valid or set a new one.",
     {
       help: {
         describe:
-          "Check if Jira API Token is valid and set new if previous expired",
+          "Check if the Jira API Token is valid or set a new one if the previous one has expired",
       },
     },
     async () => await jiraCLIverifyToken()
