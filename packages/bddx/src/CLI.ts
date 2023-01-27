@@ -70,10 +70,10 @@ yargs(process.argv.slice(2))
   )
   .command(
     "failedTest",
-    "Run a BDDX test for a failed test from BDDX cloud.",
+    "Run all the failed BDDX tests.",
     {
       help: {
-        describe: "This command will run a BDDX test for a failed test from BDDX cloud.",
+        describe: "This command will run all the failed BDDX tests in a folder.",
       },
     },
     async () => await failedTestsCLI()
