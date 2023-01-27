@@ -42,7 +42,7 @@ export const existsJSONOrDefaultSync = <T>(p: string, defaultValue: T) =>
     ? JSON.parse(fs.readFileSync(p).toString("utf-8"))
     : defaultValue;
 
-export const fileWriteRecuirsiveAsync = async (
+export const fileWriteRecursiveAsync = async (
   p: string,
   data: string | Uint8Array
 ) => {
@@ -50,7 +50,7 @@ export const fileWriteRecuirsiveAsync = async (
   fs.promises.writeFile(p, data);
 };
 
-export const fileWriteRecuirsiveIfContentDifferent = async (
+export const fileWriteRecursiveIfContentDifferent = async (
   p: string,
   data: string
 ) => {

@@ -1,40 +1,9 @@
+import { uploadReports } from "@/api/api.js";
+import { ModelTypes } from "@/zeus/index.js";
 import { message, GLOBAL_CONFIG_FILE } from "bddx-core";
 import fs from "fs";
 import inquirer from "inquirer";
 import { Results, TEST_STATUS } from "./doTests.js";
-import { Chain, ModelTypes } from "./zeus/index.js";
-
-const chain = (option: "query" | "mutation", Key: string) =>
-  Chain("https://bddx-p-api.azurewebsites.net/graphql", {
-    headers: {
-      "Content-type": "application/json",
-      Key,
-    },
-  })(option);
-
-const uploadReports = async (
-  uploadReportInput: ModelTypes["UploadReportInput"],
-  key: string
-) => {
-  const response = await chain(
-    "mutation",
-    key
-  )({
-    cli: {
-      uploadReport: [
-        {
-          uploadReportInput,
-        },
-        true,
-      ],
-    },
-  });
-  if (!response) {
-    message("We cannot upload your reports to BDDX Cloud right now.", "red");
-    return;
-  }
-  return response.cli?.uploadReport;
-};
 
 export const cloudIntegration = async (resultsPaths: string[]) => {
   const selected = await inquirer.prompt<{
@@ -104,7 +73,7 @@ export const cloudIntegration = async (resultsPaths: string[]) => {
       return;
     }
   } else {
-    message("You provided wrong value into fields.", "red");
+    message("You provided wrong value into command line.", "red");
     return;
   }
 };
