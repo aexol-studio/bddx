@@ -1,41 +1,92 @@
 import inquirer from "inquirer";
 import { message, messageWithContent, rebuildToGherkin } from "bddx-core";
-import { GraphQLTypes } from "@/zeus/index.js";
 import { parseResultIntoGherkin } from "./testParsers.js";
-import { JiraType } from "@/coreFunctions/index.js";
+import { getReport, getReports, updateReport } from "@/api/api.js";
+import { ResultsType } from "@/api/selectors.js";
 
-type newType = GraphQLTypes["TestResultInput"] & { resultId: string };
-
-export const failedTestHandler = async (
-  outTestsPath: string,
-  fileName: string,
-  jira?: JiraType
-) => {
-  const selected = await inquirer.prompt<{
-    key: string;
+export const failedTestHandler = async () => {
+  const FirstSelected = await inquirer.prompt<{
+    method: "I know failed report ID" | "List failed tests on BDDX project key";
   }>([
     {
-      type: "input",
-      name: "key",
-      message: "Insert report_id from BDDX Cloud:",
+      type: "list",
+      name: "method",
+      message: "Pick method:",
+      choices: [
+        "I know failed report ID",
+        "List failed tests on BDDX project key",
+      ],
+      default: `I know failed report ID`,
     },
   ]);
-  if (selected.key) {
-    const _failedTest: GraphQLTypes["TestResultInput"][] = [
+
+  if (FirstSelected.method === "I know failed report ID") {
+    const SecondSelected = await inquirer.prompt<{
+      key: string;
+    }>([
       {
-        testPath: "./bdd/Pro/Graph/activeNode.feature",
-        testContent:
-          "Given User is in the schema graph view\n        And edit mode is on\n        And node is selected\n        And Schema has some directives\n\n        When User clicks add directives\n        And Selects the directives\n\n        Then directive is visible and implemented under the title",
-        featureContent:
-          "Easiliy create new fields and use node editor\n\n    The user can use edit mode of the active node",
-        scenario: "User wants main type to implement directives",
-        reasonOfFail:
-          "mialem error, ze przeskakiwalo mi na edycje dyrekktywy po dodaniu/usunieciu z node. moze naprawione na localhoscie u Artura",
+        type: "input",
+        name: "key",
+        message: "Insert report_id from BDDX Cloud:",
       },
-    ];
+    ]);
+    if (!SecondSelected.key) {
+      message("You provided wrong value into command line.", "red");
+      return;
+    } else await doFailedTestFunction(SecondSelected.key);
+  } else if (FirstSelected.method === "List failed tests on BDDX project key") {
+    const SecondSelected = await inquirer.prompt<{
+      key: string;
+    }>([
+      {
+        type: "input",
+        name: "key",
+        message: "Insert BDDX project key from BDDX Cloud:",
+      },
+    ]);
+    if (SecondSelected.key) {
+      const reports = await getReports(SecondSelected.key);
+      if (!reports) {
+        message("There is no project with this key", "red");
+        return;
+      }
+      const ThirdSelected = await inquirer.prompt<{
+        project: string;
+      }>([
+        {
+          type: "list",
+          name: "project",
+          choices: reports.map(
+            (o) =>
+              `Project name: ${o.project.name} - with ${o.results.length} failed tests - reportID: ${o._id}`
+          ),
+          message: "Select file of unfinished BDDX session",
+          default: `Project name: ${reports[0].project.name} - with ${reports[0].results.length} failed tests`,
+        },
+      ]);
+      if (ThirdSelected.project) {
+        const lookingFor = ThirdSelected.project.split("reportID:")[1].trim();
+        await doFailedTestFunction(lookingFor);
+      }
+    } else {
+      message("You provided wrong value into command line.", "red");
+      return;
+    }
+  } else {
+    message("You provided wrong value into command line.", "red");
+    return;
+  }
+};
 
-    const newResults: newType[] = [];
-
+const doFailedTestFunction = async (key: string) => {
+  if (key) {
+    const report = await getReport(key);
+    if (!report) {
+      message("There is no report with this id", "red");
+      return;
+    }
+    const _failedTest: ResultsType[] = report.results;
+    const newResults: ResultsType[] = [];
     for (const test of _failedTest) {
       const failedTest = parseResultIntoGherkin(test);
       console.log(rebuildToGherkin(failedTest), "red");
@@ -64,19 +115,27 @@ export const failedTestHandler = async (
       ]);
       if (answers.confirmation === "✅ Pass") {
         newResults.push({
-          ...test,
-          resultId: selected.key,
+          featureContent: test.featureContent,
+          scenario: test.scenario,
+          testContent: test.testContent,
+          testPath: test.testPath,
+          inherited: key,
         });
       }
       if (answers.confirmation === "❌ Report issue" && answers.message) {
         newResults.push({
           ...test,
           reasonOfFail: answers.message,
-          resultId: selected.key,
+          inherited: key,
         });
       }
     }
-    console.log(selected.key, newResults);
+    const response = await updateReport({ results: newResults }, key);
+    if (!response) {
+      message("Error occurred when sending updated report", "red");
+      return;
+    }
+    message("Success, updated report just landed on BDDX cloud", "green");
     return;
   } else {
     message("You provided wrong value into command line.", "red");

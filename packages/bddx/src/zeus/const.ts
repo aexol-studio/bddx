@@ -1,36 +1,85 @@
 /* eslint-disable */
 
 export const AllTypesProps: Record<string,any> = {
+	ChangePasswordInput:{
+
+	},
+	SimpleUserInput:{
+
+	},
+	AdminMutation:{
+		createProject:{
+			projectInput:"ProjectInput"
+		},
+		deleteProject:{
+
+		},
+		project:{
+
+		},
+		updateProject:{
+			updateProjectInput:"UpdateProjectInput"
+		}
+	},
+	ProjectMutation:{
+		deleteKey:{
+
+		}
+	},
+	LoginInput:{
+
+	},
+	AdminQuery:{
+		reportById:{
+
+		}
+	},
 	DateInput:{
 
 	},
-	GenerateOAuthTokenInput:{
-		social:"SocialKind"
-	},
-	SocialKind: "enum" as const,
 	VerifyEmailInput:{
 
 	},
+	Query:{
+		getGithubOAuthLink:{
+
+		},
+		requestForForgotPassword:{
+
+		}
+	},
+	ProviderErrors: "enum" as const,
 	CLIMutation:{
 		updateReport:{
-			uploadReportInput:"UpdateReportInput"
+			uploadReportInput:"UploadReportInput"
 		},
 		uploadReport:{
 			uploadReportInput:"UploadReportInput"
 		}
+	},
+	RegisterInput:{
+
 	},
 	Project:{
 		reports:{
 			filterDate:"DateInput"
 		}
 	},
-	ProjectInput:{
-
+	LoginErrors: "enum" as const,
+	GenerateOAuthTokenInput:{
+		social:"SocialKind"
 	},
-	SimpleUserInput:{
-
+	LoginQuery:{
+		password:{
+			user:"LoginInput"
+		},
+		provider:{
+			params:"ProviderLoginInput"
+		}
 	},
-	ProviderErrors: "enum" as const,
+	UploadReportInput:{
+		results:"TestResultInput"
+	},
 	Mutation:{
 		changePassword:{
 			changePasswordData:"ChangePasswordInput"
@@ -48,117 +97,26 @@ export const AllTypesProps: Record<string,any> = {
 			verifyData:"VerifyEmailInput"
 		}
 	},
-	UploadReportInput:{
-		results:"TestResultInput"
-	},
-	ChangePasswordInput:{
+	TestResultInput:{
 
 	},
-	CLIQuery:{
-		getReport:{
+	RegisterErrors: "enum" as const,
+	SocialKind: "enum" as const,
+	ProjectInput:{
 
-		},
-		getReports:{
-
-		}
-	},
-	AdminMutation:{
-		createProject:{
-			projectInput:"ProjectInput"
-		},
-		deleteProject:{
-
-		},
-		project:{
-
-		},
-		updateProject:{
-			updateProjectInput:"UpdateProjectInput"
-		}
-	},
-	UpdateReportInput:{
-		results:"TestResultInput"
-	},
-	LoginQuery:{
-		password:{
-			user:"LoginInput"
-		},
-		provider:{
-			params:"ProviderLoginInput"
-		}
-	},
-	ProviderLoginInput:{
-
-	},
-	LoginErrors: "enum" as const,
-	AdminQuery:{
-		reportById:{
-
-		}
 	},
 	UpdateProjectInput:{
 
 	},
-	ProjectMutation:{
-		deleteKey:{
+	ProviderLoginInput:{
 
-		}
-	},
-	Query:{
-		getGithubOAuthLink:{
-
-		},
-		requestForForgotPassword:{
-
-		}
-	},
-	LoginInput:{
-
-	},
-	TestResultInput:{
-
-	},
-	RegisterInput:{
-
-	},
-	RegisterErrors: "enum" as const
+	}
 }
 
 export const ReturnTypes: Record<string,any> = {
-	CLIMutation:{
-		updateReport:"Boolean",
-		uploadReport:"String"
-	},
-	TestResult:{
-		featureContent:"String",
-		inherited:"String",
-		reasonOfFail:"String",
-		scenario:"String",
-		testContent:"String",
-		testPath:"String"
-	},
-	Project:{
-		_id:"String",
-		issueAddUrl:"String",
-		keys:"String",
-		name:"String",
-		reports:"TestReport"
-	},
-	Mutation:{
-		admin:"AdminMutation",
-		changePassword:"Boolean",
-		cli:"CLIMutation",
-		generateOAuthToken:"Boolean",
-		integrateSocialAccount:"Boolean",
-		register:"RegisterResponse",
-		verifyEmail:"Boolean"
-	},
-	CLIQuery:{
-		getReport:"TestReport",
-		getReports:"TestReport"
-	},
-	User:{
-		username:"String"
+	LoginResponse:{
+		hasError:"LoginErrors",
+		login:"String"
 	},
 	AdminMutation:{
 		createProject:"String",
@@ -166,23 +124,20 @@ export const ReturnTypes: Record<string,any> = {
 		project:"ProjectMutation",
 		updateProject:"Boolean"
 	},
-	ProviderLoginQuery:{
-		apple:"ProviderResponse",
-		github:"ProviderResponse",
-		google:"ProviderResponse"
+	ProjectMutation:{
+		createKey:"String",
+		deleteKey:"Boolean"
 	},
-	LoginQuery:{
-		password:"LoginResponse",
-		provider:"ProviderLoginQuery"
+	TestReport:{
+		_id:"String",
+		createdAt:"String",
+		project:"Project",
+		results:"TestResult"
 	},
 	AdminQuery:{
 		me:"User",
 		projects:"Project",
 		reportById:"TestReport"
-	},
-	ProjectMutation:{
-		createKey:"String",
-		deleteKey:"Boolean"
 	},
 	Query:{
 		admin:"AdminQuery",
@@ -193,28 +148,62 @@ export const ReturnTypes: Record<string,any> = {
 		login:"LoginQuery",
 		requestForForgotPassword:"Boolean"
 	},
+	CLIMutation:{
+		updateReport:"String",
+		uploadReport:"String"
+	},
+	Project:{
+		_id:"String",
+		issueAddUrl:"String",
+		keys:"String",
+		name:"String",
+		reports:"TestReport"
+	},
 	ProviderResponse:{
 		access_token:"String",
 		hasError:"ProviderErrors",
 		jwt:"String"
 	},
-	LoginResponse:{
-		hasError:"LoginErrors",
-		login:"String"
-	},
 	RegisterResponse:{
 		hasError:"RegisterErrors",
 		registered:"Boolean"
 	},
-	TestReport:{
-		_id:"String",
-		createdAt:"String",
-		project:"Project",
-		results:"TestResult"
+	User:{
+		username:"String"
+	},
+	LoginQuery:{
+		password:"LoginResponse",
+		provider:"ProviderLoginQuery"
+	},
+	CLIQuery:{
+		getReport:"TestReport",
+		getReports:"TestReport"
+	},
+	Mutation:{
+		admin:"AdminMutation",
+		changePassword:"Boolean",
+		cli:"CLIMutation",
+		generateOAuthToken:"Boolean",
+		integrateSocialAccount:"Boolean",
+		register:"RegisterResponse",
+		verifyEmail:"Boolean"
+	},
+	TestResult:{
+		featureContent:"String",
+		inherited:"String",
+		reasonOfFail:"String",
+		scenario:"String",
+		testContent:"String",
+		testPath:"String"
+	},
+	ProviderLoginQuery:{
+		apple:"ProviderResponse",
+		github:"ProviderResponse",
+		google:"ProviderResponse"
 	}
 }
 
 export const Ops = {
-mutation: "Mutation" as const,
-	query: "Query" as const
+query: "Query" as const,
+	mutation: "Mutation" as const
 }

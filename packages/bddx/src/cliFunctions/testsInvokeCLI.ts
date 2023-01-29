@@ -22,7 +22,7 @@ export const failedTestsCLI = async () => {
       "blueBright"
     );
     await checkConfigDirectories(config);
-    await failedTestHandler(config.out, "ghEditorRun.json");
+    await failedTestHandler();
   }
 };
 

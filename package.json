@@ -10,6 +10,7 @@
     "build::win": "npm run build::win --ws --if-present",
     "start-bddx": "npm run dev -w packages/bddx",
     "start-sandbox-example": "npm run dev -w sandbox/bddx-example",
+    "zeus": "npm run zeus -w packages/bddx",
     "rebuild-cli-and-example": "npm run build -w packages/bddx && npx -w sandbox/bddx-example bddx"
   },
   "repository": {
