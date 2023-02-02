@@ -58,10 +58,10 @@ export const failedTestHandler = async () => {
           name: "project",
           choices: reports.map(
             (o) =>
-              `Project name: ${o.project.name} - with ${o.results.length} failed tests - reportID: ${o._id}`
+              `Project name: ${o.project.name} - with ${o.runs?.length} failed tests - reportID: ${o._id}`
           ),
           message: "Select file of unfinished BDDX session",
-          default: `Project name: ${reports[0].project.name} - with ${reports[0].results.length} failed tests`,
+          default: `Project name: ${reports[0].project.name} - with ${reports[0].runs?.length} failed tests`,
         },
       ]);
       if (ThirdSelected.project) {
@@ -85,7 +85,13 @@ const doFailedTestFunction = async (key: string) => {
       message("There is no report with this id", "red");
       return;
     }
-    const _failedTest: ResultsType[] = report.results;
+
+    const lastReport = report.length - 1 > 0 ? report.length - 1 : 0;
+    const _failedTest: ResultsType[] = report[lastReport].results;
+    if (_failedTest.length === 0) {
+      message("There is no test to run", "red");
+      return;
+    }
     const newResults: ResultsType[] = [];
     for (const test of _failedTest) {
       const failedTest = parseResultIntoGherkin(test);
@@ -136,6 +142,7 @@ const doFailedTestFunction = async (key: string) => {
       return;
     }
     message("Success, updated report just landed on BDDX cloud", "green");
+    message(`Updated report run with _id: ${response}.`, "blue");
     return;
   } else {
     message("You provided wrong value into command line.", "red");
