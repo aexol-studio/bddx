@@ -1,6 +1,6 @@
 import { uploadReports } from "@/api/api.js";
 import { ModelTypes } from "@/zeus/index.js";
-import { message, GLOBAL_CONFIG_FILE } from "bddx-core";
+import { message, GLOBAL_CONFIG_FILE, loader } from "bddx-core";
 import fs from "fs";
 import inquirer from "inquirer";
 import { Results, TEST_STATUS } from "./doTests.js";
@@ -55,12 +55,19 @@ export const cloudIntegration = async (resultsPaths: string[]) => {
         return;
       }
       if (arrayToSend.results.length) {
+        const spinner = loader({
+          text: " Sending results",
+          onFail: " Failed...",
+          onSuccess: " Successfully sended all results",
+        });
         try {
           const response = await uploadReports(arrayToSend, selected.key);
           if (!response) {
             message("Error occurred while uploading results.", "red");
+            spinner.fail();
             return;
           }
+          spinner.succeed();
           message(`Success upload results with id: ${response}.`, "blue");
           return;
         } catch {

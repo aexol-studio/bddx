@@ -14,6 +14,8 @@
   },
   "dependencies": {
     "chalk": "^5.1.2",
-    "chokidar": "^3.5.3"
+    "chokidar": "^3.5.3",
+    "cli-spinners": "^2.7.0",
+    "ora": "^6.1.2"
   }
 }

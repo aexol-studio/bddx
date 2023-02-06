@@ -1,5 +1,10 @@
 import inquirer from "inquirer";
-import { message, messageWithContent, rebuildToGherkin } from "bddx-core";
+import {
+  message,
+  messageWithContent,
+  rebuildToGherkin,
+  loader,
+} from "bddx-core";
 import { parseResultIntoGherkin } from "./testParsers.js";
 import { getReport, getReports, updateReport } from "@/api/api.js";
 import { ResultsType } from "@/api/selectors.js";
@@ -45,9 +50,23 @@ export const failedTestHandler = async () => {
       },
     ]);
     if (SecondSelected.key) {
+      const spinner = loader({
+        text: " Fetching all failed reports from project key.",
+        onSuccess: " Success.",
+        onFail: " Something goes wrong.",
+      });
       const reports = await getReports(SecondSelected.key);
       if (!reports) {
         message("There is no project with this key", "red");
+        spinner.fail();
+        return;
+      }
+      spinner.succeed();
+      if (reports.length === 0) {
+        message(
+          "No failed results in reports on this bddx project key.",
+          "red"
+        );
         return;
       }
       const ThirdSelected = await inquirer.prompt<{
@@ -80,12 +99,19 @@ export const failedTestHandler = async () => {
 
 const doFailedTestFunction = async (key: string) => {
   if (key) {
+    const spinner = loader({
+      text: " Fetching all failed results from report.",
+      onSuccess: " Success.",
+      onFail: " Something goes wrong.",
+      fastSpinner: true,
+    });
     const report = await getReport(key);
     if (!report) {
       message("There is no report with this id", "red");
+      spinner.fail();
       return;
     }
-
+    spinner.succeed();
     const lastReport = report.length - 1 > 0 ? report.length - 1 : 0;
     const _failedTest: ResultsType[] = report[lastReport].results;
     if (_failedTest.length === 0) {
