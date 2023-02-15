@@ -77,10 +77,10 @@ export const failedTestHandler = async () => {
           name: "project",
           choices: reports.map(
             (o) =>
-              `Project name: ${o.project.name} - with ${o.runs?.length} failed tests - reportID: ${o._id}`
+              `Project name: ${o.projectName} - with ${o.numberOfFailedResults} failed tests - reportID: ${o.reportId}`
           ),
           message: "Select file of unfinished BDDX session",
-          default: `Project name: ${reports[0].project.name} - with ${reports[0].runs?.length} failed tests`,
+          default: `Project name: ${reports[0].projectName} - with ${reports[0].numberOfFailedResults} failed tests`,
         },
       ]);
       if (ThirdSelected.project) {

@@ -17,10 +17,6 @@ import { checkJiraToken } from "@/coreFunctions/index.js";
 export const failedTestsCLI = async () => {
   const config = readConfig("./bddx.json");
   if (config) {
-    message(
-      `Read config: tests files are in ${config.in} and result of tests will be saved in ${config.out}`,
-      "blueBright"
-    );
     await checkConfigDirectories(config);
     await failedTestHandler();
   }

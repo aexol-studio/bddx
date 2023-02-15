@@ -3,7 +3,7 @@ import { Chain, ModelTypes } from "@/zeus/index.js";
 import { JiraType } from "@/coreFunctions/index.js";
 import { testResultsSelector } from "./selectors.js";
 
-// const API_LOCAL = "http://10.1.27.121:8080/graphql";
+// const API_LOCAL = "http://localhost:8080/graphql";
 const API_DEV = "https://bddx-api.azurewebsites.net/graphql";
 // const API_PROD = "https://bddx-p-api.azurewebsites.net/graphql";
 
@@ -42,11 +42,12 @@ export const getReports = async (key: string) => {
   )({
     cli: {
       getReports: {
-        _id: true,
-        project: { name: true },
-        runs: {
-          results: testResultsSelector,
-        },
+        numberOfFailedResults: true,
+        numberOfResults: true,
+        numberOfRuns: true,
+        projectId: true,
+        projectName: true,
+        reportId: true,
       },
     },
   });
