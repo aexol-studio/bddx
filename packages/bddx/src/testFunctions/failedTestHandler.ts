@@ -55,37 +55,44 @@ export const failedTestHandler = async () => {
         onSuccess: " Success.",
         onFail: " Something goes wrong.",
       });
-      const reports = await getReports(SecondSelected.key);
-      if (!reports) {
-        message("There is no project with this key", "red");
+      try {
+        const reports = await getReports(SecondSelected.key);
+        if (!reports) {
+          message("There is no project with this key", "red");
+          spinner.fail();
+          return;
+        }
+        spinner.succeed();
+        if (reports.length === 0) {
+          message(
+            "No failed results in reports on this bddx project key.",
+            "red"
+          );
+          spinner.fail();
+          return;
+        }
+        const ThirdSelected = await inquirer.prompt<{
+          project: string;
+        }>([
+          {
+            type: "list",
+            name: "project",
+            choices: reports.map(
+              (o) =>
+                `Project name: ${o.projectName} - with ${o.numberOfFailedResults} failed tests - reportID: ${o.reportId}`
+            ),
+            message: "Select file of unfinished BDDX session",
+            default: `Project name: ${reports[0].projectName} - with ${reports[0].numberOfFailedResults} failed tests`,
+          },
+        ]);
+        if (ThirdSelected.project) {
+          const lookingFor = ThirdSelected.project.split("reportID:")[1].trim();
+          await doFailedTestFunction(lookingFor);
+        }
+      } catch {
+        message("Inserted key was removed from BDDX cloud.", "red");
         spinner.fail();
         return;
-      }
-      spinner.succeed();
-      if (reports.length === 0) {
-        message(
-          "No failed results in reports on this bddx project key.",
-          "red"
-        );
-        return;
-      }
-      const ThirdSelected = await inquirer.prompt<{
-        project: string;
-      }>([
-        {
-          type: "list",
-          name: "project",
-          choices: reports.map(
-            (o) =>
-              `Project name: ${o.projectName} - with ${o.numberOfFailedResults} failed tests - reportID: ${o.reportId}`
-          ),
-          message: "Select file of unfinished BDDX session",
-          default: `Project name: ${reports[0].projectName} - with ${reports[0].numberOfFailedResults} failed tests`,
-        },
-      ]);
-      if (ThirdSelected.project) {
-        const lookingFor = ThirdSelected.project.split("reportID:")[1].trim();
-        await doFailedTestFunction(lookingFor);
       }
     } else {
       message("You provided wrong value into command line.", "red");
