@@ -11,6 +11,7 @@ export enum TEST_STATUS {
 
 export type Results = {
   testStatus: {
+    savedTo: string;
     currentTestPath?: string;
     currentScenario?: number;
     status: TEST_STATUS;
@@ -40,6 +41,7 @@ export const doTests = async (
     failedTests: [],
     passedTests: [],
     testStatus: {
+      savedTo: "",
       currentScenario: 0,
       status: TEST_STATUS.UNFINISHED,
       currentTestPath: testsPaths[0],
@@ -76,6 +78,7 @@ export const doTests = async (
         `${outPath}/${answers.fileName}`,
         JSON.stringify(results, null, 4)
       );
+      results.testStatus.savedTo = answers.fileName.replace(".json", "");
       message(
         `                                                                                                                                      `,
         "bgYellow"
@@ -95,6 +98,7 @@ export const doTests = async (
       `${outPath}/${fileName}`,
       JSON.stringify(results, null, 4)
     );
+    results.testStatus.savedTo = fileName.replace(".json", "");
     message(
       `                                                                                                                                      `,
       "bgYellow"

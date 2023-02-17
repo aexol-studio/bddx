@@ -4,10 +4,53 @@ export const AllTypesProps: Record<string,any> = {
 	ProviderLoginInput:{
 
 	},
-	RegisterInput:{
+	Project:{
+		reports:{
+			filterDate:"DateInput"
+		}
+	},
+	DateInput:{
 
 	},
-	LoginInput:{
+	ChangePasswordWhenLoggedInput:{
+
+	},
+	UpdateReportInput:{
+		results:"TestResultInput"
+	},
+	RegisterErrors: "enum" as const,
+	SocialKind: "enum" as const,
+	ChangePasswordWithTokenInput:{
+
+	},
+	AdminMutation:{
+		createProject:{
+			projectInput:"ProjectInput"
+		},
+		deleteProject:{
+
+		},
+		project:{
+
+		},
+		updateProject:{
+			updateProjectInput:"UpdateProjectInput"
+		}
+	},
+	ProjectMutation:{
+		deleteKey:{
+
+		}
+	},
+	LoginQuery:{
+		password:{
+			user:"LoginInput"
+		},
+		provider:{
+			params:"ProviderLoginInput"
+		}
+	},
+	GetOAuthInput:{
 
 	},
 	Mutation:{
@@ -30,90 +73,62 @@ export const AllTypesProps: Record<string,any> = {
 			verifyData:"VerifyEmailInput"
 		}
 	},
-	VerifyEmailInput:{
+	UpdateProjectInput:{
+		color:"Colors"
+	},
+	UploadReportInput:{
+		results:"TestResultInput"
+	},
+	GenerateOAuthTokenInput:{
+		social:"SocialKind"
+	},
+	LoginInput:{
+
+	},
+	ProviderErrors: "enum" as const,
+	Colors: "enum" as const,
+	RegisterInput:{
 
 	},
 	Query:{
+		getAppleOAuthLink:{
+			setup:"GetOAuthInput"
+		},
 		getGithubOAuthLink:{
-
+			setup:"GetOAuthInput"
+		},
+		getGoogleOAuthLink:{
+			setup:"GetOAuthInput"
 		},
 		requestForForgotPassword:{
 
 		}
 	},
-	ProviderErrors: "enum" as const,
-	ChangePasswordWhenLoggedInput:{
-
-	},
-	UploadReportInput:{
-		results:"TestResultInput"
-	},
-	LoginQuery:{
-		password:{
-			user:"LoginInput"
-		},
-		provider:{
-			params:"ProviderLoginInput"
-		}
-	},
-	SocialKind: "enum" as const,
-	RegisterErrors: "enum" as const,
-	ChangePasswordWithTokenInput:{
-
-	},
-	AdminMutation:{
-		createProject:{
-			projectInput:"ProjectInput"
-		},
-		deleteProject:{
-
-		},
-		project:{
-
-		},
-		updateProject:{
-			updateProjectInput:"UpdateProjectInput"
-		}
-	},
-	DateInput:{
-
-	},
-	AdminQuery:{
-		reportById:{
-
-		}
-	},
-	TestResultInput:{
-
-	},
-	Project:{
-		reports:{
-			filterDate:"DateInput"
-		}
-	},
-	ProjectMutation:{
-		deleteKey:{
-
-		}
-	},
-	UpdateProjectInput:{
-		color:"Colors"
-	},
-	LoginErrors: "enum" as const,
-	ProjectInput:{
-		color:"Colors"
-	},
 	CLIMutation:{
 		updateReport:{
-			uploadReportInput:"UploadReportInput"
+			updateReportInput:"UpdateReportInput"
 		},
 		uploadReport:{
 			uploadReportInput:"UploadReportInput"
 		}
 	},
-	Colors: "enum" as const,
-	GenerateOAuthTokenInput:{
-		social:"SocialKind"
+	TestResultInput:{
+
+	},
+	LoginErrors: "enum" as const,
+	AdminQuery:{
+		reportById:{
+
+		},
+		reports:{
+			filterDate:"DateInput"
+		}
+	},
+	ProjectInput:{
+		color:"Colors"
+	},
+	VerifyEmailInput:{
+
 	},
 	SimpleUserInput:{
 
@@ -121,6 +136,22 @@ export const AllTypesProps: Record<string,any> = {
 }
 
 export const ReturnTypes: Record<string,any> = {
+	Project:{
+		_id:"String",
+		color:"Colors",
+		issueAddUrl:"String",
+		keys:"String",
+		name:"String",
+		reports:"TestReport"
+	},
+	TestReport:{
+		_id:"String",
+		createdAt:"String",
+		key:"String",
+		name:"String",
+		project:"Project",
+		runs:"ReportRun"
+	},
 	ReportRun:{
 		_id:"String",
 		createdAt:"String",
@@ -128,6 +159,38 @@ export const ReturnTypes: Record<string,any> = {
 		project:"Project",
 		report_id:"String",
 		results:"TestResult"
+	},
+	AdminMutation:{
+		createProject:"String",
+		deleteProject:"Boolean",
+		project:"ProjectMutation",
+		updateProject:"Boolean"
+	},
+	ProjectMutation:{
+		createKey:"String",
+		deleteKey:"Boolean"
+	},
+	LoginQuery:{
+		password:"LoginResponse",
+		provider:"ProviderLoginQuery"
+	},
+	ProviderLoginQuery:{
+		apple:"ProviderResponse",
+		github:"ProviderResponse",
+		google:"ProviderResponse"
+	},
+	ProviderResponse:{
+		access_token:"String",
+		hasError:"ProviderErrors",
+		jwt:"String"
+	},
+	ReportInfo:{
+		numberOfFailedResults:"Int",
+		numberOfResults:"Int",
+		numberOfRuns:"Int",
+		projectId:"String",
+		projectName:"String",
+		reportId:"String"
 	},
 	Mutation:{
 		admin:"AdminMutation",
@@ -139,10 +202,6 @@ export const ReturnTypes: Record<string,any> = {
 		register:"RegisterResponse",
 		verifyEmail:"Boolean"
 	},
-	RegisterResponse:{
-		hasError:"RegisterErrors",
-		registered:"Boolean"
-	},
 	Query:{
 		admin:"AdminQuery",
 		cli:"CLIQuery",
@@ -152,29 +211,13 @@ export const ReturnTypes: Record<string,any> = {
 		login:"LoginQuery",
 		requestForForgotPassword:"Boolean"
 	},
-	ProviderLoginQuery:{
-		apple:"ProviderResponse",
-		github:"ProviderResponse",
-		google:"ProviderResponse"
+	CLIMutation:{
+		updateReport:"String",
+		uploadReport:"String"
 	},
-	LoginQuery:{
-		password:"LoginResponse",
-		provider:"ProviderLoginQuery"
-	},
-	User:{
-		username:"String"
-	},
-	AdminMutation:{
-		createProject:"String",
-		deleteProject:"Boolean",
-		project:"ProjectMutation",
-		updateProject:"Boolean"
-	},
-	TestReport:{
-		_id:"String",
-		createdAt:"String",
-		project:"Project",
-		runs:"ReportRun"
+	RegisterResponse:{
+		hasError:"RegisterErrors",
+		registered:"Boolean"
 	},
 	LoginResponse:{
 		hasError:"LoginErrors",
@@ -183,24 +226,8 @@ export const ReturnTypes: Record<string,any> = {
 	AdminQuery:{
 		me:"User",
 		projects:"Project",
-		reportById:"TestReport"
-	},
-	Project:{
-		_id:"String",
-		color:"Colors",
-		issueAddUrl:"String",
-		keys:"String",
-		name:"String",
+		reportById:"TestReport",
 		reports:"TestReport"
-	},
-	ProviderResponse:{
-		access_token:"String",
-		hasError:"ProviderErrors",
-		jwt:"String"
-	},
-	ProjectMutation:{
-		createKey:"String",
-		deleteKey:"Boolean"
 	},
 	TestResult:{
 		featureContent:"String",
@@ -210,21 +237,12 @@ export const ReturnTypes: Record<string,any> = {
 		testContent:"String",
 		testPath:"String"
 	},
-	CLIMutation:{
-		updateReport:"String",
-		uploadReport:"String"
+	User:{
+		username:"String"
 	},
 	CLIQuery:{
 		getReport:"TestReport",
 		getReports:"ReportInfo"
-	},
-	ReportInfo:{
-		numberOfFailedResults:"Int",
-		numberOfResults:"Int",
-		numberOfRuns:"Int",
-		projectId:"String",
-		projectName:"String",
-		reportId:"String"
 	}
 }
 

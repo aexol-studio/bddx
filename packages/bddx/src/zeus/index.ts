@@ -837,7 +837,32 @@ export type ScalarCoders = {
 type ZEUS_UNIONS = never
 
 export type ValueTypes = {
-    ["ReportRun"]: AliasType<{
+    ["ProviderLoginInput"]: {
+	code: string | Variable<any, string>
+};
+	["Project"]: AliasType<{
+	_id?:boolean | `@${string}`,
+	color?:boolean | `@${string}`,
+	issueAddUrl?:boolean | `@${string}`,
+	keys?:boolean | `@${string}`,
+	name?:boolean | `@${string}`,
+reports?: [{	filterDate: ValueTypes["DateInput"] | Variable<any, string>},ValueTypes["TestReport"]],
+		__typename?: boolean | `@${string}`
+}>;
+	["DateInput"]: {
+	from: string | Variable<any, string>,
+	to?: string | undefined | null | Variable<any, string>
+};
+	["TestReport"]: AliasType<{
+	_id?:boolean | `@${string}`,
+	createdAt?:boolean | `@${string}`,
+	key?:boolean | `@${string}`,
+	name?:boolean | `@${string}`,
+	project?:ValueTypes["Project"],
+	runs?:ValueTypes["ReportRun"],
+		__typename?: boolean | `@${string}`
+}>;
+	["ReportRun"]: AliasType<{
 	_id?:boolean | `@${string}`,
 	createdAt?:boolean | `@${string}`,
 	number?:boolean | `@${string}`,
@@ -846,17 +871,63 @@ export type ValueTypes = {
 	results?:ValueTypes["TestResult"],
 		__typename?: boolean | `@${string}`
 }>;
-	["ProviderLoginInput"]: {
-	code: string | Variable<any, string>
-};
-	["RegisterInput"]: {
+	["ChangePasswordWhenLoggedInput"]: {
 	username: string | Variable<any, string>,
-	password: string | Variable<any, string>
+	oldPassword: string | Variable<any, string>,
+	newPassword: string | Variable<any, string>
 };
-	["LoginInput"]: {
-	username?: string | undefined | null | Variable<any, string>,
-	password?: string | undefined | null | Variable<any, string>
+	["UpdateReportInput"]: {
+	results: Array<ValueTypes["TestResultInput"]> | Variable<any, string>
 };
+	["RegisterErrors"]:RegisterErrors;
+	["SocialKind"]:SocialKind;
+	["ChangePasswordWithTokenInput"]: {
+	forgotToken: string | Variable<any, string>,
+	newPassword: string | Variable<any, string>,
+	username: string | Variable<any, string>
+};
+	["AdminMutation"]: AliasType<{
+createProject?: [{	projectInput: ValueTypes["ProjectInput"] | Variable<any, string>},boolean | `@${string}`],
+deleteProject?: [{	_id: string | Variable<any, string>},boolean | `@${string}`],
+project?: [{	_id: string | Variable<any, string>},ValueTypes["ProjectMutation"]],
+updateProject?: [{	_id: string | Variable<any, string>,	updateProjectInput: ValueTypes["UpdateProjectInput"] | Variable<any, string>},boolean | `@${string}`],
+		__typename?: boolean | `@${string}`
+}>;
+	["ProjectMutation"]: AliasType<{
+	createKey?:boolean | `@${string}`,
+deleteKey?: [{	key: string | Variable<any, string>},boolean | `@${string}`],
+		__typename?: boolean | `@${string}`
+}>;
+	["LoginQuery"]: AliasType<{
+password?: [{	user: ValueTypes["LoginInput"] | Variable<any, string>},ValueTypes["LoginResponse"]],
+provider?: [{	params: ValueTypes["ProviderLoginInput"] | Variable<any, string>},ValueTypes["ProviderLoginQuery"]],
+		__typename?: boolean | `@${string}`
+}>;
+	["ProviderLoginQuery"]: AliasType<{
+	apple?:ValueTypes["ProviderResponse"],
+	github?:ValueTypes["ProviderResponse"],
+	google?:ValueTypes["ProviderResponse"],
+		__typename?: boolean | `@${string}`
+}>;
+	["ProviderResponse"]: AliasType<{
+	access_token?:boolean | `@${string}`,
+	hasError?:boolean | `@${string}`,
+	jwt?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
+	["GetOAuthInput"]: {
+	scopes?: Array<string> | undefined | null | Variable<any, string>,
+	state?: string | undefined | null | Variable<any, string>
+};
+	["ReportInfo"]: AliasType<{
+	numberOfFailedResults?:boolean | `@${string}`,
+	numberOfResults?:boolean | `@${string}`,
+	numberOfRuns?:boolean | `@${string}`,
+	projectId?:boolean | `@${string}`,
+	projectName?:boolean | `@${string}`,
+	reportId?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
 	["Mutation"]: AliasType<{
 	admin?:ValueTypes["AdminMutation"],
 changePasswordWhenLogged?: [{	changePasswordData: ValueTypes["ChangePasswordWhenLoggedInput"] | Variable<any, string>},boolean | `@${string}`],
@@ -868,118 +939,70 @@ register?: [{	user: ValueTypes["RegisterInput"] | Variable<any, string>},ValueTy
 verifyEmail?: [{	verifyData: ValueTypes["VerifyEmailInput"] | Variable<any, string>},boolean | `@${string}`],
 		__typename?: boolean | `@${string}`
 }>;
+	["UpdateProjectInput"]: {
+	color?: ValueTypes["Colors"] | undefined | null | Variable<any, string>,
+	name?: string | undefined | null | Variable<any, string>,
+	issueAddUrl?: string | undefined | null | Variable<any, string>
+};
+	["UploadReportInput"]: {
+	name: string | Variable<any, string>,
+	results: Array<ValueTypes["TestResultInput"]> | Variable<any, string>
+};
+	["GenerateOAuthTokenInput"]: {
+	social: ValueTypes["SocialKind"] | Variable<any, string>,
+	code: string | Variable<any, string>
+};
+	["LoginInput"]: {
+	password?: string | undefined | null | Variable<any, string>,
+	username?: string | undefined | null | Variable<any, string>
+};
+	["ProviderErrors"]:ProviderErrors;
+	["Colors"]:Colors;
+	["RegisterInput"]: {
+	username: string | Variable<any, string>,
+	password: string | Variable<any, string>
+};
+	["Query"]: AliasType<{
+	admin?:ValueTypes["AdminQuery"],
+	cli?:ValueTypes["CLIQuery"],
+getAppleOAuthLink?: [{	setup: ValueTypes["GetOAuthInput"] | Variable<any, string>},boolean | `@${string}`],
+getGithubOAuthLink?: [{	setup: ValueTypes["GetOAuthInput"] | Variable<any, string>},boolean | `@${string}`],
+getGoogleOAuthLink?: [{	setup: ValueTypes["GetOAuthInput"] | Variable<any, string>},boolean | `@${string}`],
+	login?:ValueTypes["LoginQuery"],
+requestForForgotPassword?: [{	username: string | Variable<any, string>},boolean | `@${string}`],
+		__typename?: boolean | `@${string}`
+}>;
+	["CLIMutation"]: AliasType<{
+updateReport?: [{	updateReportInput: ValueTypes["UpdateReportInput"] | Variable<any, string>},boolean | `@${string}`],
+uploadReport?: [{	uploadReportInput: ValueTypes["UploadReportInput"] | Variable<any, string>},boolean | `@${string}`],
+		__typename?: boolean | `@${string}`
+}>;
 	["RegisterResponse"]: AliasType<{
 	hasError?:boolean | `@${string}`,
 	registered?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
-	["VerifyEmailInput"]: {
-	username: string | Variable<any, string>,
-	token: string | Variable<any, string>
-};
-	["Query"]: AliasType<{
-	admin?:ValueTypes["AdminQuery"],
-	cli?:ValueTypes["CLIQuery"],
-	getAppleOAuthLink?:boolean | `@${string}`,
-getGithubOAuthLink?: [{	scopes?: Array<string | undefined | null> | undefined | null | Variable<any, string>},boolean | `@${string}`],
-	getGoogleOAuthLink?:boolean | `@${string}`,
-	login?:ValueTypes["LoginQuery"],
-requestForForgotPassword?: [{	username: string | Variable<any, string>},boolean | `@${string}`],
-		__typename?: boolean | `@${string}`
-}>;
-	["ProviderLoginQuery"]: AliasType<{
-	apple?:ValueTypes["ProviderResponse"],
-	github?:ValueTypes["ProviderResponse"],
-	google?:ValueTypes["ProviderResponse"],
-		__typename?: boolean | `@${string}`
-}>;
-	["ProviderErrors"]:ProviderErrors;
-	["ChangePasswordWhenLoggedInput"]: {
-	username: string | Variable<any, string>,
-	oldPassword: string | Variable<any, string>,
-	newPassword: string | Variable<any, string>
-};
-	["UploadReportInput"]: {
-	results: Array<ValueTypes["TestResultInput"]> | Variable<any, string>
-};
-	["LoginQuery"]: AliasType<{
-password?: [{	user: ValueTypes["LoginInput"] | Variable<any, string>},ValueTypes["LoginResponse"]],
-provider?: [{	params: ValueTypes["ProviderLoginInput"] | Variable<any, string>},ValueTypes["ProviderLoginQuery"]],
-		__typename?: boolean | `@${string}`
-}>;
-	["User"]: AliasType<{
-	username?:boolean | `@${string}`,
-		__typename?: boolean | `@${string}`
-}>;
-	["SocialKind"]:SocialKind;
-	["RegisterErrors"]:RegisterErrors;
-	["ChangePasswordWithTokenInput"]: {
-	newPassword: string | Variable<any, string>,
-	username: string | Variable<any, string>,
-	forgotToken: string | Variable<any, string>
-};
-	["AdminMutation"]: AliasType<{
-createProject?: [{	projectInput: ValueTypes["ProjectInput"] | Variable<any, string>},boolean | `@${string}`],
-deleteProject?: [{	_id: string | Variable<any, string>},boolean | `@${string}`],
-project?: [{	_id: string | Variable<any, string>},ValueTypes["ProjectMutation"]],
-updateProject?: [{	_id: string | Variable<any, string>,	updateProjectInput: ValueTypes["UpdateProjectInput"] | Variable<any, string>},boolean | `@${string}`],
-		__typename?: boolean | `@${string}`
-}>;
-	["TestReport"]: AliasType<{
-	_id?:boolean | `@${string}`,
-	createdAt?:boolean | `@${string}`,
-	project?:ValueTypes["Project"],
-	runs?:ValueTypes["ReportRun"],
-		__typename?: boolean | `@${string}`
-}>;
-	["DateInput"]: {
-	from: string | Variable<any, string>,
-	to?: string | undefined | null | Variable<any, string>
+	["TestResultInput"]: {
+	testPath: string | Variable<any, string>,
+	testContent: string | Variable<any, string>,
+	featureContent?: string | undefined | null | Variable<any, string>,
+	inherited?: string | undefined | null | Variable<any, string>,
+	reasonOfFail?: string | undefined | null | Variable<any, string>,
+	scenario?: string | undefined | null | Variable<any, string>
 };
 	["LoginResponse"]: AliasType<{
 	hasError?:boolean | `@${string}`,
 	login?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
+	["LoginErrors"]:LoginErrors;
 	["AdminQuery"]: AliasType<{
 	me?:ValueTypes["User"],
 	projects?:ValueTypes["Project"],
 reportById?: [{	_id: string | Variable<any, string>},ValueTypes["TestReport"]],
+reports?: [{	filterDate?: ValueTypes["DateInput"] | undefined | null | Variable<any, string>,	filterProject?: Array<string> | undefined | null | Variable<any, string>},ValueTypes["TestReport"]],
 		__typename?: boolean | `@${string}`
 }>;
-	["TestResultInput"]: {
-	inherited?: string | undefined | null | Variable<any, string>,
-	reasonOfFail?: string | undefined | null | Variable<any, string>,
-	scenario?: string | undefined | null | Variable<any, string>,
-	testPath: string | Variable<any, string>,
-	testContent: string | Variable<any, string>,
-	featureContent?: string | undefined | null | Variable<any, string>
-};
-	["Project"]: AliasType<{
-	_id?:boolean | `@${string}`,
-	color?:boolean | `@${string}`,
-	issueAddUrl?:boolean | `@${string}`,
-	keys?:boolean | `@${string}`,
-	name?:boolean | `@${string}`,
-reports?: [{	filterDate: ValueTypes["DateInput"] | Variable<any, string>},ValueTypes["TestReport"]],
-		__typename?: boolean | `@${string}`
-}>;
-	["ProviderResponse"]: AliasType<{
-	access_token?:boolean | `@${string}`,
-	hasError?:boolean | `@${string}`,
-	jwt?:boolean | `@${string}`,
-		__typename?: boolean | `@${string}`
-}>;
-	["ProjectMutation"]: AliasType<{
-	createKey?:boolean | `@${string}`,
-deleteKey?: [{	key: string | Variable<any, string>},boolean | `@${string}`],
-		__typename?: boolean | `@${string}`
-}>;
-	["UpdateProjectInput"]: {
-	issueAddUrl?: string | undefined | null | Variable<any, string>,
-	color?: ValueTypes["Colors"] | undefined | null | Variable<any, string>,
-	name?: string | undefined | null | Variable<any, string>
-};
 	["TestResult"]: AliasType<{
 	/** content of the main feature */
 	featureContent?:boolean | `@${string}`,
@@ -991,15 +1014,8 @@ deleteKey?: [{	key: string | Variable<any, string>},boolean | `@${string}`],
 	testPath?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
-	["LoginErrors"]:LoginErrors;
-	["ProjectInput"]: {
-	name: string | Variable<any, string>,
-	issueAddUrl?: string | undefined | null | Variable<any, string>,
-	color?: ValueTypes["Colors"] | undefined | null | Variable<any, string>
-};
-	["CLIMutation"]: AliasType<{
-updateReport?: [{	uploadReportInput: ValueTypes["UploadReportInput"] | Variable<any, string>},boolean | `@${string}`],
-uploadReport?: [{	uploadReportInput: ValueTypes["UploadReportInput"] | Variable<any, string>},boolean | `@${string}`],
+	["User"]: AliasType<{
+	username?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
 	["CLIQuery"]: AliasType<{
@@ -1007,7 +1023,104 @@ uploadReport?: [{	uploadReportInput: ValueTypes["UploadReportInput"] | Variable<
 	getReports?:ValueTypes["ReportInfo"],
 		__typename?: boolean | `@${string}`
 }>;
-	["Colors"]:Colors;
+	["ProjectInput"]: {
+	issueAddUrl?: string | undefined | null | Variable<any, string>,
+	color?: ValueTypes["Colors"] | undefined | null | Variable<any, string>,
+	name: string | Variable<any, string>
+};
+	["VerifyEmailInput"]: {
+	username: string | Variable<any, string>,
+	token: string | Variable<any, string>
+};
+	["SimpleUserInput"]: {
+	username: string | Variable<any, string>,
+	password: string | Variable<any, string>
+}
+  }
+
+export type ResolverInputTypes = {
+    ["ProviderLoginInput"]: {
+	code: string
+};
+	["Project"]: AliasType<{
+	_id?:boolean | `@${string}`,
+	color?:boolean | `@${string}`,
+	issueAddUrl?:boolean | `@${string}`,
+	keys?:boolean | `@${string}`,
+	name?:boolean | `@${string}`,
+reports?: [{	filterDate: ResolverInputTypes["DateInput"]},ResolverInputTypes["TestReport"]],
+		__typename?: boolean | `@${string}`
+}>;
+	["DateInput"]: {
+	from: string,
+	to?: string | undefined | null
+};
+	["TestReport"]: AliasType<{
+	_id?:boolean | `@${string}`,
+	createdAt?:boolean | `@${string}`,
+	key?:boolean | `@${string}`,
+	name?:boolean | `@${string}`,
+	project?:ResolverInputTypes["Project"],
+	runs?:ResolverInputTypes["ReportRun"],
+		__typename?: boolean | `@${string}`
+}>;
+	["ReportRun"]: AliasType<{
+	_id?:boolean | `@${string}`,
+	createdAt?:boolean | `@${string}`,
+	number?:boolean | `@${string}`,
+	project?:ResolverInputTypes["Project"],
+	report_id?:boolean | `@${string}`,
+	results?:ResolverInputTypes["TestResult"],
+		__typename?: boolean | `@${string}`
+}>;
+	["ChangePasswordWhenLoggedInput"]: {
+	username: string,
+	oldPassword: string,
+	newPassword: string
+};
+	["UpdateReportInput"]: {
+	results: Array<ResolverInputTypes["TestResultInput"]>
+};
+	["RegisterErrors"]:RegisterErrors;
+	["SocialKind"]:SocialKind;
+	["ChangePasswordWithTokenInput"]: {
+	forgotToken: string,
+	newPassword: string,
+	username: string
+};
+	["AdminMutation"]: AliasType<{
+createProject?: [{	projectInput: ResolverInputTypes["ProjectInput"]},boolean | `@${string}`],
+deleteProject?: [{	_id: string},boolean | `@${string}`],
+project?: [{	_id: string},ResolverInputTypes["ProjectMutation"]],
+updateProject?: [{	_id: string,	updateProjectInput: ResolverInputTypes["UpdateProjectInput"]},boolean | `@${string}`],
+		__typename?: boolean | `@${string}`
+}>;
+	["ProjectMutation"]: AliasType<{
+	createKey?:boolean | `@${string}`,
+deleteKey?: [{	key: string},boolean | `@${string}`],
+		__typename?: boolean | `@${string}`
+}>;
+	["LoginQuery"]: AliasType<{
+password?: [{	user: ResolverInputTypes["LoginInput"]},ResolverInputTypes["LoginResponse"]],
+provider?: [{	params: ResolverInputTypes["ProviderLoginInput"]},ResolverInputTypes["ProviderLoginQuery"]],
+		__typename?: boolean | `@${string}`
+}>;
+	["ProviderLoginQuery"]: AliasType<{
+	apple?:ResolverInputTypes["ProviderResponse"],
+	github?:ResolverInputTypes["ProviderResponse"],
+	google?:ResolverInputTypes["ProviderResponse"],
+		__typename?: boolean | `@${string}`
+}>;
+	["ProviderResponse"]: AliasType<{
+	access_token?:boolean | `@${string}`,
+	hasError?:boolean | `@${string}`,
+	jwt?:boolean | `@${string}`,
+		__typename?: boolean | `@${string}`
+}>;
+	["GetOAuthInput"]: {
+	scopes?: Array<string> | undefined | null,
+	state?: string | undefined | null
+};
 	["ReportInfo"]: AliasType<{
 	numberOfFailedResults?:boolean | `@${string}`,
 	numberOfResults?:boolean | `@${string}`,
@@ -1017,37 +1130,6 @@ uploadReport?: [{	uploadReportInput: ValueTypes["UploadReportInput"] | Variable<
 	reportId?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
-	["GenerateOAuthTokenInput"]: {
-	social: ValueTypes["SocialKind"] | Variable<any, string>,
-	code: string | Variable<any, string>
-};
-	["SimpleUserInput"]: {
-	username: string | Variable<any, string>,
-	password: string | Variable<any, string>
-}
-  }
-
-export type ResolverInputTypes = {
-    ["ReportRun"]: AliasType<{
-	_id?:boolean | `@${string}`,
-	createdAt?:boolean | `@${string}`,
-	number?:boolean | `@${string}`,
-	project?:ResolverInputTypes["Project"],
-	report_id?:boolean | `@${string}`,
-	results?:ResolverInputTypes["TestResult"],
-		__typename?: boolean | `@${string}`
-}>;
-	["ProviderLoginInput"]: {
-	code: string
-};
-	["RegisterInput"]: {
-	username: string,
-	password: string
-};
-	["LoginInput"]: {
-	username?: string | undefined | null,
-	password?: string | undefined | null
-};
 	["Mutation"]: AliasType<{
 	admin?:ResolverInputTypes["AdminMutation"],
 changePasswordWhenLogged?: [{	changePasswordData: ResolverInputTypes["ChangePasswordWhenLoggedInput"]},boolean | `@${string}`],
@@ -1059,118 +1141,70 @@ register?: [{	user: ResolverInputTypes["RegisterInput"]},ResolverInputTypes["Reg
 verifyEmail?: [{	verifyData: ResolverInputTypes["VerifyEmailInput"]},boolean | `@${string}`],
 		__typename?: boolean | `@${string}`
 }>;
+	["UpdateProjectInput"]: {
+	color?: ResolverInputTypes["Colors"] | undefined | null,
+	name?: string | undefined | null,
+	issueAddUrl?: string | undefined | null
+};
+	["UploadReportInput"]: {
+	name: string,
+	results: Array<ResolverInputTypes["TestResultInput"]>
+};
+	["GenerateOAuthTokenInput"]: {
+	social: ResolverInputTypes["SocialKind"],
+	code: string
+};
+	["LoginInput"]: {
+	password?: string | undefined | null,
+	username?: string | undefined | null
+};
+	["ProviderErrors"]:ProviderErrors;
+	["Colors"]:Colors;
+	["RegisterInput"]: {
+	username: string,
+	password: string
+};
+	["Query"]: AliasType<{
+	admin?:ResolverInputTypes["AdminQuery"],
+	cli?:ResolverInputTypes["CLIQuery"],
+getAppleOAuthLink?: [{	setup: ResolverInputTypes["GetOAuthInput"]},boolean | `@${string}`],
+getGithubOAuthLink?: [{	setup: ResolverInputTypes["GetOAuthInput"]},boolean | `@${string}`],
+getGoogleOAuthLink?: [{	setup: ResolverInputTypes["GetOAuthInput"]},boolean | `@${string}`],
+	login?:ResolverInputTypes["LoginQuery"],
+requestForForgotPassword?: [{	username: string},boolean | `@${string}`],
+		__typename?: boolean | `@${string}`
+}>;
+	["CLIMutation"]: AliasType<{
+updateReport?: [{	updateReportInput: ResolverInputTypes["UpdateReportInput"]},boolean | `@${string}`],
+uploadReport?: [{	uploadReportInput: ResolverInputTypes["UploadReportInput"]},boolean | `@${string}`],
+		__typename?: boolean | `@${string}`
+}>;
 	["RegisterResponse"]: AliasType<{
 	hasError?:boolean | `@${string}`,
 	registered?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
-	["VerifyEmailInput"]: {
-	username: string,
-	token: string
-};
-	["Query"]: AliasType<{
-	admin?:ResolverInputTypes["AdminQuery"],
-	cli?:ResolverInputTypes["CLIQuery"],
-	getAppleOAuthLink?:boolean | `@${string}`,
-getGithubOAuthLink?: [{	scopes?: Array<string | undefined | null> | undefined | null},boolean | `@${string}`],
-	getGoogleOAuthLink?:boolean | `@${string}`,
-	login?:ResolverInputTypes["LoginQuery"],
-requestForForgotPassword?: [{	username: string},boolean | `@${string}`],
-		__typename?: boolean | `@${string}`
-}>;
-	["ProviderLoginQuery"]: AliasType<{
-	apple?:ResolverInputTypes["ProviderResponse"],
-	github?:ResolverInputTypes["ProviderResponse"],
-	google?:ResolverInputTypes["ProviderResponse"],
-		__typename?: boolean | `@${string}`
-}>;
-	["ProviderErrors"]:ProviderErrors;
-	["ChangePasswordWhenLoggedInput"]: {
-	username: string,
-	oldPassword: string,
-	newPassword: string
-};
-	["UploadReportInput"]: {
-	results: Array<ResolverInputTypes["TestResultInput"]>
-};
-	["LoginQuery"]: AliasType<{
-password?: [{	user: ResolverInputTypes["LoginInput"]},ResolverInputTypes["LoginResponse"]],
-provider?: [{	params: ResolverInputTypes["ProviderLoginInput"]},ResolverInputTypes["ProviderLoginQuery"]],
-		__typename?: boolean | `@${string}`
-}>;
-	["User"]: AliasType<{
-	username?:boolean | `@${string}`,
-		__typename?: boolean | `@${string}`
-}>;
-	["SocialKind"]:SocialKind;
-	["RegisterErrors"]:RegisterErrors;
-	["ChangePasswordWithTokenInput"]: {
-	newPassword: string,
-	username: string,
-	forgotToken: string
-};
-	["AdminMutation"]: AliasType<{
-createProject?: [{	projectInput: ResolverInputTypes["ProjectInput"]},boolean | `@${string}`],
-deleteProject?: [{	_id: string},boolean | `@${string}`],
-project?: [{	_id: string},ResolverInputTypes["ProjectMutation"]],
-updateProject?: [{	_id: string,	updateProjectInput: ResolverInputTypes["UpdateProjectInput"]},boolean | `@${string}`],
-		__typename?: boolean | `@${string}`
-}>;
-	["TestReport"]: AliasType<{
-	_id?:boolean | `@${string}`,
-	createdAt?:boolean | `@${string}`,
-	project?:ResolverInputTypes["Project"],
-	runs?:ResolverInputTypes["ReportRun"],
-		__typename?: boolean | `@${string}`
-}>;
-	["DateInput"]: {
-	from: string,
-	to?: string | undefined | null
+	["TestResultInput"]: {
+	testPath: string,
+	testContent: string,
+	featureContent?: string | undefined | null,
+	inherited?: string | undefined | null,
+	reasonOfFail?: string | undefined | null,
+	scenario?: string | undefined | null
 };
 	["LoginResponse"]: AliasType<{
 	hasError?:boolean | `@${string}`,
 	login?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
+	["LoginErrors"]:LoginErrors;
 	["AdminQuery"]: AliasType<{
 	me?:ResolverInputTypes["User"],
 	projects?:ResolverInputTypes["Project"],
 reportById?: [{	_id: string},ResolverInputTypes["TestReport"]],
+reports?: [{	filterDate?: ResolverInputTypes["DateInput"] | undefined | null,	filterProject?: Array<string> | undefined | null},ResolverInputTypes["TestReport"]],
 		__typename?: boolean | `@${string}`
 }>;
-	["TestResultInput"]: {
-	inherited?: string | undefined | null,
-	reasonOfFail?: string | undefined | null,
-	scenario?: string | undefined | null,
-	testPath: string,
-	testContent: string,
-	featureContent?: string | undefined | null
-};
-	["Project"]: AliasType<{
-	_id?:boolean | `@${string}`,
-	color?:boolean | `@${string}`,
-	issueAddUrl?:boolean | `@${string}`,
-	keys?:boolean | `@${string}`,
-	name?:boolean | `@${string}`,
-reports?: [{	filterDate: ResolverInputTypes["DateInput"]},ResolverInputTypes["TestReport"]],
-		__typename?: boolean | `@${string}`
-}>;
-	["ProviderResponse"]: AliasType<{
-	access_token?:boolean | `@${string}`,
-	hasError?:boolean | `@${string}`,
-	jwt?:boolean | `@${string}`,
-		__typename?: boolean | `@${string}`
-}>;
-	["ProjectMutation"]: AliasType<{
-	createKey?:boolean | `@${string}`,
-deleteKey?: [{	key: string},boolean | `@${string}`],
-		__typename?: boolean | `@${string}`
-}>;
-	["UpdateProjectInput"]: {
-	issueAddUrl?: string | undefined | null,
-	color?: ResolverInputTypes["Colors"] | undefined | null,
-	name?: string | undefined | null
-};
 	["TestResult"]: AliasType<{
 	/** content of the main feature */
 	featureContent?:boolean | `@${string}`,
@@ -1182,15 +1216,8 @@ deleteKey?: [{	key: string},boolean | `@${string}`],
 	testPath?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
-	["LoginErrors"]:LoginErrors;
-	["ProjectInput"]: {
-	name: string,
-	issueAddUrl?: string | undefined | null,
-	color?: ResolverInputTypes["Colors"] | undefined | null
-};
-	["CLIMutation"]: AliasType<{
-updateReport?: [{	uploadReportInput: ResolverInputTypes["UploadReportInput"]},boolean | `@${string}`],
-uploadReport?: [{	uploadReportInput: ResolverInputTypes["UploadReportInput"]},boolean | `@${string}`],
+	["User"]: AliasType<{
+	username?:boolean | `@${string}`,
 		__typename?: boolean | `@${string}`
 }>;
 	["CLIQuery"]: AliasType<{
@@ -1198,19 +1225,14 @@ uploadReport?: [{	uploadReportInput: ResolverInputTypes["UploadReportInput"]},bo
 	getReports?:ResolverInputTypes["ReportInfo"],
 		__typename?: boolean | `@${string}`
 }>;
-	["Colors"]:Colors;
-	["ReportInfo"]: AliasType<{
-	numberOfFailedResults?:boolean | `@${string}`,
-	numberOfResults?:boolean | `@${string}`,
-	numberOfRuns?:boolean | `@${string}`,
-	projectId?:boolean | `@${string}`,
-	projectName?:boolean | `@${string}`,
-	reportId?:boolean | `@${string}`,
-		__typename?: boolean | `@${string}`
-}>;
-	["GenerateOAuthTokenInput"]: {
-	social: ResolverInputTypes["SocialKind"],
-	code: string
+	["ProjectInput"]: {
+	issueAddUrl?: string | undefined | null,
+	color?: ResolverInputTypes["Colors"] | undefined | null,
+	name: string
+};
+	["VerifyEmailInput"]: {
+	username: string,
+	token: string
 };
 	["SimpleUserInput"]: {
 	username: string,
@@ -1219,7 +1241,30 @@ uploadReport?: [{	uploadReportInput: ResolverInputTypes["UploadReportInput"]},bo
   }
 
 export type ModelTypes = {
-    ["ReportRun"]: {
+    ["ProviderLoginInput"]: {
+	code: string
+};
+	["Project"]: {
+		_id: string,
+	color?: ModelTypes["Colors"] | undefined,
+	issueAddUrl?: string | undefined,
+	keys?: Array<string> | undefined,
+	name: string,
+	reports?: Array<ModelTypes["TestReport"]> | undefined
+};
+	["DateInput"]: {
+	from: string,
+	to?: string | undefined
+};
+	["TestReport"]: {
+		_id: string,
+	createdAt: string,
+	key?: string | undefined,
+	name?: string | undefined,
+	project: ModelTypes["Project"],
+	runs?: Array<ModelTypes["ReportRun"] | undefined> | undefined
+};
+	["ReportRun"]: {
 		_id: string,
 	createdAt: string,
 	number: number,
@@ -1227,16 +1272,56 @@ export type ModelTypes = {
 	report_id: string,
 	results: Array<ModelTypes["TestResult"]>
 };
-	["ProviderLoginInput"]: {
-	code: string
-};
-	["RegisterInput"]: {
+	["ChangePasswordWhenLoggedInput"]: {
 	username: string,
-	password: string
+	oldPassword: string,
+	newPassword: string
 };
-	["LoginInput"]: {
-	username?: string | undefined,
-	password?: string | undefined
+	["UpdateReportInput"]: {
+	results: Array<ModelTypes["TestResultInput"]>
+};
+	["RegisterErrors"]:RegisterErrors;
+	["SocialKind"]:SocialKind;
+	["ChangePasswordWithTokenInput"]: {
+	forgotToken: string,
+	newPassword: string,
+	username: string
+};
+	["AdminMutation"]: {
+		createProject?: string | undefined,
+	deleteProject?: boolean | undefined,
+	project?: ModelTypes["ProjectMutation"] | undefined,
+	updateProject?: boolean | undefined
+};
+	["ProjectMutation"]: {
+		createKey?: string | undefined,
+	deleteKey?: boolean | undefined
+};
+	["LoginQuery"]: {
+		password: ModelTypes["LoginResponse"],
+	provider: ModelTypes["ProviderLoginQuery"]
+};
+	["ProviderLoginQuery"]: {
+		apple?: ModelTypes["ProviderResponse"] | undefined,
+	github?: ModelTypes["ProviderResponse"] | undefined,
+	google?: ModelTypes["ProviderResponse"] | undefined
+};
+	["ProviderResponse"]: {
+		access_token?: string | undefined,
+	hasError?: ModelTypes["ProviderErrors"] | undefined,
+	jwt?: string | undefined
+};
+	["GetOAuthInput"]: {
+	scopes?: Array<string> | undefined,
+	state?: string | undefined
+};
+	["ReportInfo"]: {
+		numberOfFailedResults: number,
+	numberOfResults: number,
+	numberOfRuns: number,
+	projectId: string,
+	projectName: string,
+	reportId: string
 };
 	["Mutation"]: {
 		admin?: ModelTypes["AdminMutation"] | undefined,
@@ -1248,13 +1333,28 @@ export type ModelTypes = {
 	register: ModelTypes["RegisterResponse"],
 	verifyEmail: boolean
 };
-	["RegisterResponse"]: {
-		hasError?: ModelTypes["RegisterErrors"] | undefined,
-	registered?: boolean | undefined
+	["UpdateProjectInput"]: {
+	color?: ModelTypes["Colors"] | undefined,
+	name?: string | undefined,
+	issueAddUrl?: string | undefined
 };
-	["VerifyEmailInput"]: {
+	["UploadReportInput"]: {
+	name: string,
+	results: Array<ModelTypes["TestResultInput"]>
+};
+	["GenerateOAuthTokenInput"]: {
+	social: ModelTypes["SocialKind"],
+	code: string
+};
+	["LoginInput"]: {
+	password?: string | undefined,
+	username?: string | undefined
+};
+	["ProviderErrors"]:ProviderErrors;
+	["Colors"]:Colors;
+	["RegisterInput"]: {
 	username: string,
-	token: string
+	password: string
 };
 	["Query"]: {
 		admin?: ModelTypes["AdminQuery"] | undefined,
@@ -1265,88 +1365,32 @@ export type ModelTypes = {
 	login: ModelTypes["LoginQuery"],
 	requestForForgotPassword: boolean
 };
-	["ProviderLoginQuery"]: {
-		apple: ModelTypes["ProviderResponse"],
-	github: ModelTypes["ProviderResponse"],
-	google: ModelTypes["ProviderResponse"]
+	["CLIMutation"]: {
+		updateReport: string,
+	uploadReport: string
 };
-	["ProviderErrors"]:ProviderErrors;
-	["ChangePasswordWhenLoggedInput"]: {
-	username: string,
-	oldPassword: string,
-	newPassword: string
+	["RegisterResponse"]: {
+		hasError?: ModelTypes["RegisterErrors"] | undefined,
+	registered?: boolean | undefined
 };
-	["UploadReportInput"]: {
-	results: Array<ModelTypes["TestResultInput"]>
-};
-	["LoginQuery"]: {
-		password: ModelTypes["LoginResponse"],
-	provider: ModelTypes["ProviderLoginQuery"]
-};
-	["User"]: {
-		username: string
-};
-	["SocialKind"]:SocialKind;
-	["RegisterErrors"]:RegisterErrors;
-	["ChangePasswordWithTokenInput"]: {
-	newPassword: string,
-	username: string,
-	forgotToken: string
-};
-	["AdminMutation"]: {
-		createProject?: string | undefined,
-	deleteProject?: boolean | undefined,
-	project?: ModelTypes["ProjectMutation"] | undefined,
-	updateProject?: boolean | undefined
-};
-	["TestReport"]: {
-		_id: string,
-	createdAt: string,
-	project: ModelTypes["Project"],
-	runs?: Array<ModelTypes["ReportRun"] | undefined> | undefined
-};
-	["DateInput"]: {
-	from: string,
-	to?: string | undefined
+	["TestResultInput"]: {
+	testPath: string,
+	testContent: string,
+	featureContent?: string | undefined,
+	inherited?: string | undefined,
+	reasonOfFail?: string | undefined,
+	scenario?: string | undefined
 };
 	["LoginResponse"]: {
 		hasError?: ModelTypes["LoginErrors"] | undefined,
 	login?: string | undefined
 };
+	["LoginErrors"]:LoginErrors;
 	["AdminQuery"]: {
 		me: ModelTypes["User"],
 	projects: Array<ModelTypes["Project"]>,
-	reportById?: ModelTypes["TestReport"] | undefined
-};
-	["TestResultInput"]: {
-	inherited?: string | undefined,
-	reasonOfFail?: string | undefined,
-	scenario?: string | undefined,
-	testPath: string,
-	testContent: string,
-	featureContent?: string | undefined
-};
-	["Project"]: {
-		_id: string,
-	color?: ModelTypes["Colors"] | undefined,
-	issueAddUrl?: string | undefined,
-	keys?: Array<string> | undefined,
-	name: string,
-	reports?: Array<ModelTypes["TestReport"]> | undefined
-};
-	["ProviderResponse"]: {
-		access_token?: string | undefined,
-	hasError?: ModelTypes["ProviderErrors"] | undefined,
-	jwt?: string | undefined
-};
-	["ProjectMutation"]: {
-		createKey?: string | undefined,
-	deleteKey?: boolean | undefined
-};
-	["UpdateProjectInput"]: {
-	issueAddUrl?: string | undefined,
-	color?: ModelTypes["Colors"] | undefined,
-	name?: string | undefined
+	reportById?: ModelTypes["TestReport"] | undefined,
+	reports: Array<ModelTypes["TestReport"] | undefined>
 };
 	["TestResult"]: {
 		/** content of the main feature */
@@ -1358,32 +1402,21 @@ export type ModelTypes = {
 	testContent: string,
 	testPath: string
 };
-	["LoginErrors"]:LoginErrors;
-	["ProjectInput"]: {
-	name: string,
-	issueAddUrl?: string | undefined,
-	color?: ModelTypes["Colors"] | undefined
-};
-	["CLIMutation"]: {
-		updateReport: string,
-	uploadReport: string
+	["User"]: {
+		username: string
 };
 	["CLIQuery"]: {
 		getReport: ModelTypes["TestReport"],
 	getReports: Array<ModelTypes["ReportInfo"] | undefined>
 };
-	["Colors"]:Colors;
-	["ReportInfo"]: {
-		numberOfFailedResults: number,
-	numberOfResults: number,
-	numberOfRuns: number,
-	projectId: string,
-	projectName: string,
-	reportId: string
+	["ProjectInput"]: {
+	issueAddUrl?: string | undefined,
+	color?: ModelTypes["Colors"] | undefined,
+	name: string
 };
-	["GenerateOAuthTokenInput"]: {
-	social: ModelTypes["SocialKind"],
-	code: string
+	["VerifyEmailInput"]: {
+	username: string,
+	token: string
 };
 	["SimpleUserInput"]: {
 	username: string,
@@ -1392,7 +1425,32 @@ export type ModelTypes = {
     }
 
 export type GraphQLTypes = {
-    ["ReportRun"]: {
+    ["ProviderLoginInput"]: {
+		code: string
+};
+	["Project"]: {
+	__typename: "Project",
+	_id: string,
+	color?: GraphQLTypes["Colors"] | undefined,
+	issueAddUrl?: string | undefined,
+	keys?: Array<string> | undefined,
+	name: string,
+	reports?: Array<GraphQLTypes["TestReport"]> | undefined
+};
+	["DateInput"]: {
+		from: string,
+	to?: string | undefined
+};
+	["TestReport"]: {
+	__typename: "TestReport",
+	_id: string,
+	createdAt: string,
+	key?: string | undefined,
+	name?: string | undefined,
+	project: GraphQLTypes["Project"],
+	runs?: Array<GraphQLTypes["ReportRun"] | undefined> | undefined
+};
+	["ReportRun"]: {
 	__typename: "ReportRun",
 	_id: string,
 	createdAt: string,
@@ -1401,16 +1459,62 @@ export type GraphQLTypes = {
 	report_id: string,
 	results: Array<GraphQLTypes["TestResult"]>
 };
-	["ProviderLoginInput"]: {
-		code: string
-};
-	["RegisterInput"]: {
+	["ChangePasswordWhenLoggedInput"]: {
 		username: string,
-	password: string
+	oldPassword: string,
+	newPassword: string
 };
-	["LoginInput"]: {
-		username?: string | undefined,
-	password?: string | undefined
+	["UpdateReportInput"]: {
+		results: Array<GraphQLTypes["TestResultInput"]>
+};
+	["RegisterErrors"]: RegisterErrors;
+	["SocialKind"]: SocialKind;
+	["ChangePasswordWithTokenInput"]: {
+		forgotToken: string,
+	newPassword: string,
+	username: string
+};
+	["AdminMutation"]: {
+	__typename: "AdminMutation",
+	createProject?: string | undefined,
+	deleteProject?: boolean | undefined,
+	project?: GraphQLTypes["ProjectMutation"] | undefined,
+	updateProject?: boolean | undefined
+};
+	["ProjectMutation"]: {
+	__typename: "ProjectMutation",
+	createKey?: string | undefined,
+	deleteKey?: boolean | undefined
+};
+	["LoginQuery"]: {
+	__typename: "LoginQuery",
+	password: GraphQLTypes["LoginResponse"],
+	provider: GraphQLTypes["ProviderLoginQuery"]
+};
+	["ProviderLoginQuery"]: {
+	__typename: "ProviderLoginQuery",
+	apple?: GraphQLTypes["ProviderResponse"] | undefined,
+	github?: GraphQLTypes["ProviderResponse"] | undefined,
+	google?: GraphQLTypes["ProviderResponse"] | undefined
+};
+	["ProviderResponse"]: {
+	__typename: "ProviderResponse",
+	access_token?: string | undefined,
+	hasError?: GraphQLTypes["ProviderErrors"] | undefined,
+	jwt?: string | undefined
+};
+	["GetOAuthInput"]: {
+		scopes?: Array<string> | undefined,
+	state?: string | undefined
+};
+	["ReportInfo"]: {
+	__typename: "ReportInfo",
+	numberOfFailedResults: number,
+	numberOfResults: number,
+	numberOfRuns: number,
+	projectId: string,
+	projectName: string,
+	reportId: string
 };
 	["Mutation"]: {
 	__typename: "Mutation",
@@ -1423,14 +1527,28 @@ export type GraphQLTypes = {
 	register: GraphQLTypes["RegisterResponse"],
 	verifyEmail: boolean
 };
-	["RegisterResponse"]: {
-	__typename: "RegisterResponse",
-	hasError?: GraphQLTypes["RegisterErrors"] | undefined,
-	registered?: boolean | undefined
+	["UpdateProjectInput"]: {
+		color?: GraphQLTypes["Colors"] | undefined,
+	name?: string | undefined,
+	issueAddUrl?: string | undefined
 };
-	["VerifyEmailInput"]: {
+	["UploadReportInput"]: {
+		name: string,
+	results: Array<GraphQLTypes["TestResultInput"]>
+};
+	["GenerateOAuthTokenInput"]: {
+		social: GraphQLTypes["SocialKind"],
+	code: string
+};
+	["LoginInput"]: {
+		password?: string | undefined,
+	username?: string | undefined
+};
+	["ProviderErrors"]: ProviderErrors;
+	["Colors"]: Colors;
+	["RegisterInput"]: {
 		username: string,
-	token: string
+	password: string
 };
 	["Query"]: {
 	__typename: "Query",
@@ -1442,98 +1560,36 @@ export type GraphQLTypes = {
 	login: GraphQLTypes["LoginQuery"],
 	requestForForgotPassword: boolean
 };
-	["ProviderLoginQuery"]: {
-	__typename: "ProviderLoginQuery",
-	apple: GraphQLTypes["ProviderResponse"],
-	github: GraphQLTypes["ProviderResponse"],
-	google: GraphQLTypes["ProviderResponse"]
+	["CLIMutation"]: {
+	__typename: "CLIMutation",
+	updateReport: string,
+	uploadReport: string
 };
-	["ProviderErrors"]: ProviderErrors;
-	["ChangePasswordWhenLoggedInput"]: {
-		username: string,
-	oldPassword: string,
-	newPassword: string
+	["RegisterResponse"]: {
+	__typename: "RegisterResponse",
+	hasError?: GraphQLTypes["RegisterErrors"] | undefined,
+	registered?: boolean | undefined
 };
-	["UploadReportInput"]: {
-		results: Array<GraphQLTypes["TestResultInput"]>
-};
-	["LoginQuery"]: {
-	__typename: "LoginQuery",
-	password: GraphQLTypes["LoginResponse"],
-	provider: GraphQLTypes["ProviderLoginQuery"]
-};
-	["User"]: {
-	__typename: "User",
-	username: string
-};
-	["SocialKind"]: SocialKind;
-	["RegisterErrors"]: RegisterErrors;
-	["ChangePasswordWithTokenInput"]: {
-		newPassword: string,
-	username: string,
-	forgotToken: string
-};
-	["AdminMutation"]: {
-	__typename: "AdminMutation",
-	createProject?: string | undefined,
-	deleteProject?: boolean | undefined,
-	project?: GraphQLTypes["ProjectMutation"] | undefined,
-	updateProject?: boolean | undefined
-};
-	["TestReport"]: {
-	__typename: "TestReport",
-	_id: string,
-	createdAt: string,
-	project: GraphQLTypes["Project"],
-	runs?: Array<GraphQLTypes["ReportRun"] | undefined> | undefined
-};
-	["DateInput"]: {
-		from: string,
-	to?: string | undefined
+	["TestResultInput"]: {
+		testPath: string,
+	testContent: string,
+	featureContent?: string | undefined,
+	inherited?: string | undefined,
+	reasonOfFail?: string | undefined,
+	scenario?: string | undefined
 };
 	["LoginResponse"]: {
 	__typename: "LoginResponse",
 	hasError?: GraphQLTypes["LoginErrors"] | undefined,
 	login?: string | undefined
 };
+	["LoginErrors"]: LoginErrors;
 	["AdminQuery"]: {
 	__typename: "AdminQuery",
 	me: GraphQLTypes["User"],
 	projects: Array<GraphQLTypes["Project"]>,
-	reportById?: GraphQLTypes["TestReport"] | undefined
-};
-	["TestResultInput"]: {
-		inherited?: string | undefined,
-	reasonOfFail?: string | undefined,
-	scenario?: string | undefined,
-	testPath: string,
-	testContent: string,
-	featureContent?: string | undefined
-};
-	["Project"]: {
-	__typename: "Project",
-	_id: string,
-	color?: GraphQLTypes["Colors"] | undefined,
-	issueAddUrl?: string | undefined,
-	keys?: Array<string> | undefined,
-	name: string,
-	reports?: Array<GraphQLTypes["TestReport"]> | undefined
-};
-	["ProviderResponse"]: {
-	__typename: "ProviderResponse",
-	access_token?: string | undefined,
-	hasError?: GraphQLTypes["ProviderErrors"] | undefined,
-	jwt?: string | undefined
-};
-	["ProjectMutation"]: {
-	__typename: "ProjectMutation",
-	createKey?: string | undefined,
-	deleteKey?: boolean | undefined
-};
-	["UpdateProjectInput"]: {
-		issueAddUrl?: string | undefined,
-	color?: GraphQLTypes["Colors"] | undefined,
-	name?: string | undefined
+	reportById?: GraphQLTypes["TestReport"] | undefined,
+	reports: Array<GraphQLTypes["TestReport"] | undefined>
 };
 	["TestResult"]: {
 	__typename: "TestResult",
@@ -1546,92 +1602,82 @@ export type GraphQLTypes = {
 	testContent: string,
 	testPath: string
 };
-	["LoginErrors"]: LoginErrors;
-	["ProjectInput"]: {
-		name: string,
-	issueAddUrl?: string | undefined,
-	color?: GraphQLTypes["Colors"] | undefined
-};
-	["CLIMutation"]: {
-	__typename: "CLIMutation",
-	updateReport: string,
-	uploadReport: string
+	["User"]: {
+	__typename: "User",
+	username: string
 };
 	["CLIQuery"]: {
 	__typename: "CLIQuery",
 	getReport: GraphQLTypes["TestReport"],
 	getReports: Array<GraphQLTypes["ReportInfo"] | undefined>
 };
-	["Colors"]: Colors;
-	["ReportInfo"]: {
-	__typename: "ReportInfo",
-	numberOfFailedResults: number,
-	numberOfResults: number,
-	numberOfRuns: number,
-	projectId: string,
-	projectName: string,
-	reportId: string
+	["ProjectInput"]: {
+		issueAddUrl?: string | undefined,
+	color?: GraphQLTypes["Colors"] | undefined,
+	name: string
 };
-	["GenerateOAuthTokenInput"]: {
-		social: GraphQLTypes["SocialKind"],
-	code: string
+	["VerifyEmailInput"]: {
+		username: string,
+	token: string
 };
 	["SimpleUserInput"]: {
 		username: string,
 	password: string
 }
     }
-export const enum ProviderErrors {
-	CANNOT_RETRIVE_PROFILE_FROM_GOOGLE_TRY_REFRESH_TOKEN = "CANNOT_RETRIVE_PROFILE_FROM_GOOGLE_TRY_REFRESH_TOKEN",
-	CANNOT_FIND_EMAIL_FOR_THIS_PROFIL = "CANNOT_FIND_EMAIL_FOR_THIS_PROFIL",
-	CANNOT_RETRIVE_USER_INFORMATION_FROM_APPLE = "CANNOT_RETRIVE_USER_INFORMATION_FROM_APPLE",
-	CODE_IS_NOT_EXIST_IN_ARGS = "CODE_IS_NOT_EXIST_IN_ARGS",
-	CANNOT_RETRIVE_SUB_FIELD_FROM_JWT_TOKEN = "CANNOT_RETRIVE_SUB_FIELD_FROM_JWT_TOKEN"
+export const enum RegisterErrors {
+	INVITE_DOMAIN_INCORRECT = "INVITE_DOMAIN_INCORRECT",
+	LINK_EXPIRED = "LINK_EXPIRED",
+	PASSWORD_WEAK = "PASSWORD_WEAK",
+	USERNAME_EXISTS = "USERNAME_EXISTS",
+	USERNAME_INVALID = "USERNAME_INVALID"
 }
 export const enum SocialKind {
 	Google = "Google",
 	Github = "Github",
 	Apple = "Apple"
 }
-export const enum RegisterErrors {
-	LINK_EXPIRED = "LINK_EXPIRED",
-	PASSWORD_WEAK = "PASSWORD_WEAK",
-	USERNAME_EXISTS = "USERNAME_EXISTS",
-	USERNAME_INVALID = "USERNAME_INVALID",
-	INVITE_DOMAIN_INCORRECT = "INVITE_DOMAIN_INCORRECT"
-}
-export const enum LoginErrors {
-	YOU_PROVIDED_OTHER_METHOD_OF_LOGIN_ON_THIS_EMAIL = "YOU_PROVIDED_OTHER_METHOD_OF_LOGIN_ON_THIS_EMAIL",
-	CONFIRM_EMAIL_BEFOR_LOGIN = "CONFIRM_EMAIL_BEFOR_LOGIN",
-	INVALID_LOGIN_OR_PASSWORD = "INVALID_LOGIN_OR_PASSWORD",
-	CANNOT_FIND_CONNECTED_USER = "CANNOT_FIND_CONNECTED_USER"
+export const enum ProviderErrors {
+	CANNOT_RETRIVE_SUB_FIELD_FROM_JWT_TOKEN = "CANNOT_RETRIVE_SUB_FIELD_FROM_JWT_TOKEN",
+	CANNOT_RETRIVE_PROFILE_FROM_GOOGLE_TRY_REFRESH_TOKEN = "CANNOT_RETRIVE_PROFILE_FROM_GOOGLE_TRY_REFRESH_TOKEN",
+	CANNOT_FIND_EMAIL_FOR_THIS_PROFIL = "CANNOT_FIND_EMAIL_FOR_THIS_PROFIL",
+	CANNOT_RETRIVE_USER_INFORMATION_FROM_APPLE = "CANNOT_RETRIVE_USER_INFORMATION_FROM_APPLE",
+	CODE_IS_NOT_EXIST_IN_ARGS = "CODE_IS_NOT_EXIST_IN_ARGS"
 }
 export const enum Colors {
-	_3D82C2 = "_3D82C2",
-	_B07765 = "_B07765",
 	_8762B6 = "_8762B6",
 	_AA8753 = "_AA8753",
 	_748448 = "_748448",
-	_5D6ECC = "_5D6ECC"
+	_5D6ECC = "_5D6ECC",
+	_3D82C2 = "_3D82C2",
+	_B07765 = "_B07765"
+}
+export const enum LoginErrors {
+	CONFIRM_EMAIL_BEFOR_LOGIN = "CONFIRM_EMAIL_BEFOR_LOGIN",
+	INVALID_LOGIN_OR_PASSWORD = "INVALID_LOGIN_OR_PASSWORD",
+	CANNOT_FIND_CONNECTED_USER = "CANNOT_FIND_CONNECTED_USER",
+	YOU_PROVIDED_OTHER_METHOD_OF_LOGIN_ON_THIS_EMAIL = "YOU_PROVIDED_OTHER_METHOD_OF_LOGIN_ON_THIS_EMAIL"
 }
 
 type ZEUS_VARIABLES = {
 	["ProviderLoginInput"]: ValueTypes["ProviderLoginInput"];
-	["RegisterInput"]: ValueTypes["RegisterInput"];
-	["LoginInput"]: ValueTypes["LoginInput"];
-	["VerifyEmailInput"]: ValueTypes["VerifyEmailInput"];
-	["ProviderErrors"]: ValueTypes["ProviderErrors"];
-	["ChangePasswordWhenLoggedInput"]: ValueTypes["ChangePasswordWhenLoggedInput"];
-	["UploadReportInput"]: ValueTypes["UploadReportInput"];
-	["SocialKind"]: ValueTypes["SocialKind"];
-	["RegisterErrors"]: ValueTypes["RegisterErrors"];
-	["ChangePasswordWithTokenInput"]: ValueTypes["ChangePasswordWithTokenInput"];
 	["DateInput"]: ValueTypes["DateInput"];
-	["TestResultInput"]: ValueTypes["TestResultInput"];
+	["ChangePasswordWhenLoggedInput"]: ValueTypes["ChangePasswordWhenLoggedInput"];
+	["UpdateReportInput"]: ValueTypes["UpdateReportInput"];
+	["RegisterErrors"]: ValueTypes["RegisterErrors"];
+	["SocialKind"]: ValueTypes["SocialKind"];
+	["ChangePasswordWithTokenInput"]: ValueTypes["ChangePasswordWithTokenInput"];
+	["GetOAuthInput"]: ValueTypes["GetOAuthInput"];
 	["UpdateProjectInput"]: ValueTypes["UpdateProjectInput"];
+	["UploadReportInput"]: ValueTypes["UploadReportInput"];
+	["GenerateOAuthTokenInput"]: ValueTypes["GenerateOAuthTokenInput"];
+	["LoginInput"]: ValueTypes["LoginInput"];
+	["ProviderErrors"]: ValueTypes["ProviderErrors"];
+	["Colors"]: ValueTypes["Colors"];
+	["RegisterInput"]: ValueTypes["RegisterInput"];
+	["TestResultInput"]: ValueTypes["TestResultInput"];
 	["LoginErrors"]: ValueTypes["LoginErrors"];
 	["ProjectInput"]: ValueTypes["ProjectInput"];
-	["Colors"]: ValueTypes["Colors"];
-	["GenerateOAuthTokenInput"]: ValueTypes["GenerateOAuthTokenInput"];
+	["VerifyEmailInput"]: ValueTypes["VerifyEmailInput"];
 	["SimpleUserInput"]: ValueTypes["SimpleUserInput"];
 }

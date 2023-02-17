@@ -115,6 +115,7 @@ export const testHandler = async (
 
     if (testsPaths.indexOf(file) === testsPaths.length - 1) {
       results.testStatus = {
+        savedTo: fileName.replace(".json", ""),
         status: TEST_STATUS.FINISHED,
         testFilesRoutes: [...results.testStatus.testFilesRoutes],
       };

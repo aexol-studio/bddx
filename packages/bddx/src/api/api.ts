@@ -59,7 +59,7 @@ export const getReports = async (key: string) => {
 };
 
 export const updateReport = async (
-  uploadReportInput: ModelTypes["UploadReportInput"],
+  updateReportInput: ModelTypes["UpdateReportInput"],
   key: string
 ) => {
   const response = await chain(
@@ -69,7 +69,7 @@ export const updateReport = async (
     cli: {
       updateReport: [
         {
-          uploadReportInput,
+          updateReportInput,
         },
         true,
       ],

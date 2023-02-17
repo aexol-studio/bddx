@@ -28,7 +28,10 @@ export const cloudIntegration = async (resultsPaths: string[]) => {
       fs.readFileSync(selected.pathtoresult).toString("utf-8")
     );
     if (content.testStatus.status === TEST_STATUS.FINISHED) {
-      const arrayToSend: ModelTypes["UploadReportInput"] = { results: [] };
+      const arrayToSend: ModelTypes["UploadReportInput"] = {
+        results: [],
+        name: content.testStatus.savedTo.replace(".json", ""),
+      };
       content.passedTests.map((test) => {
         arrayToSend.results.push({
           testPath: test.testPath,

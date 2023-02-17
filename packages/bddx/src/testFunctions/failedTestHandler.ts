@@ -123,6 +123,7 @@ const doFailedTestFunction = async (key: string) => {
     const _failedTest: ResultsType[] = report[lastReport].results;
     if (_failedTest.length === 0) {
       message("There is no test to run", "red");
+      spinner.fail();
       return;
     }
     const newResults: ResultsType[] = [];
