@@ -3,9 +3,8 @@ import { Chain, ModelTypes } from "@/zeus/index.js";
 import { JiraType } from "@/coreFunctions/index.js";
 import { testResultsSelector } from "./selectors.js";
 
-// const API_LOCAL = "http://localhost:8080/graphql";
-const API_DEV = "https://bddx-api.azurewebsites.net/graphql";
-// const API_PROD = "https://bddx-p-api.azurewebsites.net/graphql";
+const API_DEV =
+  process.env.BDDX_BACKEND || "https://bddx-p-api.azurewebsites.net/graphql";
 
 const chain = (option: "query" | "mutation", Key: string) =>
   Chain(API_DEV, {

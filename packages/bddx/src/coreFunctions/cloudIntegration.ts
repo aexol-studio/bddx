@@ -75,6 +75,7 @@ export const cloudIntegration = async (resultsPaths: string[]) => {
           return;
         } catch {
           message("Cannot upload results now, try again.", "red");
+          spinner.fail();
           return;
         }
       }
