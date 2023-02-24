@@ -1,0 +1,54 @@
+{
+    "failedTests": [
+        {
+            "testPath": "./content\\fileA.feature",
+            "reasonOfFail": "sdfsdf",
+            "scenarioTitle": "testA",
+            "scenarioContent": "",
+            "featureContent": "testA\n   testA"
+        },
+        {
+            "testPath": "./content\\pass_or_fail_test.feature",
+            "reasonOfFail": "sdfsdf",
+            "scenarioTitle": "User wants to test register functionality via \"register.feature\" test which is in \"/userHandling\" path, but one of register inputs is broken",
+            "scenarioContent": "Given register functionality exists\r\n    And register.feature file exists in path \"/userHandling\" which also exists selectss\r\n    And There is a tool to approve or reject the functionality\r\n    And This tool has functionality to ask if everything is ok?\r\n    And This tool has functionality to ask for rejection reason and save it to the selected output file if something is wrong\r\n    And Test content will be displayed correctly\r\n    When User interacts with this tool by testing the functionality with error\r\n    Then User should be able to reject this test\r\n    And There should be a place to write why test is rejected.\r\n    And Rejection reason should be saved in output file\r\n    But If functionality is ok, then user can pass this test\r\n    And Information about passed test should be saved in output file",
+            "featureContent": "Verification of the functionality through a test\r\n    User can decide if functionality will pass the test or not, by asking if everything is ok.\r\n    First version can be based on the switch/if instuction, when question is displayed and everything is ok then press 1, but if something is wrong then press 2 and write what's wrong."
+        }
+    ],
+    "passedTests": [
+        {
+            "testPath": "./content\\1_fileC.feature",
+            "scenarioTitle": "testC",
+            "scenarioContent": "",
+            "featureContent": "testC\n testC"
+        },
+        {
+            "testPath": "./content\\display_test.feature",
+            "scenarioTitle": "User wants to run \"login.feature\" tests from \"/userHandling\" path",
+            "scenarioContent": "Given \"/userHandling\" path exists\r\n    And login.feature exists\r\n    And There is a tool to display test content\r\n    When User interacts with this tool\r\n    Then Test login.feature should be displayed\r\n    And After passing or failing, next test from selected path should be displayed\r\n    And If this is last or single test in path, program should quit\r\n    But If path not exists or there is a typo, then proper error message should be displayed",
+            "featureContent": "Display .feature file\r\n    User should be able to see test scenario after selecting a tests path.\r\n    For example, there is a userHandling directory with login.feature, register.feature, and forgotPassword.feature.\r\n    If user selects /userHandling path in config file all tests should be displayed sequentially one after another"
+        },
+        {
+            "testPath": "./content\\display_test.feature",
+            "scenarioTitle": "Scenario 2",
+            "scenarioContent": "Given \"/userHandling\" path exists\r\n    And login.feature exists\r\n    And There is a tool to display test content\r\n    When User interacts with this tool\r\n    Then Test login.feature should be displayed\r\n    And After passing or failing, next test from selected path should be displayed\r\n    And If this is last or single test in path, program should quit\r\n    But If path not exists or there is a typo, then proper error message should be displayed",
+            "featureContent": "Display .feature file\r\n    User should be able to see test scenario after selecting a tests path.\r\n    For example, there is a userHandling directory with login.feature, register.feature, and forgotPassword.feature.\r\n    If user selects /userHandling path in config file all tests should be displayed sequentially one after another"
+        },
+        {
+            "testPath": "./content\\fileB.feature",
+            "scenarioTitle": "testB",
+            "scenarioContent": "",
+            "featureContent": "testB\r\n\r\ntestB"
+        }
+    ],
+    "testStatus": {
+        "status": "finished",
+        "testFilesRoutes": [
+            "./content\\1_fileC.feature",
+            "./content\\display_test.feature",
+            "./content\\fileA.feature",
+            "./content\\fileB.feature",
+            "./content\\pass_or_fail_test.feature"
+        ]
+    }
+}

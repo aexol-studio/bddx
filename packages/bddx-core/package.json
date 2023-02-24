@@ -9,10 +9,13 @@
   "type": "module",
   "scripts": {
     "build": "rimraf lib tsconfig.build.tsbuildinfo && ttsc --build tsconfig.build.json",
+    "build::win": "rimraf lib tsconfig.build.tsbuildinfo && ttsc --build tsconfig.build.json",
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
     "chalk": "^5.1.2",
-    "chokidar": "^3.5.3"
+    "chokidar": "^3.5.3",
+    "cli-spinners": "^2.7.0",
+    "ora": "^6.1.2"
   }
 }

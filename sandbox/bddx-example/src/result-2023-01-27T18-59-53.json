@@ -1,5 +1,20 @@
 {
-    "failedTests": [],
+    "failedTests": [
+        {
+            "testPath": "./content\\display_test.feature",
+            "reasonOfFail": "asdfasd",
+            "scenarioTitle": "Scenario 2",
+            "scenarioContent": "Given \"/userHandling\" path exists\r\n    And login.feature exists\r\n    And There is a tool to display test content\r\n    When User interacts with this tool\r\n    Then Test login.feature should be displayed\r\n    And After passing or failing, next test from selected path should be displayed\r\n    And If this is last or single test in path, program should quit\r\n    But If path not exists or there is a typo, then proper error message should be displayed",
+            "featureContent": "Display .feature file\r\n    User should be able to see test scenario after selecting a tests path.\r\n    For example, there is a userHandling directory with login.feature, register.feature, and forgotPassword.feature.\r\n    If user selects /userHandling path in config file all tests should be displayed sequentially one after another"
+        },
+        {
+            "testPath": "./content\\fileA.feature",
+            "reasonOfFail": "asdfasd",
+            "scenarioTitle": "testA",
+            "scenarioContent": "",
+            "featureContent": "testA\n   testA"
+        }
+    ],
     "passedTests": [
         {
             "testPath": "./content\\1_fileC.feature",
@@ -12,18 +27,6 @@
             "scenarioTitle": "User wants to run \"login.feature\" tests from \"/userHandling\" path",
             "scenarioContent": "Given \"/userHandling\" path exists\r\n    And login.feature exists\r\n    And There is a tool to display test content\r\n    When User interacts with this tool\r\n    Then Test login.feature should be displayed\r\n    And After passing or failing, next test from selected path should be displayed\r\n    And If this is last or single test in path, program should quit\r\n    But If path not exists or there is a typo, then proper error message should be displayed",
             "featureContent": "Display .feature file\r\n    User should be able to see test scenario after selecting a tests path.\r\n    For example, there is a userHandling directory with login.feature, register.feature, and forgotPassword.feature.\r\n    If user selects /userHandling path in config file all tests should be displayed sequentially one after another"
-        },
-        {
-            "testPath": "./content\\display_test.feature",
-            "scenarioTitle": "Scenario 2",
-            "scenarioContent": "Given \"/userHandling\" path exists dupa\r\n    And login.feature exists\r\n    And There is a tool to display test content\r\n    When User interacts with this tool\r\n    Then Test login.feature should be displayed\r\n    And After passing or failing, next test from selected path should be displayed\r\n    And If this is last or single test in path, program should quit\r\n    But If path not exists or there is a typo, then proper error message should be displayed",
-            "featureContent": "Display .feature file\r\n    User should be able to see test scenario after selecting a tests path.\r\n    For example, there is a userHandling directory with login.feature, register.feature, and forgotPassword.feature.\r\n    If user selects /userHandling path in config file all tests should be displayed sequentially one after another"
-        },
-        {
-            "testPath": "./content\\fileA.feature",
-            "scenarioTitle": "testA",
-            "scenarioContent": "",
-            "featureContent": "testA\r\n   testA"
         },
         {
             "testPath": "./content\\fileB.feature",

@@ -12,6 +12,7 @@
   "type": "module",
   "scripts": {
     "build": "rimraf tsconfig.build.tsbuildinfo lib && ttsc --build tsconfig.build.json && chmod +x ./lib/CLI.js",
+    "build::win": "rimraf tsconfig.build.tsbuildinfo lib && ttsc --build tsconfig.build.json",
     "zeus": "zeus https://bddx-api.azurewebsites.net/graphql ./src --es --node"
   },
   "devDependencies": {
