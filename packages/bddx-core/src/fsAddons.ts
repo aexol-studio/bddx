@@ -85,7 +85,7 @@ export const getFeatureFilesPathsRecursive = (
   regex = regex || new RegExp(`\\${extn}$`);
 
   for (let i = 0; i < files.length; i++) {
-    const file = path.join(dir, files[i]);
+    const file = path.posix.join(dir, files[i]);
     if (fs.statSync(file).isDirectory()) {
       try {
         result = getFeatureFilesPathsRecursive(
