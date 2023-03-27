@@ -107,29 +107,61 @@ export const uploadReports = async (
 
 export const createJiraIssue = async (
   jira: JiraType,
-  input: { scenario: string; description: string }
+  input: {  description: string, testContent: string, scenarioTitle: string }
 ) => {
-  const { description, scenario } = input;
+  const { description,  testContent, scenarioTitle } = input;
   const { client, issueTypeName, projectName } = jira;
   if (jira && client) {
-    await client.issues
+    const task = await client.issues
       .createIssue({
         fields: {
           issuetype: {
             name: issueTypeName,
           },
           project: { key: projectName },
-          summary: `Test ${scenario} failed at ${new Date()
-            .toISOString()
-            .split(".")[0]
-            .replace(":", "-")}`,
-          description,
+          summary: `${scenarioTitle}`,
+          description: {
+            "version": 1,
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": `Reason: ${description}`,
+                    "marks": [
+                      {
+                        "type": "strong"
+                      }
+                    ]
+                  },
+                ]
+              },
+              {
+                "type": "codeBlock",
+                "attrs": {
+                  "language": "gherkin"
+                },
+                "content": [
+                  {
+                    "type": "text",
+                    "text": `Scenario: ${testContent.trimEnd()}`
+                  }
+                ]
+              }
+            ]
+          }
         },
       })
       .catch(() => {
         message("Task was not created in Jira. Something went wrong", "red");
         return;
       });
+      if (!task) return;
+      message("Task was created in Jira.", "green");
+      return;
+
   }
   message("Task was not created in Jira. Something went wrong", "red");
   return;
