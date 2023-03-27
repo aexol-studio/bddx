@@ -106,8 +106,9 @@ export const testHandler = async (
           );
           if (jira)
             await createJiraIssue(jira, {
-              scenario: file,
               description: answers.message,
+              testContent: splittedByScenario[i],
+              scenarioTitle,
             });
         }
       }
