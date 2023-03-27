@@ -128,7 +128,8 @@ export const getResultsDirectories = (inPath: string) => {
   if (!fs.existsSync(inPath)) {
     throw new Error(`There is no input directory: ${inPath}`);
   }
-  const testFilesNames = getFeatureFilesPathsRecursive(inPath, ".json");
+  const testFilesNames = getFeatureFilesPathsRecursive(inPath, ".json").reverse();
+
   if (testFilesNames.length === 0) {
     message(`No .json files found in input directory`, "yellowBright");
   } else {

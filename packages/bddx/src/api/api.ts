@@ -123,13 +123,15 @@ export const createJiraIssue = async (
             .toISOString()
             .split(".")[0]
             .replace(":", "-")}`,
-          description,
+          description: "```gherkin\n" + description + "\n```",
         },
       })
       .catch(() => {
         message("Task was not created in Jira. Something went wrong", "red");
         return;
       });
+      message("Task was created in Jira.", "green");
+      return;
   }
   message("Task was not created in Jira. Something went wrong", "red");
   return;
