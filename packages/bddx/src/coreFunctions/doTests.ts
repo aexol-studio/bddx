@@ -48,8 +48,17 @@ export const doTests = async (
       testFilesRoutes: testsPaths,
     },
   };
-  const date = new Date().toISOString().split(".")[0].replaceAll(":", "-");
-  const fileName = `result-${date}.json`;
+  const actualDate = new Date().toLocaleString('pl-PL', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).replaceAll('.', '-').replaceAll(',', '').replaceAll(' ', '-').replaceAll(':', '-');
+  const fileName = `result-${actualDate}.json`;
+  
   const getResultsNames = fs.readdirSync(outPath).map((o) => o);
   const answers = await inquirer.prompt<{
     skip: boolean;
