@@ -39,7 +39,7 @@ export const initJira = async () => {
     "Organization name will be saved in bddx.json configuration file.\nMail and token will be saved locally on your machine so you can use this credentials in all future projects with BDDX package !!!\n To change them just use init command again",
     "green"
   );
-  const config = new conf.default();
+  const config = new conf.default({ projectName: "BDDX" });
   config.set("bddxJ.mail", answers.mail);
   config.set("bddxJ.token", answers.apiToken);
 
