@@ -108,7 +108,7 @@ export const initJira = async () => {
 };
 
 export const checkJiraToken = async (): Promise<boolean> => {
-  const con = new conf.default();
+  const con = new conf.default({ projectName: "BDDX" });
   const mail = con.get("bddxJ.mail") as string;
   const token = con.get("bddxJ.token") as string;
   const config = readConfig("./bddx.json", true);
