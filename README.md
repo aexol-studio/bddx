@@ -68,7 +68,8 @@ The e-mail and Jira API token are saved locally on the machine to ensure safety!
 | --- | --- |
 | to run all .feature tests and save results in a file in the output directory: | `npx bddx` |
 | to run all .feature tests and create a task for each failed one on the configured Jira: | `npx bddx jira` |
-|to select an unfinished session and continue the tests from that point (you will also be asked about Jira usage): | `npx bddx continue` |
+| to select an unfinished session and continue the tests from that point (you will also be asked about Jira usage): | `npx bddx continue` |
+| to run all failed .feature tests in selected source and submit results to the bddx cloud: | `npx bddx` |
 
 
 #### [Readme CORE](https://github.com/aexol-studio/bddx/blob/main/Readme.md)
