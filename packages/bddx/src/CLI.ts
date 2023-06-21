@@ -11,6 +11,7 @@ import {
   continueTestsCLI,
   defaultCLI,
 } from "@/cliFunctions/index.js";
+import { hideBin } from "yargs/helpers";
 
 process.on("SIGINT", () => {
   message("Exiting...(file with unsuccessful test was created)", "redBright");
@@ -23,8 +24,9 @@ const BDDX = `
 |_) (_| (_| /\\ 
 `;
 
-yargs(process.argv.slice(2))
+yargs(hideBin(process.argv))
   .usage(BDDX)
+  .scriptName("bddx")
   .command(
     "$0",
     "The default command to run all BDD tests.",
@@ -116,8 +118,8 @@ yargs(process.argv.slice(2))
     async () => await jiraCLIverifyToken()
   )
   .help()
-  .showHelpOnFail(true)
   .version()
+  .showHelpOnFail(true)
   .strict()
   .strictCommands()
   .demandCommand()

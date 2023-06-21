@@ -32,7 +32,7 @@ export const failedTestHandler = async () => {
       {
         type: "input",
         name: "key",
-        message: "Insert report_id from BDDX Cloud:",
+        message: "Insert Report ID from BDDX Cloud:",
       },
     ]);
     if (!SecondSelected.key) {

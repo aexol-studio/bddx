@@ -85,31 +85,34 @@ export const uploadReports = async (
   uploadReportInput: ModelTypes["UploadReportInput"],
   key: string
 ) => {
-  const response = await chain(
-    "mutation",
-    key
-  )({
-    cli: {
-      uploadReport: [
-        {
-          uploadReportInput,
-        },
-        true,
-      ],
-    },
-  });
-  if (!response) {
-    message("We cannot upload your reports to BDDX Cloud right now.", "red");
+  try {
+    const response = await chain(
+      "mutation",
+      key
+    )({
+      cli: {
+        uploadReport: [
+          {
+            uploadReportInput,
+          },
+          true,
+        ],
+      },
+    });
+    return response.cli?.uploadReport;
+  } catch (_error) {
+    const error = _error as Error;
+    const firstError = Object.values(error)[0];
+    message(`\n${firstError.errors[0].message.split(":")[1].trim()}`, "red");
     return;
   }
-  return response.cli?.uploadReport;
 };
 
 export const createJiraIssue = async (
   jira: JiraType,
-  input: {  description: string, testContent: string, scenarioTitle: string }
+  input: { description: string; testContent: string; scenarioTitle: string }
 ) => {
-  const { description,  testContent, scenarioTitle } = input;
+  const { description, testContent, scenarioTitle } = input;
   const { client, issueTypeName, projectName } = jira;
   if (jira && client) {
     const task = await client.issues
@@ -121,47 +124,46 @@ export const createJiraIssue = async (
           project: { key: projectName },
           summary: `${scenarioTitle}`,
           description: {
-            "version": 1,
-            "type": "doc",
-            "content": [
+            version: 1,
+            type: "doc",
+            content: [
               {
-                "type": "paragraph",
-                "content": [
+                type: "paragraph",
+                content: [
                   {
-                    "type": "text",
-                    "text": `Reason: ${description}`,
-                    "marks": [
+                    type: "text",
+                    text: `Reason: ${description}`,
+                    marks: [
                       {
-                        "type": "strong"
-                      }
-                    ]
+                        type: "strong",
+                      },
+                    ],
                   },
-                ]
+                ],
               },
               {
-                "type": "codeBlock",
-                "attrs": {
-                  "language": "gherkin"
+                type: "codeBlock",
+                attrs: {
+                  language: "gherkin",
                 },
-                "content": [
+                content: [
                   {
-                    "type": "text",
-                    "text": `Scenario: ${testContent.trimEnd()}`
-                  }
-                ]
-              }
-            ]
-          }
+                    type: "text",
+                    text: `Scenario: ${testContent.trimEnd()}`,
+                  },
+                ],
+              },
+            ],
+          },
         },
       })
       .catch(() => {
         message("Task was not created in Jira. Something went wrong", "red");
         return;
       });
-      if (!task) return;
-      message("Task was created in Jira.", "green");
-      return;
-
+    if (!task) return;
+    message("Task was created in Jira.", "green");
+    return;
   }
   message("Task was not created in Jira. Something went wrong", "red");
   return;
