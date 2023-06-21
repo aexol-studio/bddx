@@ -29,7 +29,7 @@ export const jiraCLIinit = async () => {
 };
 
 export const jiraCLI = async () => {
-  const confi = new conf.default();
+  const confi = new conf.default({ projectName: "BDDX" });
   const mail = confi.get("bddxJ.mail") as string;
   const token = confi.get("bddxJ.token") as string;
   const config = readConfig("./bddx.json", true);

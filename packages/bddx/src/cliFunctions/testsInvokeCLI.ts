@@ -53,7 +53,7 @@ export const continueTestsCLI = async () => {
         },
       ]);
       if (selected.withJira) {
-        const confi = new conf.default();
+        const confi = new conf.default({ projectName: "BDDX" });
         const mail = confi.get("bddxJ.mail") as string;
         const token = confi.get("bddxJ.token") as string;
         const configJira = readConfig("./bddx.json", true);
